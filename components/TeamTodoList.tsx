@@ -196,7 +196,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       console.log('Todo 상태 업데이트 성공:', { id, status });
       
       // 상태 업데이트 후 UI 즉시 갱신
-      setTodos(todos.map(todo => 
+      setTodos(prevTodos => prevTodos.map(todo => 
         todo.id === id ? { ...todo, status } : todo
       ))
       
@@ -295,7 +295,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       }
       
       // 삭제 후 UI 즉시 갱신
-      setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
       
       // 부모 컴포넌트에 삭제 이벤트 알림 (통계 업데이트용)
       if (onDelete) {
@@ -373,24 +373,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               return;
             }
             
-            // 현재 목록에 있는 항목인지 확인
-            const existingIndex = todos.findIndex(todo => todo.id === updatedTodo.id);
-            
-            if (existingIndex >= 0) {
-              // 목록에 있으면 업데이트
-              setTodos(prevTodos => {
-                const newTodos = [...prevTodos];
-                newTodos[existingIndex] = { 
-                  ...newTodos[existingIndex], 
-                  ...updatedTodo,
-                  user: newTodos[existingIndex].user // 사용자 정보 유지
-                };
-                return newTodos;
-              });
-            } else {
-              // 목록에 없지만 상태 필터에 맞으면 다시 불러오기
-              fetchTodos();
-            }
+            // 상태 업데이트로 목록 새로고침
+            fetchTodos();
           } else if (payload.eventType === 'DELETE') {
             const deletedTodo = payload.old as Todo;
             // 삭제된 항목 제거
@@ -414,7 +398,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
         console.error('TodoList 구독 해제 중 오류:', err);
       }
     };
-  }, [userId, filter, statusFilter, refreshTrigger, supabase, todos]);
+  }, [userId, filter, statusFilter, refreshTrigger, supabase]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
