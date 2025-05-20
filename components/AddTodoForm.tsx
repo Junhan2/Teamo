@@ -96,7 +96,6 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         description: description || null,
         due_date: dueDate.toISOString(), // null 옵션 제거
         status: 'pending',
-        priority: 'medium', // 기본값으로 고정
         user_id: userId,
         team_id: teamId
       }
