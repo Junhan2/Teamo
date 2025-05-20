@@ -29,49 +29,93 @@ body {
     100% { transform: rotate(-10deg); }
   }
   
-  /* Space floating animation for the dog */
+  /* Space floating animation for the dog - super smooth with more keyframes */
   @keyframes space-float {
     /* Starting point */
     0% { transform: translate(0, 0) rotate(0deg); }
+    2% { transform: translate(8vw, -6vh) rotate(6deg); }
+    4% { transform: translate(16vw, -12vh) rotate(12deg); }
     
-    /* Float to top right */
-    5% { transform: translate(20vw, -15vh) rotate(15deg); }
-    10% { transform: translate(40vw, -10vh) rotate(20deg); }
+    /* Float to top right - smoother with more steps */
+    6% { transform: translate(22vw, -15vh) rotate(18deg); }
+    8% { transform: translate(28vw, -14vh) rotate(22deg); }
+    10% { transform: translate(35vw, -12vh) rotate(26deg); }
+    12% { transform: translate(40vw, -8vh) rotate(30deg); }
     
-    /* Hit right wall and bounce */
-    15% { transform: translate(45vw, 10vh) rotate(30deg); }
+    /* Near right wall - slow down before bounce */
+    14% { transform: translate(43vw, -3vh) rotate(34deg); }
+    16% { transform: translate(44vw, 3vh) rotate(38deg); }
     
-    /* Float to bottom right */
-    20% { transform: translate(40vw, 20vh) rotate(40deg); }
-    25% { transform: translate(30vw, 30vh) rotate(50deg); }
+    /* Hit right wall and start bouncing - gentle curve */
+    18% { transform: translate(42vw, 10vh) rotate(42deg); }
     
-    /* Hit bottom wall and bounce */
-    30% { transform: translate(10vw, 35vh) rotate(60deg); }
+    /* Float to bottom right - smooth transition */
+    20% { transform: translate(38vw, 16vh) rotate(48deg); }
+    22% { transform: translate(34vw, 22vh) rotate(54deg); }
+    24% { transform: translate(28vw, 28vh) rotate(60deg); }
+    26% { transform: translate(22vw, 32vh) rotate(66deg); }
     
-    /* Float to bottom left */
-    35% { transform: translate(-15vw, 30vh) rotate(70deg); }
-    40% { transform: translate(-30vw, 20vh) rotate(80deg); }
+    /* Approaching bottom wall - slow down */
+    28% { transform: translate(16vw, 35vh) rotate(72deg); }
+    30% { transform: translate(8vw, 36vh) rotate(78deg); }
     
-    /* Hit left wall and bounce */
-    45% { transform: translate(-40vw, 0vh) rotate(100deg); }
+    /* Bottom wall area - start gentle curve */
+    32% { transform: translate(0vw, 35vh) rotate(84deg); }
+    34% { transform: translate(-8vw, 33vh) rotate(90deg); }
     
-    /* Float to top left */
-    50% { transform: translate(-35vw, -20vh) rotate(150deg); }
-    55% { transform: translate(-25vw, -30vh) rotate(170deg); }
+    /* Float to bottom left - smooth curve */
+    36% { transform: translate(-16vw, 30vh) rotate(96deg); }
+    38% { transform: translate(-24vw, 25vh) rotate(102deg); }
+    40% { transform: translate(-30vw, 18vh) rotate(108deg); }
     
-    /* Hit top wall and bounce */
-    60% { transform: translate(-10vw, -35vh) rotate(200deg); }
+    /* Approaching left wall - slow down */
+    42% { transform: translate(-36vw, 10vh) rotate(120deg); }
+    44% { transform: translate(-40vw, 0vh) rotate(130deg); }
     
-    /* Float across top */
-    65% { transform: translate(15vw, -30vh) rotate(230deg); }
+    /* Left wall area - start curve up */
+    46% { transform: translate(-38vw, -10vh) rotate(140deg); }
+    48% { transform: translate(-36vw, -16vh) rotate(150deg); }
     
-    /* Slowly float back toward center */
-    70% { transform: translate(25vw, -20vh) rotate(260deg); }
-    75% { transform: translate(20vw, -10vh) rotate(280deg); }
-    80% { transform: translate(10vw, 5vh) rotate(310deg); }
-    85% { transform: translate(0vw, 15vh) rotate(330deg); }
-    90% { transform: translate(-10vw, 10vh) rotate(345deg); }
-    95% { transform: translate(-5vw, 5vh) rotate(355deg); }
+    /* Float to top left - smooth transition */
+    50% { transform: translate(-32vw, -22vh) rotate(160deg); }
+    52% { transform: translate(-28vw, -26vh) rotate(170deg); }
+    54% { transform: translate(-22vw, -30vh) rotate(180deg); }
+    56% { transform: translate(-16vw, -33vh) rotate(190deg); }
+    
+    /* Near top wall - slow down before bounce */
+    58% { transform: translate(-8vw, -35vh) rotate(200deg); }
+    
+    /* Top wall area - start gentle curve */
+    60% { transform: translate(0vw, -34vh) rotate(210deg); }
+    62% { transform: translate(8vw, -32vh) rotate(220deg); }
+    
+    /* Float across top - smooth movement */
+    64% { transform: translate(16vw, -28vh) rotate(230deg); }
+    66% { transform: translate(22vw, -22vh) rotate(240deg); }
+    
+    /* Start descending - smooth curve */
+    68% { transform: translate(24vw, -16vh) rotate(250deg); }
+    70% { transform: translate(22vw, -10vh) rotate(260deg); }
+    
+    /* Gently float toward center - very gradual */
+    72% { transform: translate(18vw, -5vh) rotate(270deg); }
+    74% { transform: translate(14vw, 0vh) rotate(280deg); }
+    76% { transform: translate(10vw, 5vh) rotate(290deg); }
+    78% { transform: translate(6vw, 8vh) rotate(300deg); }
+    80% { transform: translate(3vw, 10vh) rotate(310deg); }
+    
+    /* Final approach to center - very slow */
+    82% { transform: translate(0vw, 8vh) rotate(320deg); }
+    84% { transform: translate(-3vw, 6vh) rotate(330deg); }
+    86% { transform: translate(-5vw, 4vh) rotate(340deg); }
+    88% { transform: translate(-4vw, 2vh) rotate(350deg); }
+    90% { transform: translate(-3vw, 1vh) rotate(355deg); }
+    
+    /* Almost home - tiny movements */
+    92% { transform: translate(-2vw, 0vh) rotate(358deg); }
+    94% { transform: translate(-1vw, 0vh) rotate(359deg); }
+    96% { transform: translate(-0.5vw, 0vh) rotate(360deg); }
+    98% { transform: translate(-0.2vw, 0vh) rotate(360deg); }
     
     /* Return to starting position */
     100% { transform: translate(0, 0) rotate(0deg); }
@@ -86,7 +130,7 @@ body {
   }
   
   .animate-gentle-float {
-    animation: gentle-float 10s ease-in-out infinite;
+    animation: gentle-float 16s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   }
   
   /* Sparkle animation */
@@ -110,9 +154,9 @@ body {
     transition: all 0.8s ease;
   }
   
-  /* Space floating class */
+  /* Space floating class - much slower, smoother animation */
   .hero-image-wrapper.is-bouncing {
-    animation: space-float 30s ease-in-out forwards;
+    animation: space-float 60s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
     z-index: 20;
   }
   
