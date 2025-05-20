@@ -136,7 +136,6 @@ export default function ContributionGraph({ userId, days = 90 }: ContributionGra
   return (
     <div className="mb-8" style={{ overflow: 'visible', position: 'relative', zIndex: 1 }}>
       <div className="flex flex-col gap-1" style={{ overflow: 'visible' }}>
-        <h3 className="text-base font-medium text-white mb-3">Activity Contribution</h3>
         <div className="bg-[#1a1a27]/40 p-5 rounded-xl border border-[#2a2a3c] relative" style={{ overflow: 'visible', zIndex: 1 }}>
           <div className="flex gap-1.5 flex-wrap justify-center py-4">
             {/* 네모칸 상하 여백 추가 */}

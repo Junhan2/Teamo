@@ -46,22 +46,7 @@ export default function Navbar({ user }: NavbarProps) {
           </Link>
 
           <div className="flex items-center gap-4">
-            <nav className="hidden md:flex items-center gap-1">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="text-sm font-medium text-gray-300 hover:text-white rounded-lg">
-                  <CheckSquare className="w-4 h-4 mr-1.5" /> My Tasks
-                </Button>
-              </Link>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                disabled
-                className="text-sm font-medium text-gray-500 rounded-lg cursor-not-allowed opacity-60"
-                title="This feature is coming soon"
-              >
-                <Calendar className="w-4 h-4 mr-1.5" /> Calendar (Coming Soon)
-              </Button>
-            </nav>
+            {/* 플로팅 버튼으로 이동됨 */}
 
             {user && (
               <DropdownMenu>
