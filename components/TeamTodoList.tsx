@@ -85,12 +85,12 @@ const getUserColor = (userId: string, currentUserId: string | undefined, type: '
   
   // 사용 가능한 색상 조합 (배지, 컨테이너, 도트 색상)
   const colorSchemes = [
-    { badge: 'bg-blue-900/30 text-blue-300 border-blue-700/20', container: 'bg-blue-950/40 border-blue-800/30', dot: 'bg-blue-400' },
-    { badge: 'bg-purple-900/30 text-purple-300 border-purple-700/20', container: 'bg-purple-950/40 border-purple-800/30', dot: 'bg-purple-400' },
-    { badge: 'bg-green-900/30 text-green-300 border-green-700/20', container: 'bg-green-950/40 border-green-800/30', dot: 'bg-green-400' },
-    { badge: 'bg-amber-900/30 text-amber-300 border-amber-700/20', container: 'bg-amber-950/40 border-amber-800/30', dot: 'bg-amber-400' },
-    { badge: 'bg-pink-900/30 text-pink-300 border-pink-700/20', container: 'bg-pink-950/40 border-pink-800/30', dot: 'bg-pink-400' },
-    { badge: 'bg-cyan-900/30 text-cyan-300 border-cyan-700/20', container: 'bg-cyan-950/40 border-cyan-800/30', dot: 'bg-cyan-400' }
+    { badge: 'bg-blue-900/10 text-blue-200/70 border-blue-700/10', container: 'bg-blue-950/40 border-blue-800/30', dot: 'bg-blue-400' },
+    { badge: 'bg-purple-900/10 text-purple-200/70 border-purple-700/10', container: 'bg-purple-950/40 border-purple-800/30', dot: 'bg-purple-400' },
+    { badge: 'bg-green-900/10 text-green-200/70 border-green-700/10', container: 'bg-green-950/40 border-green-800/30', dot: 'bg-green-400' },
+    { badge: 'bg-amber-900/10 text-amber-200/70 border-amber-700/10', container: 'bg-amber-950/40 border-amber-800/30', dot: 'bg-amber-400' },
+    { badge: 'bg-pink-900/10 text-pink-200/70 border-pink-700/10', container: 'bg-pink-950/40 border-pink-800/30', dot: 'bg-pink-400' },
+    { badge: 'bg-cyan-900/10 text-cyan-200/70 border-cyan-700/10', container: 'bg-cyan-950/40 border-cyan-800/30', dot: 'bg-cyan-400' }
   ]
   
   // 내 태스크인 경우 별도 처리

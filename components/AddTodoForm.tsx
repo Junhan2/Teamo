@@ -159,15 +159,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full supertape-input pr-10 pl-3 py-3 text-base"
+            className="w-full supertape-input pl-3 py-3 text-base"
           />
-          <Button 
-            type="submit" 
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-10 w-10 p-0 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
-            disabled={loading}
-          >
-            <Plus size={20} />
-          </Button>
         </div>
       </div>
       
