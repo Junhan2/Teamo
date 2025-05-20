@@ -56,7 +56,7 @@ export default function LoginPage() {
       setTimeout(() => {
         imageEl.classList.remove('is-bouncing');
         setIsBouncing(false);
-      }, 60000); // Float in space for 60 seconds - much much slower animation
+      }, 120000); // Float in space for 120 seconds (2 minutes) - super slow animation
     }
   };
 
