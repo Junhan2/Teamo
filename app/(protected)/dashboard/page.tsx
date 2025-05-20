@@ -286,11 +286,75 @@ export default function DashboardPage() {
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
-          {/* 할일 추가 섹션 */}
-          <div className="w-full md:w-2/5 animate-fadeIn">
+          {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
+          <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
+            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6 md:mb-0">
+              <Tabs 
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full text-base"
+              >
+                <div className="border-b border-[#464c58]/60 relative">
+                  <TabsList className="w-full bg-transparent p-0">
+                    <TabsTrigger 
+                      value="my-todos" 
+                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
+                    >
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-base">MY TASKS</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="team-todos" 
+                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
+                    >
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-base">TEAM TASKS</span>
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  {/* 활성화된 탭 표시 - 애니메이션 가능한 하단 바 */}
+                  <div 
+                    className="absolute bottom-0 left-0 h-0.5 bg-white transition-all duration-300"
+                    style={{
+                      width: '50%',
+                      transform: activeTab === 'my-todos' ? 'translateX(0)' : 'translateX(100%)'
+                    }}
+                  />
+                </div>
+                
+                <TabsContent value="my-todos" className="p-6 focus:outline-none">
+                  <TeamTodoList 
+                    userId={user?.id} 
+                    filter="my" 
+                    refreshTrigger={refreshTrigger}
+                    onDelete={() => {
+                      console.log('할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
+                      // 즉시 통계 업데이트
+                      fetchTodoStats();
+                    }}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="team-todos" className="p-6 focus:outline-none">
+                  <TeamTodoList 
+                    userId={user?.id} 
+                    filter="team" 
+                    refreshTrigger={refreshTrigger}
+                    onDelete={() => {
+                      console.log('팀 할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
+                      // 즉시 통계 업데이트
+                      fetchTodoStats();
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+          
+          {/* 할일 추가 및 통계 섹션 */}
+          <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
+            {/* 할일 추가 섹션 */}
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-base font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
+                <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -306,8 +370,9 @@ export default function DashboardPage() {
             {/* Productivity Streak 비활성화 */}
             {/* {user && <TaskStreak userId={user.id} className="mb-6" />} */}
             
+            {/* 통계 섹션 */}
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-base font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
+              <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
               <div style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
               </div>
@@ -360,69 +425,6 @@ export default function DashboardPage() {
                   ></motion.div>
                 </div>
               </div>
-            </div>
-          </div>
-          
-          {/* 할일 목록 섹션 */}
-          <div className="w-full md:w-3/5 animate-fadeIn">
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20">
-              <Tabs 
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full text-base"
-              >
-                <div className="border-b border-[#464c58]/60 relative">
-                  <TabsList className="w-full bg-transparent p-0">
-                    <TabsTrigger 
-                      value="my-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
-                    >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] text-base">MY TASKS</span>
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="team-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
-                    >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] text-base">TEAM TASKS</span>
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  {/* 활성화된 탭 표시 - 애니메이션 가능한 하단 바 */}
-                  <div 
-                    className="absolute bottom-0 left-0 h-0.5 bg-white transition-all duration-300"
-                    style={{
-                      width: '50%',
-                      transform: activeTab === 'my-todos' ? 'translateX(0)' : 'translateX(100%)'
-                    }}
-                  />
-                </div>
-                
-                <TabsContent value="my-todos" className="p-6 focus:outline-none">
-                  <TeamTodoList 
-                    userId={user?.id} 
-                    filter="my" 
-                    refreshTrigger={refreshTrigger}
-                    onDelete={() => {
-                      console.log('할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
-                      // 즉시 통계 업데이트
-                      fetchTodoStats();
-                    }}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="team-todos" className="p-6 focus:outline-none">
-                  <TeamTodoList 
-                    userId={user?.id} 
-                    filter="team" 
-                    refreshTrigger={refreshTrigger}
-                    onDelete={() => {
-                      console.log('팀 할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
-                      // 즉시 통계 업데이트
-                      fetchTodoStats();
-                    }}
-                  />
-                </TabsContent>
-              </Tabs>
             </div>
           </div>
         </div>
