@@ -29,6 +29,67 @@ body {
     100% { transform: translateY(0px) rotate(0deg); }
   }
   
+  /* Billiard-like bouncing animation */
+  @keyframes billiard-bounce {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    
+    /* First bounce - going up right */
+    5% { transform: translate(20px, -20px) rotate(2deg); }
+    
+    /* Hit top right corner */
+    10% { transform: translate(40px, -40px) rotate(5deg); }
+    
+    /* Bounce down right */
+    15% { transform: translate(60px, -20px) rotate(1deg); }
+    
+    /* Hit right side */
+    20% { transform: translate(80px, 0) rotate(-3deg); }
+    
+    /* Bounce down right */
+    25% { transform: translate(60px, 20px) rotate(-5deg); }
+    
+    /* Hit bottom right corner */
+    30% { transform: translate(40px, 40px) rotate(-2deg); }
+    
+    /* Bounce down left */
+    35% { transform: translate(20px, 60px) rotate(1deg); }
+    
+    /* Hit bottom side */
+    40% { transform: translate(0, 80px) rotate(4deg); }
+    
+    /* Bounce up left */
+    45% { transform: translate(-20px, 60px) rotate(2deg); }
+    
+    /* Hit left side */
+    50% { transform: translate(-40px, 40px) rotate(-2deg); }
+    
+    /* Bounce up left */
+    55% { transform: translate(-60px, 20px) rotate(-4deg); }
+    
+    /* Hit left side */
+    60% { transform: translate(-80px, 0) rotate(-1deg); }
+    
+    /* Bounce up right */
+    65% { transform: translate(-60px, -20px) rotate(3deg); }
+    
+    /* Hit top left corner */
+    70% { transform: translate(-40px, -40px) rotate(5deg); }
+    
+    /* Slowing down - right */
+    75% { transform: translate(-20px, -20px) rotate(3deg); }
+    
+    /* Slowing down - center */
+    80% { transform: translate(0, 0) rotate(0deg); }
+    
+    /* Small final bounces */
+    85% { transform: translate(10px, 10px) rotate(-1deg); }
+    90% { transform: translate(-5px, -5px) rotate(1deg); }
+    95% { transform: translate(2px, 2px) rotate(-0.5deg); }
+    
+    /* Back to center */
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out forwards;
   }
@@ -54,11 +115,23 @@ body {
   }
   
   .hero-image-wrapper {
-    transition: transform 0.8s ease-out;
+    transition: transform 0.3s ease-out;
+    position: relative;
+    cursor: pointer;
   }
   
   .hero-image-wrapper img {
     transition: all 0.8s ease;
+  }
+  
+  /* Billiard bouncing class */
+  .hero-image-wrapper.is-bouncing {
+    animation: billiard-bounce 6s ease-in-out forwards;
+    z-index: 20;
+  }
+  
+  .hero-image-wrapper.is-bouncing img {
+    filter: drop-shadow(0 10px 25px rgba(138, 104, 233, 0.5));
   }
   
   .hero-text {
@@ -74,6 +147,17 @@ body {
   .hero-container.is-hovered .hero-text {
     text-shadow: 0 0 15px rgba(138, 104, 233, 0.4);
     background-image: linear-gradient(to right, #a881ff, #d775ff);
+  }
+  
+  /* Bounce effect text interaction */
+  .hero-image-wrapper.is-bouncing ~ .hero-text {
+    animation: text-glow 6s ease-in-out forwards;
+  }
+  
+  @keyframes text-glow {
+    0%, 100% { text-shadow: 0 0 15px rgba(138, 104, 233, 0.4); }
+    25%, 75% { text-shadow: 0 0 25px rgba(138, 104, 233, 0.8); }
+    50% { text-shadow: 0 0 35px rgba(138, 104, 233, 1); }
   }
   
   /* Sparkle effects */
@@ -98,6 +182,12 @@ body {
   
   .hero-container.is-hovered .sparkle {
     animation: sparkle 3s ease-in-out infinite;
+  }
+  
+  /* When bouncing, more intense sparkles */
+  .hero-image-wrapper.is-bouncing ~ .sparkle-effect .sparkle {
+    animation: sparkle 1.5s ease-in-out infinite;
+    box-shadow: 0 0 12px 3px rgba(161, 92, 246, 0.9);
   }
   
   .sparkle-1 {

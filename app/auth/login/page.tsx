@@ -36,15 +36,64 @@ export default function LoginPage() {
     }
   }
 
-  // Simplified hover effect - no mouse tracking, just add a class on hover
+  // State for controlling bounce animation
+  const [isBouncing, setIsBouncing] = useState(false);
+
+  // Subtle mouse tracking for hover effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isBouncing) return; // Don't track mouse when bouncing
+    
+    const container = e.currentTarget;
+    const { left, top, width, height } = container.getBoundingClientRect();
+    
+    // Calculate cursor position relative to container (very small range)
+    const x = ((e.clientX - left) / width - 0.5) * 3; // Scale for subtlety
+    const y = ((e.clientY - top) / height - 0.5) * 3; // Scale for subtlety
+    
+    const imageEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
+    
+    if (imageEl) {
+      // Very subtle movement
+      imageEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    }
+  };
+  
+  // Hover effects
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     const container = e.currentTarget;
     container.classList.add('is-hovered');
   };
   
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isBouncing) return; // Don't reset when bouncing
+    
     const container = e.currentTarget;
     container.classList.remove('is-hovered');
+    
+    // Reset position
+    const imageEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
+    if (imageEl) {
+      imageEl.style.transform = 'translate3d(0, 0, 0)';
+    }
+  };
+  
+  // Click to start bouncing animation
+  const handleClick = () => {
+    if (isBouncing) return; // Already bouncing
+    
+    setIsBouncing(true);
+    
+    // Get the image wrapper and add bouncing class
+    const imageEl = document.querySelector('.hero-image-wrapper') as HTMLElement;
+    if (imageEl) {
+      imageEl.classList.add('is-bouncing');
+      
+      // Remove the bouncing class and state after animation completes
+      setTimeout(() => {
+        imageEl.classList.remove('is-bouncing');
+        setIsBouncing(false);
+      }, 6000); // Bounce for 6 seconds
+    }
   };
 
   return (
@@ -59,7 +108,9 @@ export default function LoginPage() {
           className="text-center mb-12 animate-fadeIn relative pt-28 hero-container"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-        > {/* Simplified hover effect handlers */}
+          onMouseMove={handleMouseMove}
+          onClick={handleClick}
+        > {/* Added subtle mouse move tracking and click for bounce effect */}
           {/* Hero image positioned with the Mocha text */}
           <div className="absolute z-0 left-1/2 transform -translate-x-1/2 w-[300px] max-w-full hero-image-wrapper" style={{ top: "-100px" }}>
             {/* Sparkle effects that appear on hover */}
