@@ -662,11 +662,17 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                           <Clock size={12} className="mr-1.5 text-gray-400" />
                           <span className="text-gray-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) >= 0 ? (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-500/20 text-indigo-300">
-                              D-{calculateDaysLeft(todo.due_date)}
-                            </span>
+                            calculateDaysLeft(todo.due_date) <= 7 ? (
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-[#ff82c2] text-[#000000]">
+                                D-{calculateDaysLeft(todo.due_date)}
+                              </span>
+                            ) : (
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#5ad363] text-[#000000]">
+                                D-{calculateDaysLeft(todo.due_date)}
+                              </span>
+                            )
                           ) : (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-300">
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-normal bg-gray-500/30 text-gray-400">
                               D+{Math.abs(calculateDaysLeft(todo.due_date))}
                             </span>
                           )}

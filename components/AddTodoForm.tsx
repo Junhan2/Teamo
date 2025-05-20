@@ -204,10 +204,11 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       
       <Button 
         type="submit" 
-        className="bg-white text-[#292C33] hover:bg-white/90 w-full h-11 px-6 text-base rounded-sm mt-6"
+        variant="default"
+        className="rounded-sm mt-6"
         disabled={loading}
       >
-        {loading ? "Adding..." : <><Plus className="w-4 h-4 mr-2" /> Add Task</>}
+        {loading ? "Adding..." : <><Plus className="w-4 h-4" /> Add Task</>}
       </Button>
       
       {message && (
