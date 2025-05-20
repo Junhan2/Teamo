@@ -74,7 +74,7 @@ export default function LoginPage() {
         > {/* Simplified container with only click handler */}
           <div className="relative mb-2">
             {/* Hero image with sparkle effects */}
-            <div className="relative w-[240px] mx-auto hero-image-wrapper">
+            <div className="relative w-[200px] mx-auto hero-image-wrapper">
               {/* Sparkle effects */}
               <div className="sparkle-effect">
                 <div className="sparkle sparkle-1"></div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
             
             {/* Mung. text overlapping with the image */}
             <h1 
-              className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500 mt-[-50px]"
+              className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500 mt-[-80px]"
               style={{
                 fontSize: "clamp(48px, 10vw, 80px)", 
                 lineHeight: "1.1",
