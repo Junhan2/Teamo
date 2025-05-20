@@ -19,7 +19,9 @@ import {
   Sparkles,
   ArrowUp,
   ArrowRight,
-  ArrowDown
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import { format, differenceInCalendarDays } from "date-fns"
 import { Badge } from "@/components/ui/badge"
@@ -54,6 +56,7 @@ interface TeamTodoListProps {
   filter: "my" | "team"
   refreshTrigger?: number
   onDelete?: () => void  // 할일 삭제 또는 상태 변경 시 호출할 콜백 (통계 업데이트용)
+  itemsPerPage?: number
 }
 
 interface CompletionEffectPosition {
@@ -106,13 +109,14 @@ const getUserColor = (userId: string, currentUserId: string | undefined, type: '
   return colorSchemes[colorIndex][type]
 }
 
-const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) => {
+const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage = 5 }: TeamTodoListProps) => {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
   const [dateFilter, setDateFilter] = useState<string | null>(null)
   const [showCompletionEffect, setShowCompletionEffect] = useState(false)
   const [isBrowser, setIsBrowser] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const [completionPosition, setCompletionPosition] = useState<CompletionEffectPosition>({ 
     x: 0, 
     y: 0, 
@@ -372,6 +376,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
   }
 
   useEffect(() => {
+    // 필터 변경 시 페이지를 1로 리셋
+    setCurrentPage(1)
     fetchTodos()
     
     // 실시간 구독 설정
@@ -578,7 +584,9 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       ) : (
         <div className="space-y-3">
           <AnimatePresence>
-            {todos.map((todo) => (
+            {todos
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((todo) => (
               <motion.div 
                 key={todo.id}
                 className={`bg-[#292C33] rounded-xl overflow-hidden border ${
@@ -706,6 +714,30 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               </motion.div>
             ))}
           </AnimatePresence>
+          
+          {/* Pagination Controls */}
+          {todos.length > itemsPerPage && (
+            <div className="flex justify-center mt-6 gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="h-10 w-10 p-0 rounded-none bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none aspect-square shadow-md"
+              >
+                <ChevronLeft size={18} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage >= Math.ceil(todos.length / itemsPerPage)}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
+                className="h-10 w-10 p-0 rounded-none bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none aspect-square shadow-md"
+              >
+                <ChevronRight size={18} />
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
