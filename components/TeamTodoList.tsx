@@ -77,7 +77,7 @@ const calculateDaysLeft = (dueDate: string) => {
 }
 
 // 사용자 ID 기반 색상 선택 함수
-const getUserColor = (userId: string, type: 'badge' | 'container' | 'dot') => {
+const getUserColor = (userId: string, currentUserId: string | undefined, type: 'badge' | 'container' | 'dot') => {
   // 사용자 ID의 마지막 6자리를 가져와 고유한 값으로 사용
   const hash = userId.substring(Math.max(0, userId.length - 6))
   // 해시 값을 0-5 사이의 숫자로 변환 (6가지 색상 사용)
@@ -94,28 +94,16 @@ const getUserColor = (userId: string, type: 'badge' | 'container' | 'dot') => {
   ]
   
   // 내 태스크인 경우 별도 처리
-  // userId: 태스크 소유자를 위한 단순한 비교 로직으로 변경
-  // 정적 전역 변수 대신 문자열 비교 사용
-  if (userId === TodoList.myUserId && type === 'container') {
+  // 직접 props로 받은 현재 사용자 ID와 비교 (순수 함수 방식)
+  if (userId === currentUserId && type === 'container') {
     return 'bg-indigo-950/40 border-indigo-800/30'
   }
   
   return colorSchemes[colorIndex][type]
 }
 
-// 정적 참조용 객체
-const TodoList = {
-  myUserId: ''
-};
-
-// 컴포넌트 선언
+// 컴포넌트 선언 - 정적 참조 객체 제거
 const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) => {
-  // 컴포넌트가 마운트될 때 현재 사용자 ID 저장 (정적 객체 사용)
-  useEffect(() => {
-    if (userId) {
-      TodoList.myUserId = userId;
-    }
-  }, [userId]);
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
@@ -466,7 +454,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
     )
   }
 
-  // 타입 선언 삭제 - 더 이상 Window 인터페이스 확장이 필요 없음
+  // 리액트의 순수함수 방식으로 변경 - 파일 끝
 
 return (
     <div className="text-white" ref={containerRef}>
@@ -542,7 +530,7 @@ return (
                           <span>{todo.title}</span>
                         )}
                         {todo.user_id !== userId && filter === "team" && (
-                          <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${getUserColor(todo.user_id, 'badge')}`}>
+                          <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
                             {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Other'}
                           </span>
                         )}
@@ -600,8 +588,8 @@ return (
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">
                       {filter === "team" && (
-                        <span className={`mr-3 px-3 py-1 rounded-md border shadow-sm flex items-center ${getUserColor(todo.user_id, 'container')}`}>
-                          <span className={`mr-1 inline-block w-2 h-2 rounded-full ${getUserColor(todo.user_id, 'dot')}`}></span>
+                        <span className={`mr-3 px-3 py-1 rounded-md border shadow-sm flex items-center ${getUserColor(todo.user_id, userId, 'container')}`}>
+                          <span className={`mr-1 inline-block w-2 h-2 rounded-full ${getUserColor(todo.user_id, userId, 'dot')}`}></span>
                           {todo.user?.full_name || todo.user?.email || 'Unknown'}
                         </span>
                       )}
