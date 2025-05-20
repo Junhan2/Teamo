@@ -39,23 +39,9 @@ export default function LoginPage() {
   // State for controlling bounce animation
   const [isBouncing, setIsBouncing] = useState(false);
 
-  // Subtle mouse tracking for hover effect
+  // No mouse tracking - we're removing this effect
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isBouncing) return; // Don't track mouse when bouncing
-    
-    const container = e.currentTarget;
-    const { left, top, width, height } = container.getBoundingClientRect();
-    
-    // Calculate cursor position relative to container (very small range)
-    const x = ((e.clientX - left) / width - 0.5) * 3; // Scale for subtlety
-    const y = ((e.clientY - top) / height - 0.5) * 3; // Scale for subtlety
-    
-    const imageEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
-    
-    if (imageEl) {
-      // Very subtle movement
-      imageEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    }
+    // Mouse tracking disabled - the dog will just rock back and forth on hover
   };
   
   // Hover effects
@@ -92,7 +78,7 @@ export default function LoginPage() {
       setTimeout(() => {
         imageEl.classList.remove('is-bouncing');
         setIsBouncing(false);
-      }, 8000); // Bounce for 8 seconds to complete all the animation
+      }, 30000); // Float in space for 30 seconds - much slower animation
     }
   };
 
@@ -112,7 +98,7 @@ export default function LoginPage() {
           onClick={handleClick}
         > {/* Added subtle mouse move tracking and click for bounce effect */}
           {/* Hero image positioned with the Mocha text */}
-          <div className="absolute z-5 left-1/2 transform -translate-x-1/2 w-[240px] max-w-full hero-image-wrapper" style={{ top: "-30px" }}>
+          <div className="absolute z-5 left-1/2 transform -translate-x-1/2 w-[280px] max-w-full hero-image-wrapper" style={{ top: "20px" }}>
             {/* Sparkle effects that appear on hover */}
             <div className="sparkle-effect">
               <div className="sparkle sparkle-1"></div>
@@ -142,7 +128,7 @@ export default function LoginPage() {
               letterSpacing: "-0.03em",
               display: "block",
               padding: "0 20px",
-              marginTop: "50px", /* Adjusted to position text below image */
+              marginTop: "200px", /* Positioned below the dog image */
               fontFamily: "var(--font-playfair)"
             }}
           >

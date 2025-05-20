@@ -24,87 +24,57 @@ body {
   }
   
   @keyframes gentle-float {
-    0% { transform: translateX(-2px) translateY(0px) rotate(0deg); }
-    25% { transform: translateX(2px) translateY(-2px) rotate(0.3deg); }
-    50% { transform: translateX(0px) translateY(-3px) rotate(0deg); }
-    75% { transform: translateX(-3px) translateY(-1px) rotate(-0.3deg); }
-    100% { transform: translateX(-2px) translateY(0px) rotate(0deg); }
+    0% { transform: rotate(-20deg); }
+    50% { transform: rotate(20deg); }
+    100% { transform: rotate(-20deg); }
   }
   
-  /* Billiard-like bouncing animation with 360 degree spins */
-  @keyframes billiard-bounce {
+  /* Space floating animation for the dog */
+  @keyframes space-float {
+    /* Starting point */
     0% { transform: translate(0, 0) rotate(0deg); }
     
-    /* Initial spin and launch */
-    2% { transform: translate(10px, -10px) rotate(45deg); }
-    5% { transform: translate(30px, -30px) rotate(90deg); }
+    /* Float to top right */
+    5% { transform: translate(20vw, -15vh) rotate(15deg); }
+    10% { transform: translate(40vw, -10vh) rotate(20deg); }
     
-    /* First full 360 spin as it moves */
-    8% { transform: translate(50px, -40px) rotate(180deg); }
-    10% { transform: translate(60px, -30px) rotate(270deg); }
-    12% { transform: translate(70px, -20px) rotate(360deg); }
+    /* Hit right wall and bounce */
+    15% { transform: translate(45vw, 10vh) rotate(30deg); }
     
-    /* Hit right wall */
-    15% { transform: translate(80px, 0) rotate(380deg); }
+    /* Float to bottom right */
+    20% { transform: translate(40vw, 20vh) rotate(40deg); }
+    25% { transform: translate(30vw, 30vh) rotate(50deg); }
     
-    /* Bounce diagonally down */
-    18% { transform: translate(60px, 20px) rotate(410deg); }
-    20% { transform: translate(40px, 40px) rotate(440deg); }
+    /* Hit bottom wall and bounce */
+    30% { transform: translate(10vw, 35vh) rotate(60deg); }
     
-    /* Bottom right cornor bounce with spin */
-    23% { transform: translate(20px, 60px) rotate(520deg); }
-    25% { transform: translate(0, 75px) rotate(540deg); }
+    /* Float to bottom left */
+    35% { transform: translate(-15vw, 30vh) rotate(70deg); }
+    40% { transform: translate(-30vw, 20vh) rotate(80deg); }
     
-    /* Bottom wall bounce */
-    28% { transform: translate(-20px, 60px) rotate(570deg); }
-    30% { transform: translate(-40px, 40px) rotate(600deg); }
+    /* Hit left wall and bounce */
+    45% { transform: translate(-40vw, 0vh) rotate(100deg); }
     
-    /* Left direction with another spin */
-    33% { transform: translate(-60px, 20px) rotate(680deg); }
-    35% { transform: translate(-70px, 0) rotate(720deg); }
+    /* Float to top left */
+    50% { transform: translate(-35vw, -20vh) rotate(150deg); }
+    55% { transform: translate(-25vw, -30vh) rotate(170deg); }
     
-    /* Left wall bounce */
-    38% { transform: translate(-60px, -20px) rotate(750deg); }
-    40% { transform: translate(-40px, -40px) rotate(770deg); }
+    /* Hit top wall and bounce */
+    60% { transform: translate(-10vw, -35vh) rotate(200deg); }
     
-    /* Top left bounce with spin */
-    43% { transform: translate(-20px, -60px) rotate(850deg); }
-    45% { transform: translate(0, -70px) rotate(900deg); }
+    /* Float across top */
+    65% { transform: translate(15vw, -30vh) rotate(230deg); }
     
-    /* Top wall bounce */
-    48% { transform: translate(20px, -60px) rotate(925deg); }
-    50% { transform: translate(40px, -40px) rotate(950deg); }
+    /* Slowly float back toward center */
+    70% { transform: translate(25vw, -20vh) rotate(260deg); }
+    75% { transform: translate(20vw, -10vh) rotate(280deg); }
+    80% { transform: translate(10vw, 5vh) rotate(310deg); }
+    85% { transform: translate(0vw, 15vh) rotate(330deg); }
+    90% { transform: translate(-10vw, 10vh) rotate(345deg); }
+    95% { transform: translate(-5vw, 5vh) rotate(355deg); }
     
-    /* Top right with another spin */ 
-    52% { transform: translate(60px, -20px) rotate(1020deg); }
-    54% { transform: translate(70px, 0) rotate(1080deg); }
-    
-    /* Right wall again */
-    56% { transform: translate(60px, 20px) rotate(1100deg); }
-    58% { transform: translate(40px, 40px) rotate(1120deg); }
-    
-    /* Slower bounces as energy dissipates */
-    60% { transform: translate(20px, 50px) rotate(1140deg); }
-    62% { transform: translate(0, 40px) rotate(1160deg); }
-    64% { transform: translate(-20px, 30px) rotate(1170deg); }
-    66% { transform: translate(-30px, 10px) rotate(1180deg); }
-    
-    /* Smaller bounces */
-    68% { transform: translate(-20px, -10px) rotate(1190deg); }
-    70% { transform: translate(-10px, -20px) rotate(1200deg); }
-    72% { transform: translate(0, -15px) rotate(1210deg); }
-    74% { transform: translate(10px, -5px) rotate(1220deg); }
-    
-    /* Final tiny bounces and settling */
-    78% { transform: translate(5px, 5px) rotate(1225deg); }
-    82% { transform: translate(-5px, 0px) rotate(1230deg); }
-    86% { transform: translate(0px, -3px) rotate(1233deg); }
-    90% { transform: translate(3px, 0px) rotate(1235deg); }
-    94% { transform: translate(0px, 2px) rotate(1236deg); }
-    98% { transform: translate(-1px, 0px) rotate(1237deg); }
-    
-    /* Final resting position: 3 complete 360 turns + 157 degrees */
-    100% { transform: translate(0, 0) rotate(1237deg); }
+    /* Return to starting position */
+    100% { transform: translate(0, 0) rotate(0deg); }
   }
   
   .animate-fadeIn {
@@ -116,7 +86,7 @@ body {
   }
   
   .animate-gentle-float {
-    animation: gentle-float 8s ease-in-out infinite;
+    animation: gentle-float 6s ease-in-out infinite;
   }
   
   /* Sparkle animation */
@@ -141,9 +111,9 @@ body {
     transition: all 0.8s ease;
   }
   
-  /* Billiard bouncing class */
+  /* Space floating class */
   .hero-image-wrapper.is-bouncing {
-    animation: billiard-bounce 6s ease-in-out forwards;
+    animation: space-float 30s ease-in-out forwards;
     z-index: 20;
   }
   
