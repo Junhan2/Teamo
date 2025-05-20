@@ -35,7 +35,7 @@
 }
 
 .supertape-nav {
-  @apply bg-[#0c0c10]/80 backdrop-blur-md border-b border-[#2a2a3c];
+  @apply bg-[#292c33]/80 backdrop-blur-md border-b border-[#2a2a3c];
 }
 
 .supertape-badge {
@@ -87,7 +87,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0c0c10;
+  background: #292c33;
 }
 
 ::-webkit-scrollbar-thumb {
