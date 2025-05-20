@@ -659,11 +659,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           <span className="text-gray-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) >= 0 ? (
                             calculateDaysLeft(todo.due_date) <= 7 ? (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-[#ff82c2] text-[#000000]">
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-white text-[#000000]">
                                 D-{calculateDaysLeft(todo.due_date)}
                               </span>
                             ) : (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#5ad363] text-[#000000]">
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-white text-[#000000]">
                                 D-{calculateDaysLeft(todo.due_date)}
                               </span>
                             )

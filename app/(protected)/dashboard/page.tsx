@@ -300,13 +300,13 @@ export default function DashboardPage() {
                       value="my-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm">MY TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm py-1 px-3 rounded-lg bg-[#3A3F4B] shadow-md">MY TASKS</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm">TEAM TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm py-1 px-3 rounded-lg bg-[#3A3F4B] shadow-md">TEAM TASKS</span>
                     </TabsTrigger>
                   </TabsList>
                   
