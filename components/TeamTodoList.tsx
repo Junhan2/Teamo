@@ -529,7 +529,11 @@ return (
                         ) : (
                           <span>{todo.title}</span>
                         )}
-                        {/* 타이틀 옆 담당자 표시 제거 */}
+                        {filter === "team" && (
+                          <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
+                            {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
+                          </span>
+                        )}
                       </h3>
                       
                       {todo.description && (
@@ -583,23 +587,19 @@ return (
                   
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">
-                      {filter === "team" && (
-                        <span className={`mr-2 px-2 py-0.5 text-xs rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
-                          {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                        </span>
-                      )}
-                      
                       {todo.due_date && (
                         <div className="flex items-center bg-[#2a2a3c]/50 px-3 py-1 rounded-md border border-[#2a2a3c] shadow-sm">
                           <Clock size={12} className="mr-1.5 text-indigo-400" />
                           <span>{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
-                          {calculateDaysLeft(todo.due_date) >= 0 && (
+                          {calculateDaysLeft(todo.due_date) >= 0 ? (
                             <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-500/30 text-indigo-300">
                               D-{calculateDaysLeft(todo.due_date)}
                             </span>
+                          ) : (
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/30 text-red-300">
+                              D+{Math.abs(calculateDaysLeft(todo.due_date))}
+                            </span>
                           )}
-                        </div>
-                      )}
                     </div>
                     
                     <div className="flex items-center gap-1">

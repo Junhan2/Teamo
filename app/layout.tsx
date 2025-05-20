@@ -3,6 +3,8 @@ import "@/styles/DynamicIslandTodo.css"
 import type { Metadata } from "next"
 import { Inter, Poppins } from "next/font/google"
 import { Zilla_Slab } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,7 +42,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable} ${poppins.variable} ${zillaSlab.variable}`}>
-      <body className={`${inter.className} bg-gradient-to-b from-[#0f0f13] to-[#171720] text-white min-h-screen`}>{children}</body>
+      <body className={`${inter.className} bg-gradient-to-b from-[#0f0f13] to-[#171720] text-white min-h-screen`}>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   )
 }
