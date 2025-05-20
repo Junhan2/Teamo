@@ -529,11 +529,7 @@ return (
                         ) : (
                           <span>{todo.title}</span>
                         )}
-                        {todo.user_id !== userId && filter === "team" && (
-                          <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
-                            {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Other'}
-                          </span>
-                        )}
+                        {/* 타이틀 옆 담당자 표시 제거 */}
                       </h3>
                       
                       {todo.description && (
@@ -588,9 +584,8 @@ return (
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">
                       {filter === "team" && (
-                        <span className={`mr-3 px-3 py-1 rounded-md border shadow-sm flex items-center ${getUserColor(todo.user_id, userId, 'container')}`}>
-                          <span className={`mr-1 inline-block w-2 h-2 rounded-full ${getUserColor(todo.user_id, userId, 'dot')}`}></span>
-                          {todo.user?.full_name || todo.user?.email || 'Unknown'}
+                        <span className={`mr-2 px-2 py-0.5 text-xs rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
+                          {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
                         </span>
                       )}
                       
