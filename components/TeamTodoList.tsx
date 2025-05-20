@@ -630,6 +630,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         variant="ghost"
                         size="sm"
                         className="h-6 w-6 p-0 rounded-full transition-all duration-200 hover:bg-gray-700/30"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleDescription(todo.id);
+                        }}
                       >
                         <ChevronDown 
                           size={16} 
@@ -679,7 +683,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     <div className="flex items-center gap-2">
                       {(filter === "my" || todo.user_id === userId) ? (
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
+                          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                             <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
                               <span>{getStatusText(todo.status)}</span>
                               <ChevronDown size={10} />
@@ -690,7 +694,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                             className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)]"
                           >
                             <DropdownMenuItem 
-                              onClick={(e) => updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
+                              }}
                               className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-[#FFDA40]/10 text-[#FFDA40]' : 'hover:bg-[#FFDA40]/10 hover:text-[#FFDA40]'}`}
                             >
                               <ListTodo size={14} className="mr-2" />
@@ -698,7 +705,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                             </DropdownMenuItem>
                             
                             <DropdownMenuItem 
-                              onClick={(e) => updateTodoStatus(todo.id, 'in_progress', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateTodoStatus(todo.id, 'in_progress', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
+                              }}
                               className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-[#FF82C2]/10 text-[#FF82C2]' : 'hover:bg-[#FF82C2]/10 hover:text-[#FF82C2]'}`}
                             >
                               <Activity size={14} className="mr-2" />
@@ -706,7 +716,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                             </DropdownMenuItem>
                             
                             <DropdownMenuItem 
-                              onClick={(e) => updateTodoStatus(todo.id, 'completed', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateTodoStatus(todo.id, 'completed', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
+                              }}
                               className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-[#5AD363]/10 text-[#5AD363]' : 'hover:bg-[#5AD363]/10 hover:text-[#5AD363]'}`}
                             >
                               <CheckCircle size={14} className="mr-2" />
@@ -724,7 +737,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          onClick={() => deleteTodo(todo.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteTodo(todo.id);
+                          }}
                           className="h-7 w-7 p-0 rounded-lg hover:bg-red-900/30 hover:text-red-300 transition-all duration-200 transform hover:scale-110"
                         >
                           <motion.div
