@@ -499,7 +499,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === null ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
                 All
               </Button>
@@ -507,7 +507,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "pending" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
                 Not yet
               </Button>
@@ -515,7 +515,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "in_progress" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
                 Doing
               </Button>
@@ -523,7 +523,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "completed" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "completed" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
                 Complete
               </Button>
@@ -535,7 +535,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
+                  className="bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
                 >
                   {dateFilter === null ? <><span className="font-light">Due date: </span><span>All</span></> : 
                    dateFilter === "today" ? <><span className="font-light">Due date: </span><span>Today</span></> : 
@@ -623,13 +623,20 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         ) : (
                           <span>{todo.title}</span>
                         )}
-                        {filter === "team" && (
-                          <span className={`ml-2 px-2 py-0.5 text-xs rounded-sm bg-[#3A3F4B] text-white border border-[#464c58]/40`}>
-                            {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                          </span>
-                        )}
                       </h3>
                     </div>
+                    {todo.description && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 rounded-full transition-all duration-200 hover:bg-gray-700/30"
+                      >
+                        <ChevronDown 
+                          size={16} 
+                          className={`text-gray-400 transition-transform duration-200 ${expandedDescriptions[todo.id] ? 'rotate-180' : ''}`} 
+                        />
+                      </Button>
+                    )}
                   </div>
                   
                   {todo.description && expandedDescriptions[todo.id] && (
@@ -639,7 +646,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   )}
                   
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
+                      {filter === "team" && (
+                        <span className={`px-2 py-0.5 text-xs rounded-sm bg-[#3A3F4B] text-white border border-[#464c58]/40 mr-1`}>
+                          {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
+                        </span>
+                      )}
+                      
                       {todo.due_date && (
                         <div className="flex items-center bg-[#1F2125]/80 px-3 py-1 rounded-md border border-[#36393F]/50 shadow-sm">
                           <Clock size={12} className="mr-1.5 text-gray-400" />
