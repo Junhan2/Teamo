@@ -151,8 +151,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center mb-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex items-center mb-3">
         <div className="flex-grow relative">
           <Input
             id="title"
@@ -171,7 +171,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={3}
+          rows={2}
           className="bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm text-base w-full resize-none"
         />
       </div>
@@ -205,7 +205,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-6 w-auto"
+        className="mt-4 w-auto"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-4 h-4" /> Add Task</>}

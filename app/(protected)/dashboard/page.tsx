@@ -287,7 +287,7 @@ export default function DashboardPage() {
           <div className="w-full md:w-2/5 animate-fadeIn">
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-2xl font-medium mb-6 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
+                <h2 className="text-base font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -303,7 +303,7 @@ export default function DashboardPage() {
             {user && <TaskStreak userId={user.id} className="mb-6" />}
             
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-2xl font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
+              <h2 className="text-base font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
               <div style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
               </div>
@@ -373,13 +373,13 @@ export default function DashboardPage() {
                       value="my-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">MY TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] text-base">MY TASKS</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">TEAM TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] text-base">TEAM TASKS</span>
                     </TabsTrigger>
                   </TabsList>
                   

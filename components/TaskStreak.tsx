@@ -179,8 +179,8 @@ export default function TaskStreak({ userId, className }: TaskStreakProps) {
   
   return (
     <div className={`bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-5 ${className}`}>
-      <h3 className="text-lg text-white mb-4 flex items-center uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">
-        <Flame size={18} className="mr-2 text-orange-400" />
+      <h3 className="text-base text-white mb-4 flex items-center uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">
+        <Flame size={16} className="mr-2 text-orange-400" />
         PRODUCTIVITY STREAK
       </h3>
       
