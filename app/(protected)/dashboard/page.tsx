@@ -282,7 +282,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#292C33]">
+    <div className="min-h-screen bg-[#292c33]">
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex flex-col md:flex-row gap-8">

@@ -38,7 +38,7 @@ export default function Navbar({ user }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#292C33] shadow-md">
+    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#292c33] shadow-md">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 py-2">
           <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2">
