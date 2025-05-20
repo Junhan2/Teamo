@@ -106,6 +106,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
+  const [dateFilter, setDateFilter] = useState<string | null>(null)
   const [showCompletionEffect, setShowCompletionEffect] = useState(false)
   const [isBrowser, setIsBrowser] = useState(false)
   const [completionPosition, setCompletionPosition] = useState<CompletionEffectPosition>({ 
@@ -141,6 +142,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       return () => clearTimeout(timer)
     }
   }, [showCompletionEffect])
+  
+  // priorityFilter props 변경 감지 및 로컬 상태 업데이트
+  useEffect(() => {
+    if (priorityFilter !== undefined) {
+      setLocalPriorityFilter(priorityFilter);
+    }
+  }, [priorityFilter])
 
   const fetchTodos = async () => {
     try {
@@ -160,6 +168,29 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       
       if (statusFilter) {
         query = query.eq('status', statusFilter)
+      }
+      
+      // Due date 필터 적용
+      if (dateFilter) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작
+        
+        if (dateFilter === 'today') {
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          query = query.gte('due_date', today.toISOString())
+                     .lt('due_date', tomorrow.toISOString());
+        } else if (dateFilter === 'week') {
+          const nextWeek = new Date(today);
+          nextWeek.setDate(nextWeek.getDate() + 7);
+          query = query.gte('due_date', today.toISOString())
+                     .lt('due_date', nextWeek.toISOString());
+        } else if (dateFilter === 'month') {
+          const nextMonth = new Date(today);
+          nextMonth.setMonth(nextMonth.getMonth() + 1);
+          query = query.gte('due_date', today.toISOString())
+                     .lt('due_date', nextMonth.toISOString());
+        }
       }
       
       const { data, error } = await query
@@ -398,12 +429,12 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
         console.error('TodoList 구독 해제 중 오류:', err);
       }
     };
-  }, [userId, filter, statusFilter, refreshTrigger, supabase]);
+  }, [userId, filter, statusFilter, dateFilter, refreshTrigger, supabase]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-[0_0_10px_rgba(234,179,8,0.5)] border border-yellow-400/30'
+        return 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-[0_0_10px_rgba(156,163,175,0.5)] border border-gray-400/30'
       case 'in_progress':
         return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)] border border-blue-400/30'
       case 'completed':
@@ -439,44 +470,89 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
 
   return (
     <div className="text-white" ref={containerRef}>
-      <div className="flex flex-wrap gap-3 mb-6">
-        <Button 
-          variant={statusFilter === null ? "default" : "outline"} 
-          size="sm"
-          onClick={() => setStatusFilter(null)}
-          className={`${statusFilter === null ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]' : 'button-ghost hover:shadow-[0_0_10px_rgba(99,102,241,0.3)]'} text-base px-5 py-3 h-11 rounded-lg transition-all duration-200 font-medium`}
-        >
-          All
-        </Button>
-        <Button 
-          variant={statusFilter === "pending" ? "default" : "outline"} 
-          size="sm"
-          onClick={() => setStatusFilter("pending")}
-          className={`${statusFilter === "pending" ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-[0_0_15px_rgba(234,179,8,0.5)]' : 'button-ghost hover:shadow-[0_0_10px_rgba(234,179,8,0.3)]'} text-base px-5 py-3 h-11 rounded-lg transition-all duration-200 font-medium`}
-        >
-          Pending
-        </Button>
-        <Button 
-          variant={statusFilter === "in_progress" ? "default" : "outline"} 
-          size="sm"
-          onClick={() => setStatusFilter("in_progress")}
-          className={`${statusFilter === "in_progress" ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'button-ghost hover:shadow-[0_0_10px_rgba(59,130,246,0.3)]'} text-base px-5 py-3 h-11 rounded-lg transition-all duration-200 font-medium`}
-        >
-          In Progress
-        </Button>
-        <Button 
-          variant={statusFilter === "completed" ? "default" : "outline"} 
-          size="sm"
-          onClick={() => setStatusFilter("completed")}
-          className={`${statusFilter === "completed" ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'button-ghost hover:shadow-[0_0_10px_rgba(34,197,94,0.3)]'} text-base px-5 py-3 h-11 rounded-lg transition-all duration-200 font-medium`}
-        >
-          Complete
-        </Button>
+      <div className="flex flex-col space-y-6 mb-6">
+        {/* 상태 필터 */}
+        <div>
+          <h3 className="text-sm text-gray-300 mb-3 font-medium uppercase tracking-wide">STATUS</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant={statusFilter === null ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter(null)}
+              className={`${statusFilter === null ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              All
+            </Button>
+            <Button 
+              variant={statusFilter === "pending" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("pending")}
+              className={`${statusFilter === "pending" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              Pending
+            </Button>
+            <Button 
+              variant={statusFilter === "in_progress" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("in_progress")}
+              className={`${statusFilter === "in_progress" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              In Progress
+            </Button>
+            <Button 
+              variant={statusFilter === "completed" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setStatusFilter("completed")}
+              className={`${statusFilter === "completed" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              Complete
+            </Button>
+          </div>
+        </div>
+
+        {/* Due Date 필터 */}
+        <div>
+          <h3 className="text-sm text-gray-300 mb-3 font-medium uppercase tracking-wide">DUE DATE</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant={dateFilter === null ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setDateFilter(null)}
+              className={`${dateFilter === null ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              All
+            </Button>
+            <Button 
+              variant={dateFilter === "today" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setDateFilter("today")}
+              className={`${dateFilter === "today" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              Today
+            </Button>
+            <Button 
+              variant={dateFilter === "week" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setDateFilter("week")}
+              className={`${dateFilter === "week" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              This Week
+            </Button>
+            <Button 
+              variant={dateFilter === "month" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setDateFilter("month")}
+              className={`${dateFilter === "month" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              This Month
+            </Button>
+          </div>
+        </div>
       </div>
 
       {todos.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-gray-300">
-          <div className="w-20 h-20 mb-5 rounded-full bg-[#2a2a3c]/70 flex items-center justify-center shadow-lg shadow-indigo-500/10">
+          <div className="w-20 h-20 mb-5 rounded-full bg-[#323741] flex items-center justify-center shadow-lg shadow-indigo-500/10">
             <CheckSquare size={32} className="text-indigo-400" />
           </div>
           <p className="text-lg sebenta-title">No Tasks Available</p>
@@ -488,20 +564,20 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
             {todos.map((todo) => (
               <motion.div 
                 key={todo.id}
-                className={`glass-card hover-lift rounded-xl overflow-hidden border ${
+                className={`bg-[#323741] rounded-xl overflow-hidden border ${
                   todo.status === 'pending' 
-                    ? 'border-[#2a2a3c]/70 hover:shadow-[0_0_15px_rgba(234,179,8,0.15)]' 
+                    ? 'border-[#464c58]/40 hover:border-[#464c58]/70' 
                     : todo.status === 'in_progress' 
-                    ? 'border-[#2a2a3c]/70 hover:shadow-[0_0_15px_rgba(59,130,246,0.15)]' 
-                    : 'border-[#2a2a3c]/70 hover:shadow-[0_0_15px_rgba(34,197,94,0.15)]'
-                } transition-all duration-300`}
+                    ? 'border-[#464c58]/40 hover:border-[#464c58]/70' 
+                    : 'border-[#464c58]/40 hover:border-[#464c58]/70'
+                } transition-all duration-200 hover:bg-[#3A3F4B]`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={snappyTransition}
                 whileHover={{ scale: 1.01 }}
               >
-                <div className="p-3">
+                <div className="p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-medium text-base text-white flex items-center">
@@ -511,32 +587,32 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                           <span>{todo.title}</span>
                         )}
                         {filter === "team" && (
-                          <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${getUserColor(todo.user_id, userId, 'badge')}`}>
+                          <span className={`ml-2 px-2 py-0.5 text-xs rounded-sm bg-[#3A3F4B] text-white border border-[#464c58]/40`}>
                             {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
                           </span>
                         )}
                       </h3>
                       
                       {todo.description && (
-                        <p className="text-sm text-gray-400 mt-1">{todo.description}</p>
+                        <p className="text-sm text-gray-400 mt-2">{todo.description}</p>
                       )}
                     </div>
                     
                     {(filter === "my" || todo.user_id === userId) ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Badge className={`${getStatusColor(todo.status)} text-sm ml-2 px-2 py-1 h-6 rounded-md shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
+                          <Badge className={`${getStatusColor(todo.status)} text-sm ml-2 px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
                             <span>{getStatusText(todo.status)}</span>
                             <ChevronDown size={10} />
                           </Badge>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent 
                           sideOffset={5} 
-                          className="bg-[#1a1a27] border border-[#2a2a3c] text-gray-200 shadow-[0_0_25px_rgba(60,60,80,0.3)]"
+                          className="bg-[#3A3F4B] border border-[#464c58]/60 text-gray-200 shadow-[0_0_25px_rgba(41,44,51,0.3)]"
                         >
                           <DropdownMenuItem 
                             onClick={(e) => updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
-                            className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' : 'hover:bg-yellow-500/10 hover:text-yellow-400'}`}
+                            className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-gray-500/10 text-gray-300' : 'hover:bg-gray-500/10 hover:text-gray-300'}`}
                           >
                             <ListTodo size={14} className="mr-2" />
                             <span>Pending</span>

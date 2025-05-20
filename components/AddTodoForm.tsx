@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { format } from "date-fns"
-import { CalendarIcon, Pencil, Plus } from "lucide-react"
+import { CalendarIcon, Pencil, Plus, ArrowUp, ArrowRight, ArrowDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface AddTodoFormProps {
@@ -21,6 +22,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [dueDate, setDueDate] = useState<Date | undefined>()
+  const [priority, setPriority] = useState<string | null>("medium")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   
@@ -96,6 +98,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         description: description || null,
         due_date: dueDate.toISOString(), // null 옵션 제거
         status: 'pending',
+        priority: priority,
         user_id: userId,
         team_id: teamId
       }
@@ -131,6 +134,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       setTitle("")
       setDescription("")
       setDueDate(undefined)
+      setPriority("medium")
       setMessage({ type: "success", text: "Task added successfully." })
       
       // 추가 완료 후 부모 컴포넌트에 알림 (refreshTrigger는 더 이상 필요하지 않지만 호환성 유지)
@@ -159,7 +163,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full supertape-input pl-3 py-3 text-base"
+            className="w-full bg-[#3A3F4B] border-[#464c58]/60 focus:border-white focus:ring-0 rounded-sm pl-3 py-3 text-base"
           />
         </div>
       </div>
@@ -171,38 +175,92 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="supertape-input text-base w-full resize-none"
+          className="bg-[#3A3F4B] border-[#464c58]/60 focus:border-white focus:ring-0 rounded-sm text-base w-full resize-none"
         />
       </div>
       
       <div className="flex flex-col gap-3 w-full">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal button-ghost px-4 py-2 h-11 text-base",
-                !dueDate && "text-gray-500"
-              )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal bg-[#3A3F4B] border-[#464c58]/60 hover:bg-[#464c58]/60 hover:border-white px-4 py-2 h-11 text-base rounded-sm",
+                  !dueDate && "text-gray-400"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-[#3A3F4B] border-[#464c58]/60">
+              <Calendar
+                mode="single"
+                selected={dueDate}
+                onSelect={setDueDate}
+                initialFocus
+                className="bg-[#3A3F4B] rounded-sm border-[#464c58]/60"
+              />
+            </PopoverContent>
+          </Popover>
+
+          {/* 우선순위 선택 */}
+          <div>
+            <RadioGroup
+              value={priority || "medium"}
+              onValueChange={setPriority}
+              className="flex justify-between my-1"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 glass-card border-[#2a2a3c]">
-            <Calendar
-              mode="single"
-              selected={dueDate}
-              onSelect={setDueDate}
-              initialFocus
-              className="bg-[#18181f] rounded-xl border-[#2a2a3c]"
-            />
-          </PopoverContent>
-        </Popover>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem 
+                  value="high" 
+                  id="priority-high" 
+                  className="text-white border-white focus:border-white" 
+                />
+                <Label 
+                  htmlFor="priority-high" 
+                  className="flex items-center cursor-pointer text-white hover:text-gray-300"
+                >
+                  <ArrowUp className="w-4 h-4 mr-1" />
+                  High
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem 
+                  value="medium" 
+                  id="priority-medium" 
+                  className="text-white border-white focus:border-white" 
+                />
+                <Label 
+                  htmlFor="priority-medium" 
+                  className="flex items-center cursor-pointer text-white hover:text-gray-300"
+                >
+                  <ArrowRight className="w-4 h-4 mr-1" />
+                  Medium
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem 
+                  value="low" 
+                  id="priority-low" 
+                  className="text-white border-white focus:border-white" 
+                />
+                <Label 
+                  htmlFor="priority-low" 
+                  className="flex items-center cursor-pointer text-white hover:text-gray-300"
+                >
+                  <ArrowDown className="w-4 h-4 mr-1" />
+                  Low
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </div>
         
         <Button 
           type="submit" 
-          className="button-action w-full h-11 px-6 text-base"
+          className="bg-white text-[#292C33] hover:bg-white/90 w-full h-11 px-6 text-base rounded-sm"
           disabled={loading}
         >
           {loading ? "Adding..." : <><Plus className="w-4 h-4 mr-2" /> Add Task</>}
@@ -210,8 +268,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       </div>
       
       {message && (
-        <div className={`p-2 text-xs rounded-xl ${
-          message.type === "success" ? "bg-green-900/30 text-green-400 border border-green-800/50" : "bg-red-900/30 text-red-400 border border-red-800/50"
+        <div className={`p-3 text-sm rounded-sm ${
+          message.type === "success" ? "bg-[#3A3F4B] text-white border border-[#464c58]/60" : "bg-[#3A3F4B] text-red-400 border border-[#464c58]/60"
         }`}>
           {message.text}
         </div>

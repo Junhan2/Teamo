@@ -269,8 +269,8 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0f0f13] via-[#171720] to-[#0f0f13]"></div>
-          <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+          <div className="absolute inset-0 bg-[#292C33]"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f1a_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f1a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
         </div>
         <div className="text-lg text-white relative z-10 font-medium">Loading...</div>
       </div>
@@ -280,13 +280,13 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen">
       <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-5xl">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 할일 추가 섹션 */}
           <div className="w-full md:w-2/5 animate-fadeIn">
-            <div className="glass-card rounded-2xl overflow-hidden shadow-xl mb-6" id="addTodoForm">
+            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40 mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-2xl sebenta-title mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Add New Task</h2>
+                <h2 className="text-2xl font-semibold mb-6 text-white">Add New Task</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -299,12 +299,12 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            <div className="glass-card rounded-2xl overflow-hidden shadow-xl p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-2xl sebenta-title mb-4 text-white">Statistics</h2>
+            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40 p-6" style={{ overflow: 'visible' }}>
+              <h2 className="text-2xl font-semibold mb-4 text-white">Statistics</h2>
               <div style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 mt-6">
                 <div className="flex items-center justify-between">
                   <span className="text-base text-gray-300">Completed Tasks</span>
                   <div className="flex items-center">
@@ -312,7 +312,7 @@ export default function DashboardPage() {
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#2a2a3c] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
                   <motion.div 
                     className="bg-green-500 h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#2a2a3c] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
                   <motion.div 
                     className="bg-blue-500 h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -340,13 +340,13 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between mt-4">
                   <span className="text-base text-gray-300">Pending Tasks</span>
                   <div className="flex items-center">
-                    <span className="text-yellow-400 font-semibold text-lg">{todoStats.pending}</span>
+                    <span className="text-gray-400 font-semibold text-lg">{todoStats.pending}</span>
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#2a2a3c] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
                   <motion.div 
-                    className="bg-yellow-500 h-3 rounded-full"
+                    className="bg-gray-500 h-3 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.pending / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -358,13 +358,13 @@ export default function DashboardPage() {
           
           {/* 할일 목록 섹션 */}
           <div className="w-full md:w-3/5 animate-fadeIn">
-            <div className="glass-card rounded-2xl overflow-hidden shadow-xl">
+            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40">
               <Tabs 
                 value={activeTab}
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="border-b border-[#2a2a3c] relative">
+                <div className="border-b border-[#464c58]/60 relative">
                   <TabsList className="w-full bg-transparent p-0">
                     <TabsTrigger 
                       value="my-todos" 
@@ -382,7 +382,7 @@ export default function DashboardPage() {
                   
                   {/* 활성화된 탭 표시 - 애니메이션 가능한 하단 바 */}
                   <div 
-                    className="absolute bottom-0 left-0 h-0.5 bg-indigo-500 transition-all duration-300"
+                    className="absolute bottom-0 left-0 h-0.5 bg-white transition-all duration-300"
                     style={{
                       width: '50%',
                       transform: activeTab === 'my-todos' ? 'translateX(0)' : 'translateX(100%)'

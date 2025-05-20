@@ -42,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable} ${poppins.variable} ${zillaSlab.variable}`}>
-      <body className={`${inter.className} bg-gradient-to-b from-[#0f0f13] to-[#171720] text-white min-h-screen`}>
+      <body className={`${inter.className} bg-[#292C33] text-white min-h-screen`}>
         {children}
         <Analytics />
         <SpeedInsights />
