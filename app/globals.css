@@ -24,9 +24,9 @@ body {
   }
   
   @keyframes gentle-float {
-    0% { transform: rotate(-20deg); }
-    50% { transform: rotate(20deg); }
-    100% { transform: rotate(-20deg); }
+    0% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(-10deg); }
   }
   
   /* Space floating animation for the dog */
@@ -86,7 +86,7 @@ body {
   }
   
   .animate-gentle-float {
-    animation: gentle-float 6s ease-in-out infinite;
+    animation: gentle-float 10s ease-in-out infinite;
   }
   
   /* Sparkle animation */
@@ -96,13 +96,12 @@ body {
     100% { opacity: 0; transform: scale(0); }
   }
   
-  /* Hero container hover effects */
+  /* Hero container basic styles */
   .hero-container {
     cursor: pointer;
   }
   
   .hero-image-wrapper {
-    transition: transform 0.3s ease-out;
     position: relative;
     cursor: pointer;
   }
@@ -123,17 +122,6 @@ body {
   
   .hero-text {
     transition: all 0.5s ease;
-  }
-  
-  /* More subtle hover effects */
-  .hero-container.is-hovered .hero-image-wrapper img {
-    filter: drop-shadow(0 8px 20px rgba(138, 104, 233, 0.4));
-    transform: translateY(-3px);
-  }
-  
-  .hero-container.is-hovered .hero-text {
-    text-shadow: 0 0 15px rgba(138, 104, 233, 0.4);
-    background-image: linear-gradient(to right, #a881ff, #d775ff);
   }
   
   /* Bounce effect text interaction */
@@ -167,14 +155,17 @@ body {
     box-shadow: 0 0 8px 1px rgba(161, 92, 246, 0.6);
   }
   
-  .hero-container.is-hovered .sparkle {
-    animation: sparkle 3s ease-in-out infinite;
+  /* Sparkles always visible with subtle animation */
+  .sparkle {
+    animation: sparkle 4s ease-in-out infinite;
+    opacity: 0.5;
   }
   
   /* When bouncing, more intense sparkles */
   .hero-image-wrapper.is-bouncing ~ .sparkle-effect .sparkle {
     animation: sparkle 1.5s ease-in-out infinite;
     box-shadow: 0 0 12px 3px rgba(161, 92, 246, 0.9);
+    opacity: 1;
   }
   
   .sparkle-1 {
