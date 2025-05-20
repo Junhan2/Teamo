@@ -456,7 +456,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
 
   // 리액트의 순수함수 방식으로 변경 - 파일 끝
 
-return (
+  return (
     <div className="text-white" ref={containerRef}>
       <div className="flex flex-wrap gap-3 mb-6">
         <Button 
