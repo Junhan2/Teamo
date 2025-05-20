@@ -294,30 +294,21 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="border-b border-[#464c58]/60 relative">
-                  <TabsList className="w-full bg-transparent p-0">
+                <div className="flex justify-center gap-5 py-5">
+                  <TabsList className="bg-transparent">
                     <TabsTrigger 
                       value="my-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
+                      className={`rounded-md transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm py-1 px-3 rounded-lg bg-[#3A3F4B] shadow-md">MY TASKS</span>
+                      <span className="px-10 py-3 text-base font-medium">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
+                      className={`rounded-md transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm py-1 px-3 rounded-lg bg-[#3A3F4B] shadow-md">TEAM TASKS</span>
+                      <span className="px-10 py-3 text-base font-medium">TEAM</span>
                     </TabsTrigger>
                   </TabsList>
-                  
-                  {/* 활성화된 탭 표시 - 애니메이션 가능한 하단 바 */}
-                  <div 
-                    className="absolute bottom-0 left-0 h-0.5 bg-white transition-all duration-300"
-                    style={{
-                      width: '50%',
-                      transform: activeTab === 'my-todos' ? 'translateX(0)' : 'translateX(100%)'
-                    }}
-                  />
                 </div>
                 
                 <TabsContent value="my-todos" className="p-6 focus:outline-none">
