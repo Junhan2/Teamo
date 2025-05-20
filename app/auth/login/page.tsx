@@ -36,6 +36,50 @@ export default function LoginPage() {
     }
   }
 
+  // Add mouse move handler for parallax effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    const { left, top, width, height } = container.getBoundingClientRect();
+    
+    // Calculate cursor position relative to container (-0.5 to 0.5 range)
+    const x = (e.clientX - left) / width - 0.5;
+    const y = (e.clientY - top) / height - 0.5;
+    
+    // Get elements for parallax effect
+    const imageWrapperEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
+    const sparkleEl = container.querySelector('.sparkle-effect') as HTMLElement;
+    const textEl = container.querySelector('.hero-text') as HTMLElement;
+    
+    // Apply subtle movement based on cursor position
+    if (imageWrapperEl) {
+      // Move image wrapper in opposite direction of cursor (more pronounced)
+      imageWrapperEl.style.transform = `translate3d(${x * -15}px, ${y * -15}px, 0)`;
+    }
+    
+    if (sparkleEl) {
+      // Move sparkles slightly faster than image for depth effect
+      sparkleEl.style.transform = `translate3d(${x * -20}px, ${y * -20}px, 0)`;
+    }
+    
+    if (textEl) {
+      // Move text slightly in direction of cursor (subtle effect)
+      textEl.style.transform = `translate3d(${x * 5}px, ${y * 5}px, 0)`;
+    }
+  };
+  
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    const container = e.currentTarget;
+    
+    // Reset positions with smooth transition (transition defined in CSS)
+    const imageWrapperEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
+    const sparkleEl = container.querySelector('.sparkle-effect') as HTMLElement;
+    const textEl = container.querySelector('.hero-text') as HTMLElement;
+    
+    if (imageWrapperEl) imageWrapperEl.style.transform = 'translate3d(0, 0, 0)';
+    if (sparkleEl) sparkleEl.style.transform = 'translate3d(0, 0, 0)';
+    if (textEl) textEl.style.transform = 'translate3d(0, 0, 0)';
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="absolute inset-0 z-0">
@@ -44,9 +88,35 @@ export default function LoginPage() {
       </div>
       
       <div className="container relative z-10 max-w-md">
-        <div className="text-center mb-12 animate-fadeIn">
+        <div 
+          className="text-center mb-12 animate-fadeIn relative pt-28 hero-container"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        > {/* Added hero-container class and mouse event handlers */}
+          {/* Hero image positioned with the Mocha text */}
+          <div className="absolute z-0 left-1/2 transform -translate-x-1/2 w-[260px] max-w-full hero-image-wrapper" style={{ top: "-80px" }}>
+            {/* Sparkle effects that appear on hover */}
+            <div className="sparkle-effect">
+              <div className="sparkle sparkle-1"></div>
+              <div className="sparkle sparkle-2"></div>
+              <div className="sparkle sparkle-3"></div>
+              <div className="sparkle sparkle-4"></div>
+              <div className="sparkle sparkle-5"></div>
+            </div>
+            
+            <img
+              src="/images/hero-jpg.jpg"
+              alt="Mocha"
+              className="w-full h-auto object-contain drop-shadow-[0_5px_15px_rgba(165,70,233,0.2)] animate-float transition-all duration-500"
+              style={{ 
+                filter: "saturate(1.05) brightness(1.05)"
+              }}
+            />
+          </div>
+          
+          {/* Mocha text with higher z-index to appear above the image */}
           <h1 
-            className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold"
+            className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500"
             style={{
               fontSize: "clamp(48px, 10vw, 80px)", 
               lineHeight: "1.1",
@@ -54,13 +124,14 @@ export default function LoginPage() {
               letterSpacing: "-0.03em",
               display: "block",
               padding: "0 20px",
+              marginTop: "-10px", /* Negative margin to slightly overlap with the image */
               fontFamily: "var(--font-playfair)"
             }}
           >
             Mocha.
           </h1>
           <p 
-            className="text-gray-300 text-lg mt-2" /* Larger, brighter subtitle */
+            className="text-gray-300 text-lg mt-2 relative z-10" /* Larger, brighter subtitle */
             style={{
               fontFamily: "var(--es-text-font-family, var(--inter-font))"
             }}
