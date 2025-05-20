@@ -600,7 +600,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                               D+{Math.abs(calculateDaysLeft(todo.due_date))}
                             </span>
                           )}
-                    </div>
+                        </div>
+                      )}
                     
                     <div className="flex items-center gap-1">
                       {(todo.user_id === userId) && (
