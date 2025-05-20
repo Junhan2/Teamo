@@ -14,6 +14,16 @@ body {
   line-height: 1.5;
 }
 
+::selection {
+  background-color: #FF82C2 !important;
+  color: #000000 !important;
+}
+
+::-moz-selection {
+  background-color: #FF82C2 !important;
+  color: #000000 !important;
+}
+
 .sebenta-title {
   font-family: var(--font-zilla-slab);
   letter-spacing: -0.02em;
@@ -114,15 +124,5 @@ h1, h2, h3, h4, h5, h6 {
   }
   body {
     @apply bg-background text-foreground;
-  }
-  
-  ::selection {
-    background-color: #FF82C2;
-    color: #000000;
-  }
-  
-  ::-moz-selection {
-    background-color: #FF82C2;
-    color: #000000;
   }
 }

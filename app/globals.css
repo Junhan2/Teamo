@@ -291,4 +291,14 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  
+  ::selection {
+    background-color: #FF82C2 !important;
+    color: #000000 !important;
+  }
+  
+  ::-moz-selection {
+    background-color: #FF82C2 !important;
+    color: #000000 !important;
+  }
 }
