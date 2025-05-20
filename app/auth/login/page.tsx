@@ -88,7 +88,7 @@ export default function LoginPage() {
         > {/* Simplified container with only click handler */}
           <div className="relative mb-2">
             {/* Hero image with sparkle effects */}
-            <div className={`relative mx-auto hero-image-wrapper ${isMobileView ? 'w-[120px]' : 'w-[200px]'}`}>
+            <div className={`relative mx-auto hero-image-wrapper ${isMobileView ? 'w-[160px]' : 'w-[200px]'}`}>
               {/* Sparkle effects */}
               <div className="sparkle-effect">
                 <div className="sparkle sparkle-1"></div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
             <h1 
               className={`font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500 ${isMobileView ? 'mt-[-40px]' : 'mt-[-80px]'}`}
               style={{
-                fontSize: isMobileView ? "clamp(36px, 8vw, 60px)" : "clamp(48px, 10vw, 80px)", 
+                fontSize: "clamp(48px, 10vw, 80px)", 
                 lineHeight: "1.1",
                 textWrap: "balance",
                 letterSpacing: "-0.03em",
