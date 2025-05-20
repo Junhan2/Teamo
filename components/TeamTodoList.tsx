@@ -117,6 +117,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   const [showCompletionEffect, setShowCompletionEffect] = useState(false)
   const [isBrowser, setIsBrowser] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({})
   const [completionPosition, setCompletionPosition] = useState<CompletionEffectPosition>({ 
     x: 0, 
     y: 0, 
@@ -125,6 +126,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   })
   const containerRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+  
+  const toggleDescription = (todoId: string) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [todoId]: !prev[todoId]
+    }))
+  }
   
   // 브라우저 환경 감지 (클라이언트 사이드 렌더링 확인)
   useEffect(() => {
@@ -479,14 +487,6 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
     )
   }
 
-  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
-
-  const toggleDescription = (todoId: string) => {
-    setExpandedDescriptions(prev => ({
-      ...prev,
-      [todoId]: !prev[todoId]
-    }));
-  };
 
   return (
     <div className="text-white" ref={containerRef}>
