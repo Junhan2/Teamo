@@ -288,7 +288,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
           <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6 md:mb-0">
+            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md mb-6 md:mb-0">
               <Tabs 
                 value={activeTab}
                 onValueChange={setActiveTab}

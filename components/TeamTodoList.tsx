@@ -598,13 +598,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
               .map((todo) => (
               <motion.div 
                 key={todo.id}
-                className={`bg-[#292C33] rounded-xl overflow-hidden border ${
-                  todo.status === 'pending' 
-                    ? 'border-[#464c58]/20 hover:border-[#464c58]/40' 
-                    : todo.status === 'in_progress' 
-                    ? 'border-[#464c58]/20 hover:border-[#464c58]/40' 
-                    : 'border-[#464c58]/20 hover:border-[#464c58]/40'
-                } transition-all duration-200 hover:bg-[#2E3238]`}
+                className={`bg-[#292C33] rounded-xl overflow-hidden transition-all duration-200 hover:bg-[#2E3238]`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
