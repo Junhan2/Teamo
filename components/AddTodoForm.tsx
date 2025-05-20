@@ -205,7 +205,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-4 w-auto"
+        className="mt-4 w-full py-[0.6rem] px-[1.5rem]"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-4 h-4" /> Add Task</>}
