@@ -23,6 +23,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   const [dueDate, setDueDate] = useState<Date | undefined>()
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [calendarOpen, setCalendarOpen] = useState(false)
   
   const supabase = createClient()
 
@@ -176,7 +177,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       </div>
       
       <div className="w-full">
-        <Popover>
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -193,7 +194,10 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Calendar
               mode="single"
               selected={dueDate}
-              onSelect={setDueDate}
+              onSelect={(date) => {
+                setDueDate(date);
+                setCalendarOpen(false);
+              }}
               initialFocus
               className="bg-[#292C33] rounded-sm border-[#464c58]/40"
             />
@@ -204,7 +208,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-6 mb-2 w-full py-[0.8rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem]"
+        className="mt-6 mb-2 w-full py-[1.2rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem]"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-4 h-4" /> <span className="text-[1rem] leading-[1.5rem] font-[600]">Add Task</span></>}

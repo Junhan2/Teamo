@@ -284,7 +284,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#292C33]">
       <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
           <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
