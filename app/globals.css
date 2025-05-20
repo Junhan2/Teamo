@@ -24,70 +24,87 @@ body {
   }
   
   @keyframes gentle-float {
-    0% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-5px) rotate(0.5deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
+    0% { transform: translateX(-2px) translateY(0px) rotate(0deg); }
+    25% { transform: translateX(2px) translateY(-2px) rotate(0.3deg); }
+    50% { transform: translateX(0px) translateY(-3px) rotate(0deg); }
+    75% { transform: translateX(-3px) translateY(-1px) rotate(-0.3deg); }
+    100% { transform: translateX(-2px) translateY(0px) rotate(0deg); }
   }
   
-  /* Billiard-like bouncing animation */
+  /* Billiard-like bouncing animation with 360 degree spins */
   @keyframes billiard-bounce {
     0% { transform: translate(0, 0) rotate(0deg); }
     
-    /* First bounce - going up right */
-    5% { transform: translate(20px, -20px) rotate(2deg); }
+    /* Initial spin and launch */
+    2% { transform: translate(10px, -10px) rotate(45deg); }
+    5% { transform: translate(30px, -30px) rotate(90deg); }
     
-    /* Hit top right corner */
-    10% { transform: translate(40px, -40px) rotate(5deg); }
+    /* First full 360 spin as it moves */
+    8% { transform: translate(50px, -40px) rotate(180deg); }
+    10% { transform: translate(60px, -30px) rotate(270deg); }
+    12% { transform: translate(70px, -20px) rotate(360deg); }
     
-    /* Bounce down right */
-    15% { transform: translate(60px, -20px) rotate(1deg); }
+    /* Hit right wall */
+    15% { transform: translate(80px, 0) rotate(380deg); }
     
-    /* Hit right side */
-    20% { transform: translate(80px, 0) rotate(-3deg); }
+    /* Bounce diagonally down */
+    18% { transform: translate(60px, 20px) rotate(410deg); }
+    20% { transform: translate(40px, 40px) rotate(440deg); }
     
-    /* Bounce down right */
-    25% { transform: translate(60px, 20px) rotate(-5deg); }
+    /* Bottom right cornor bounce with spin */
+    23% { transform: translate(20px, 60px) rotate(520deg); }
+    25% { transform: translate(0, 75px) rotate(540deg); }
     
-    /* Hit bottom right corner */
-    30% { transform: translate(40px, 40px) rotate(-2deg); }
+    /* Bottom wall bounce */
+    28% { transform: translate(-20px, 60px) rotate(570deg); }
+    30% { transform: translate(-40px, 40px) rotate(600deg); }
     
-    /* Bounce down left */
-    35% { transform: translate(20px, 60px) rotate(1deg); }
+    /* Left direction with another spin */
+    33% { transform: translate(-60px, 20px) rotate(680deg); }
+    35% { transform: translate(-70px, 0) rotate(720deg); }
     
-    /* Hit bottom side */
-    40% { transform: translate(0, 80px) rotate(4deg); }
+    /* Left wall bounce */
+    38% { transform: translate(-60px, -20px) rotate(750deg); }
+    40% { transform: translate(-40px, -40px) rotate(770deg); }
     
-    /* Bounce up left */
-    45% { transform: translate(-20px, 60px) rotate(2deg); }
+    /* Top left bounce with spin */
+    43% { transform: translate(-20px, -60px) rotate(850deg); }
+    45% { transform: translate(0, -70px) rotate(900deg); }
     
-    /* Hit left side */
-    50% { transform: translate(-40px, 40px) rotate(-2deg); }
+    /* Top wall bounce */
+    48% { transform: translate(20px, -60px) rotate(925deg); }
+    50% { transform: translate(40px, -40px) rotate(950deg); }
     
-    /* Bounce up left */
-    55% { transform: translate(-60px, 20px) rotate(-4deg); }
+    /* Top right with another spin */ 
+    52% { transform: translate(60px, -20px) rotate(1020deg); }
+    54% { transform: translate(70px, 0) rotate(1080deg); }
     
-    /* Hit left side */
-    60% { transform: translate(-80px, 0) rotate(-1deg); }
+    /* Right wall again */
+    56% { transform: translate(60px, 20px) rotate(1100deg); }
+    58% { transform: translate(40px, 40px) rotate(1120deg); }
     
-    /* Bounce up right */
-    65% { transform: translate(-60px, -20px) rotate(3deg); }
+    /* Slower bounces as energy dissipates */
+    60% { transform: translate(20px, 50px) rotate(1140deg); }
+    62% { transform: translate(0, 40px) rotate(1160deg); }
+    64% { transform: translate(-20px, 30px) rotate(1170deg); }
+    66% { transform: translate(-30px, 10px) rotate(1180deg); }
     
-    /* Hit top left corner */
-    70% { transform: translate(-40px, -40px) rotate(5deg); }
+    /* Smaller bounces */
+    68% { transform: translate(-20px, -10px) rotate(1190deg); }
+    70% { transform: translate(-10px, -20px) rotate(1200deg); }
+    72% { transform: translate(0, -15px) rotate(1210deg); }
+    74% { transform: translate(10px, -5px) rotate(1220deg); }
     
-    /* Slowing down - right */
-    75% { transform: translate(-20px, -20px) rotate(3deg); }
+    /* Final tiny bounces and settling */
+    78% { transform: translate(5px, 5px) rotate(1225deg); }
+    82% { transform: translate(-5px, 0px) rotate(1230deg); }
+    86% { transform: translate(0px, -3px) rotate(1233deg); }
+    90% { transform: translate(3px, 0px) rotate(1235deg); }
+    94% { transform: translate(0px, 2px) rotate(1236deg); }
+    98% { transform: translate(-1px, 0px) rotate(1237deg); }
     
-    /* Slowing down - center */
-    80% { transform: translate(0, 0) rotate(0deg); }
-    
-    /* Small final bounces */
-    85% { transform: translate(10px, 10px) rotate(-1deg); }
-    90% { transform: translate(-5px, -5px) rotate(1deg); }
-    95% { transform: translate(2px, 2px) rotate(-0.5deg); }
-    
-    /* Back to center */
-    100% { transform: translate(0, 0) rotate(0deg); }
+    /* Final resting position: 3 complete 360 turns + 157 degrees */
+    100% { transform: translate(0, 0) rotate(1237deg); }
   }
   
   .animate-fadeIn {

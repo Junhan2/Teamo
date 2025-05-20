@@ -92,7 +92,7 @@ export default function LoginPage() {
       setTimeout(() => {
         imageEl.classList.remove('is-bouncing');
         setIsBouncing(false);
-      }, 6000); // Bounce for 6 seconds
+      }, 8000); // Bounce for 8 seconds to complete all the animation
     }
   };
 
@@ -112,7 +112,7 @@ export default function LoginPage() {
           onClick={handleClick}
         > {/* Added subtle mouse move tracking and click for bounce effect */}
           {/* Hero image positioned with the Mocha text */}
-          <div className="absolute z-0 left-1/2 transform -translate-x-1/2 w-[300px] max-w-full hero-image-wrapper" style={{ top: "-100px" }}>
+          <div className="absolute z-5 left-1/2 transform -translate-x-1/2 w-[240px] max-w-full hero-image-wrapper" style={{ top: "-30px" }}>
             {/* Sparkle effects that appear on hover */}
             <div className="sparkle-effect">
               <div className="sparkle sparkle-1"></div>
@@ -132,7 +132,7 @@ export default function LoginPage() {
             />
           </div>
           
-          {/* Mocha text with higher z-index to appear above the image */}
+          {/* Mung. text with higher z-index */}
           <h1 
             className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500"
             style={{
@@ -142,11 +142,11 @@ export default function LoginPage() {
               letterSpacing: "-0.03em",
               display: "block",
               padding: "0 20px",
-              marginTop: "-10px", /* Negative margin to slightly overlap with the image */
+              marginTop: "50px", /* Adjusted to position text below image */
               fontFamily: "var(--font-playfair)"
             }}
           >
-            Mocha.
+            Mung.
           </h1>
           <p 
             className="text-gray-300 text-lg mt-2 relative z-10" /* Larger, brighter subtitle */
@@ -158,8 +158,8 @@ export default function LoginPage() {
           </p>
         </div>
         
-        <div className="animate-fadeIn">
-          <Card className="glass-card border-[#2a2a3c] shadow-xl border-2"> {/* Added border-2 for more emphasis */}
+        <div className="animate-fadeIn mt-10">
+          <Card className="glass-card border-[#2a2a3c] shadow-xl border-2"> {/* Added margin top and border */}
             <CardHeader className="space-y-1 text-center pb-4">
             </CardHeader>
             <CardContent className="flex flex-col gap-5"> {/* Increased gap */}
@@ -216,7 +216,7 @@ export default function LoginPage() {
             className="text-sm text-gray-400" /* Increased text size */
             style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}
           >
-            © 2025 Mocha. All rights reserved.
+            © 2025 Mung. All rights reserved.
           </p>
         </div>
       </div>

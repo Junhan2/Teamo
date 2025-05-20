@@ -38,7 +38,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Mocha. | Team Task Management",
+  title: "Mung. | Team Task Management",
   description: "Elegant team collaboration and task management service",
   generator: 'v0.dev'
 }
