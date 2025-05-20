@@ -445,20 +445,20 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-gradient-to-r from-gray-600 to-gray-700 text-white shadow-[0_0_10px_rgba(156,163,175,0.5)] border border-gray-400/30'
+        return 'bg-[#FFDA40] text-black'
       case 'in_progress':
-        return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.5)] border border-blue-400/30'
+        return 'bg-[#FF82C2] text-black'
       case 'completed':
-        return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-[0_0_10px_rgba(34,197,94,0.5)] border border-green-400/30'
+        return 'bg-[#5AD363] text-black'
       default:
-        return 'bg-gradient-to-r from-gray-600 to-gray-700 text-white'
+        return 'bg-[#FFDA40] text-black'
     }
   }
 
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'Pending'
+        return 'Not yet'
       case 'in_progress':
         return 'Doing'
       case 'completed':
@@ -500,7 +500,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 onClick={() => setStatusFilter("pending")}
                 className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
-                Pending
+                Not yet
               </Button>
               <Button 
                 variant={statusFilter === "in_progress" ? "default" : "outline"} 
@@ -617,53 +617,28 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           </span>
                         )}
                       </h3>
-                      
-                      {todo.description && (
-                        <p className="text-sm text-gray-400 mt-2">{todo.description}</p>
-                      )}
                     </div>
                     
-                    {(filter === "my" || todo.user_id === userId) ? (
+                    {todo.description && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Badge className={`${getStatusColor(todo.status)} text-sm ml-2 px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
-                            <span>{getStatusText(todo.status)}</span>
-                            <ChevronDown size={10} />
-                          </Badge>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-7 w-7 p-0 rounded-lg transition-all duration-200 transform hover:bg-gray-700/30"
+                          >
+                            <ChevronDown size={14} className="text-gray-400" />
+                          </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent 
                           sideOffset={5} 
-                          className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)]"
+                          className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)] max-w-md"
                         >
-                          <DropdownMenuItem 
-                            onClick={(e) => updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
-                            className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-gray-500/10 text-gray-300' : 'hover:bg-gray-500/10 hover:text-gray-300'}`}
-                          >
-                            <ListTodo size={14} className="mr-2" />
-                            <span>Pending</span>
-                          </DropdownMenuItem>
-                          
-                          <DropdownMenuItem 
-                            onClick={(e) => updateTodoStatus(todo.id, 'in_progress', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
-                            className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-blue-500/10 text-blue-400' : 'hover:bg-blue-500/10 hover:text-blue-400'}`}
-                          >
-                            <Activity size={14} className="mr-2" />
-                            <span>Doing</span>
-                          </DropdownMenuItem>
-                          
-                          <DropdownMenuItem 
-                            onClick={(e) => updateTodoStatus(todo.id, 'completed', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
-                            className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-green-500/10 text-green-400' : 'hover:bg-green-500/10 hover:text-green-400'}`}
-                          >
-                            <CheckCircle size={14} className="mr-2" />
-                            <span>Complete</span>
-                          </DropdownMenuItem>
+                          <div className="px-3 py-2 text-sm text-gray-400">
+                            {todo.description}
+                          </div>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    ) : (
-                      <Badge className={`${getStatusColor(todo.status)} text-sm ml-2 px-2 py-1 h-6 rounded-md shadow-sm`}>
-                        {getStatusText(todo.status)}
-                      </Badge>
                     )}
                   </div>
                   
@@ -692,7 +667,50 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      {(filter === "my" || todo.user_id === userId) ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
+                              <span>{getStatusText(todo.status)}</span>
+                              <ChevronDown size={10} />
+                            </Badge>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent 
+                            sideOffset={5} 
+                            className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)]"
+                          >
+                            <DropdownMenuItem 
+                              onClick={(e) => updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-[#FFDA40]/10 text-[#FFDA40]' : 'hover:bg-[#FFDA40]/10 hover:text-[#FFDA40]'}`}
+                            >
+                              <ListTodo size={14} className="mr-2" />
+                              <span>Not yet</span>
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuItem 
+                              onClick={(e) => updateTodoStatus(todo.id, 'in_progress', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-[#FF82C2]/10 text-[#FF82C2]' : 'hover:bg-[#FF82C2]/10 hover:text-[#FF82C2]'}`}
+                            >
+                              <Activity size={14} className="mr-2" />
+                              <span>Doing</span>
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuItem 
+                              onClick={(e) => updateTodoStatus(todo.id, 'completed', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-[#5AD363]/10 text-[#5AD363]' : 'hover:bg-[#5AD363]/10 hover:text-[#5AD363]'}`}
+                            >
+                              <CheckCircle size={14} className="mr-2" />
+                              <span>Complete</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-md shadow-sm`}>
+                          {getStatusText(todo.status)}
+                        </Badge>
+                      )}
+                      
                       {(todo.user_id === userId) && (
                         <Button 
                           variant="ghost" 

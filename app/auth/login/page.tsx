@@ -46,17 +46,18 @@ export default function LoginPage() {
       <div className="container relative z-10 max-w-md">
         <div className="text-center mb-12 animate-fadeIn">
           <h1 
-            className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 sebenta-title"
+            className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold"
             style={{
               fontSize: "clamp(48px, 10vw, 80px)", 
               lineHeight: "1.1",
               textWrap: "balance",
               letterSpacing: "-0.03em",
               display: "block",
-              padding: "0 20px"
+              padding: "0 20px",
+              fontFamily: "var(--font-playfair)"
             }}
           >
-            Tasktide
+            Mocha.
           </h1>
           <p 
             className="text-gray-300 text-lg mt-2" /* Larger, brighter subtitle */
@@ -126,7 +127,7 @@ export default function LoginPage() {
             className="text-sm text-gray-400" /* Increased text size */
             style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}
           >
-            © 2025 Tasktide. All rights reserved.
+            © 2025 Mocha. All rights reserved.
           </p>
         </div>
       </div>
