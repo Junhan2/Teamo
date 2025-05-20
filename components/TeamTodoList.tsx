@@ -102,7 +102,6 @@ const getUserColor = (userId: string, currentUserId: string | undefined, type: '
   return colorSchemes[colorIndex][type]
 }
 
-// 컴포넌트 선언 - 정적 참조 객체 제거
 const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) => {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
@@ -415,7 +414,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
         console.error('TodoList 구독 해제 중 오류:', err);
       }
     };
-  }, [userId, filter, statusFilter, refreshTrigger, supabase]);
+  }, [userId, filter, statusFilter, refreshTrigger, supabase, todos]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -453,8 +452,6 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       </div>
     )
   }
-
-  // 리액트의 순수함수 방식으로 변경 - 파일 끝
 
   return (
     <div className="text-white" ref={containerRef}>
@@ -602,6 +599,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                           )}
                         </div>
                       )}
+                    </div>
                     
                     <div className="flex items-center gap-1">
                       {(todo.user_id === userId) && (
@@ -769,7 +767,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
         document.body
       )}
     </div>
-  )
-}
+  );
+};
 
 export default TeamTodoList;
