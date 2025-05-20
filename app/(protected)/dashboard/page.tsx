@@ -294,19 +294,19 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="flex justify-center gap-5 py-5">
-                  <TabsList className="bg-transparent">
+                <div className="flex justify-start py-5 pl-6">
+                  <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-md transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
-                      <span className="px-10 py-3 text-base font-medium">MY</span>
+                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-md transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
-                      <span className="px-10 py-3 text-base font-medium">TEAM</span>
+                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">TEAM</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
