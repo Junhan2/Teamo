@@ -9,6 +9,7 @@ import TeamTodoList from "@/components/TeamTodoList"
 import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
+import TaskStreak from "@/components/TaskStreak"
 import { motion } from "framer-motion"
 
 interface UserProfile {
@@ -278,13 +279,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#292C33]">
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 할일 추가 섹션 */}
           <div className="w-full md:w-2/5 animate-fadeIn">
-            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40 mb-6" id="addTodoForm">
+            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6" id="addTodoForm">
               <div className="p-6">
                 <h2 className="text-2xl font-semibold mb-6 text-white">Add New Task</h2>
                 {user && (
@@ -299,7 +300,9 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40 p-6" style={{ overflow: 'visible' }}>
+            {user && <TaskStreak userId={user.id} className="mb-6" />}
+            
+            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
               <h2 className="text-2xl font-semibold mb-4 text-white">Statistics</h2>
               <div style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
@@ -312,7 +315,7 @@ export default function DashboardPage() {
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
                   <motion.div 
                     className="bg-green-500 h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -328,7 +331,7 @@ export default function DashboardPage() {
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
                   <motion.div 
                     className="bg-blue-500 h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -344,7 +347,7 @@ export default function DashboardPage() {
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#3A3F4B] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
                   <motion.div 
                     className="bg-gray-500 h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -358,7 +361,7 @@ export default function DashboardPage() {
           
           {/* 할일 목록 섹션 */}
           <div className="w-full md:w-3/5 animate-fadeIn">
-            <div className="bg-[#323741] rounded-xl overflow-hidden shadow-md border border-[#464c58]/40">
+            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20">
               <Tabs 
                 value={activeTab}
                 onValueChange={setActiveTab}

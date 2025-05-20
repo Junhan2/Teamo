@@ -16,7 +16,10 @@ import {
   Heart,
   Star,
   ThumbsUp,
-  Sparkles
+  Sparkles,
+  ArrowUp,
+  ArrowRight,
+  ArrowDown
 } from "lucide-react"
 import { format, differenceInCalendarDays } from "date-fns"
 import { Badge } from "@/components/ui/badge"
@@ -35,6 +38,7 @@ interface Todo {
   description: string | null
   due_date: string | null
   status: "pending" | "in_progress" | "completed"
+  priority: "high" | "medium" | "low" | null
   user_id: string
   team_id: string
   created_at: string
@@ -143,12 +147,6 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
     }
   }, [showCompletionEffect])
   
-  // priorityFilter props 변경 감지 및 로컬 상태 업데이트
-  useEffect(() => {
-    if (priorityFilter !== undefined) {
-      setLocalPriorityFilter(priorityFilter);
-    }
-  }, [priorityFilter])
 
   const fetchTodos = async () => {
     try {
@@ -170,6 +168,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
         query = query.eq('status', statusFilter)
       }
       
+      
       // Due date 필터 적용
       if (dateFilter) {
         const today = new Date();
@@ -190,6 +189,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
           nextMonth.setMonth(nextMonth.getMonth() + 1);
           query = query.gte('due_date', today.toISOString())
                      .lt('due_date', nextMonth.toISOString());
+        } else if (dateFilter === 'year') {
+          const nextYear = new Date(today);
+          nextYear.setFullYear(nextYear.getFullYear() + 1);
+          query = query.gte('due_date', today.toISOString())
+                     .lt('due_date', nextYear.toISOString());
         }
       }
       
@@ -392,7 +396,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
             const newTodo = payload.new as Todo;
             // 상태 필터가 있고, 새 항목이 필터와 일치하지 않으면 무시
             if (statusFilter && newTodo.status !== statusFilter) return;
-            
+              
             // 새 항목 추가
             fetchTodos();
           } else if (payload.eventType === 'UPDATE') {
@@ -403,6 +407,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               setTodos(prevTodos => prevTodos.filter(todo => todo.id !== updatedTodo.id));
               return;
             }
+            
             
             // 상태 업데이트로 목록 새로고침
             fetchTodos();
@@ -546,16 +551,24 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
             >
               This Month
             </Button>
+            <Button 
+              variant={dateFilter === "year" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setDateFilter("year")}
+              className={`${dateFilter === "year" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+            >
+              This Year
+            </Button>
           </div>
         </div>
       </div>
 
       {todos.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-gray-300">
-          <div className="w-20 h-20 mb-5 rounded-full bg-[#323741] flex items-center justify-center shadow-lg shadow-indigo-500/10">
-            <CheckSquare size={32} className="text-indigo-400" />
+          <div className="w-20 h-20 mb-5 rounded-full bg-[#292C33] flex items-center justify-center shadow-lg shadow-indigo-500/10">
+            <CheckSquare size={32} className="text-white/70" />
           </div>
-          <p className="text-lg sebenta-title">No Tasks Available</p>
+          <p className="text-lg font-semibold text-white">No Tasks Available</p>
           <p className="text-sm text-gray-400 mt-2 max-w-xs">Click the New Task button above to get started with your first task</p>
         </div>
       ) : (
@@ -564,20 +577,20 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
             {todos.map((todo) => (
               <motion.div 
                 key={todo.id}
-                className={`bg-[#323741] rounded-xl overflow-hidden border ${
+                className={`bg-[#292C33] rounded-xl overflow-hidden border ${
                   todo.status === 'pending' 
-                    ? 'border-[#464c58]/40 hover:border-[#464c58]/70' 
+                    ? 'border-[#464c58]/20 hover:border-[#464c58]/40' 
                     : todo.status === 'in_progress' 
-                    ? 'border-[#464c58]/40 hover:border-[#464c58]/70' 
-                    : 'border-[#464c58]/40 hover:border-[#464c58]/70'
-                } transition-all duration-200 hover:bg-[#3A3F4B]`}
+                    ? 'border-[#464c58]/20 hover:border-[#464c58]/40' 
+                    : 'border-[#464c58]/20 hover:border-[#464c58]/40'
+                } transition-all duration-200 hover:bg-[#2E3238]`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={snappyTransition}
                 whileHover={{ scale: 1.01 }}
               >
-                <div className="p-4">
+                <div className="p-5">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-medium text-base text-white flex items-center">
@@ -608,7 +621,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                         </DropdownMenuTrigger>
                         <DropdownMenuContent 
                           sideOffset={5} 
-                          className="bg-[#3A3F4B] border border-[#464c58]/60 text-gray-200 shadow-[0_0_25px_rgba(41,44,51,0.3)]"
+                          className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)]"
                         >
                           <DropdownMenuItem 
                             onClick={(e) => updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>)}
@@ -645,15 +658,15 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">
                       {todo.due_date && (
-                        <div className="flex items-center bg-[#2a2a3c]/50 px-3 py-1 rounded-md border border-[#2a2a3c] shadow-sm">
-                          <Clock size={12} className="mr-1.5 text-indigo-400" />
-                          <span>{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
+                        <div className="flex items-center bg-[#1F2125]/80 px-3 py-1 rounded-md border border-[#36393F]/50 shadow-sm">
+                          <Clock size={12} className="mr-1.5 text-gray-400" />
+                          <span className="text-gray-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) >= 0 ? (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-500/30 text-indigo-300">
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-500/20 text-indigo-300">
                               D-{calculateDaysLeft(todo.due_date)}
                             </span>
                           ) : (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/30 text-red-300">
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-300">
                               D+{Math.abs(calculateDaysLeft(todo.due_date))}
                             </span>
                           )}
@@ -667,13 +680,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                           variant="ghost" 
                           size="sm" 
                           onClick={() => deleteTodo(todo.id)}
-                          className="h-7 w-7 p-0 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 transform hover:scale-110 hover:shadow-[0_0_10px_rgba(239,68,68,0.4)]"
+                          className="h-7 w-7 p-0 rounded-lg hover:bg-red-900/30 hover:text-red-300 transition-all duration-200 transform hover:scale-110"
                         >
                           <motion.div
                             whileTap={{ scale: 0.8 }}
                             whileHover={{ rotate: -10 }}
                           >
-                            <Trash2 size={14} className="text-red-400" />
+                            <Trash2 size={14} className="text-gray-400 hover:text-red-300" />
                           </motion.div>
                         </Button>
                       )}
