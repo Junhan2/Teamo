@@ -182,7 +182,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-[#1F2125] border-[#464c58]/40 hover:bg-[#2E3238] hover:border-[#464c58]/60 px-4 py-2 h-11 text-base rounded-sm",
+                "w-full justify-start text-left font-normal bg-[#1F2125] border-[#464c58]/40 hover:bg-[#2E3238] hover:border-[#464c58]/60 px-4 py-2 h-10 text-base",
                 !dueDate && "text-gray-400"
               )}
             >
@@ -205,7 +205,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="rounded-sm mt-6"
+        className="mt-6 w-auto"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-4 h-4" /> Add Task</>}

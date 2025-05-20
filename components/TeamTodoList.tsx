@@ -484,7 +484,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === null ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter(null)}
-              className={`${statusFilter === null ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${statusFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               All
             </Button>
@@ -492,7 +492,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "pending" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("pending")}
-              className={`${statusFilter === "pending" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               Pending
             </Button>
@@ -500,7 +500,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "in_progress" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("in_progress")}
-              className={`${statusFilter === "in_progress" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               In Progress
             </Button>
@@ -508,7 +508,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "completed" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("completed")}
-              className={`${statusFilter === "completed" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${statusFilter === "completed" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               Complete
             </Button>
@@ -523,7 +523,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={dateFilter === null ? "default" : "outline"} 
               size="sm"
               onClick={() => setDateFilter(null)}
-              className={`${dateFilter === null ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${dateFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               All
             </Button>
@@ -531,7 +531,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={dateFilter === "today" ? "default" : "outline"} 
               size="sm"
               onClick={() => setDateFilter("today")}
-              className={`${dateFilter === "today" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${dateFilter === "today" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               Today
             </Button>
@@ -539,7 +539,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={dateFilter === "week" ? "default" : "outline"} 
               size="sm"
               onClick={() => setDateFilter("week")}
-              className={`${dateFilter === "week" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${dateFilter === "week" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               This Week
             </Button>
@@ -547,7 +547,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={dateFilter === "month" ? "default" : "outline"} 
               size="sm"
               onClick={() => setDateFilter("month")}
-              className={`${dateFilter === "month" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${dateFilter === "month" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               This Month
             </Button>
@@ -555,7 +555,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={dateFilter === "year" ? "default" : "outline"} 
               size="sm"
               onClick={() => setDateFilter("year")}
-              className={`${dateFilter === "year" ? 'bg-white text-[#292C33] hover:bg-white/90' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-2 h-8 rounded-sm transition-all duration-200 font-medium`}
+              className={`${dateFilter === "year" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
             >
               This Year
             </Button>

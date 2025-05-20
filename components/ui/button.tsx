@@ -5,26 +5,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-semibold cursor-pointer border-none w-full min-h-[3.5rem] min-w-[6.5rem] px-6 py-[0.6rem] outline-none transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-medium cursor-pointer border-none rounded-none transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-white text-[#292C33] hover:bg-[#e7e7e7] active:bg-[#cfcfcf]",
+        default: "bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]",
         destructive:
-          "bg-[#ff6138] text-white hover:bg-[#e85833] active:bg-[#d1502e]",
+          "bg-[#ff6138] text-white hover:bg-[#E85833]",
         outline:
-          "border border-[#cfd6e566] bg-[#cfd6e514] text-white hover:bg-[#cfd6e529] active:bg-[#cfd6e53d]",
+          "border border-[#464c58] bg-transparent text-white hover:bg-[#4C4F57]",
         secondary:
-          "bg-[#cfd6e529] text-white hover:bg-[#cfd6e53d] active:bg-[#cfd6e552]",
-        ghost: "bg-transparent text-white hover:bg-[#cfd6e514] active:bg-[#cfd6e529]",
+          "bg-[#3F4249] text-white hover:bg-[#4C4F57]",
+        ghost: "bg-transparent text-white hover:bg-[#4C4F57]",
         link: "text-[#20afff] underline-offset-4 hover:underline",
-        accent: "bg-[#ff82c2] text-white hover:bg-[#e575af] active:bg-[#cc689b]",
+        accent: "bg-[#ff82c2] text-white hover:bg-[#E575AF]",
       },
       size: {
-        default: "h-[3.5rem] px-6",
-        sm: "h-9 px-3 py-2 text-sm min-h-0 min-w-0",
-        lg: "h-12 px-8 py-3",
-        icon: "h-10 w-10 min-h-0 min-w-0",
+        default: "h-10 px-4 py-2",
+        sm: "h-9 px-3 py-1.5 text-sm",
+        lg: "h-11 px-6 py-2.5",
+        icon: "h-10 w-10 p-2",
       },
     },
     defaultVariants: {
