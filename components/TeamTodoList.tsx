@@ -94,25 +94,26 @@ const getUserColor = (userId: string, type: 'badge' | 'container' | 'dot') => {
   ]
   
   // 내 태스크인 경우 별도 처리
-  // userId: 태스크 소유자, teamTodoListUserId: 현재 컴포넌트 사용자
-  const teamTodoListUserId = typeof window !== 'undefined' && window.__currentUserId 
-    ? window.__currentUserId 
-    : '';
-  
-  if (userId === teamTodoListUserId && type === 'container') {
+  // userId: 태스크 소유자를 위한 단순한 비교 로직으로 변경
+  // 정적 전역 변수 대신 문자열 비교 사용
+  if (userId === TodoList.myUserId && type === 'container') {
     return 'bg-indigo-950/40 border-indigo-800/30'
   }
   
   return colorSchemes[colorIndex][type]
 }
 
-// 정적 프로퍼티로 현재 사용자 ID 저장
+// 정적 참조용 객체
+const TodoList = {
+  myUserId: ''
+};
+
+// 컴포넌트 선언
 const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) => {
-  // 컴포넌트가 마운트될 때 현재 사용자 ID 저장
+  // 컴포넌트가 마운트될 때 현재 사용자 ID 저장 (정적 객체 사용)
   useEffect(() => {
-    if (userId && typeof window !== 'undefined') {
-      // @ts-ignore - 전역 속성 추가
-      window.__currentUserId = userId;
+    if (userId) {
+      TodoList.myUserId = userId;
     }
   }, [userId]);
   const [todos, setTodos] = useState<Todo[]>([])
@@ -465,12 +466,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
     )
   }
 
-  // TypeScript용 Window 인터페이스 확장 (타입 오류 방지)
-declare global {
-  interface Window {
-    __currentUserId?: string;
-  }
-}
+  // 타입 선언 삭제 - 더 이상 Window 인터페이스 확장이 필요 없음
 
 return (
     <div className="text-white" ref={containerRef}>
