@@ -522,11 +522,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
                   size="sm" 
                   className="bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
                 >
-                  {dateFilter === null ? 'Due Date: All' : 
-                   dateFilter === "today" ? 'Due Date: Today' : 
-                   dateFilter === "week" ? 'Due Date: This Week' :
-                   dateFilter === "month" ? 'Due Date: This Month' :
-                   'Due Date: This Year'}
+                  {dateFilter === null ? <><span className="font-light">Due Date: </span><span>All</span></> : 
+                   dateFilter === "today" ? <><span className="font-light">Due Date: </span><span>Today</span></> : 
+                   dateFilter === "week" ? <><span className="font-light">Due Date: </span><span>This Week</span></> :
+                   dateFilter === "month" ? <><span className="font-light">Due Date: </span><span>This Month</span></> :
+                   <><span className="font-light">Due Date: </span><span>This Year</span></>}
                   <ChevronDown size={14} />
                 </Button>
               </DropdownMenuTrigger>

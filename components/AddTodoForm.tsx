@@ -160,7 +160,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm pl-3 py-3 text-base"
+            className="w-full bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm pl-4 py-2 h-10 text-base"
           />
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm text-base w-full resize-none"
+          className="bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm text-base w-full resize-none pl-4 py-2"
         />
       </div>
       
@@ -205,10 +205,10 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-4 w-full py-[0.6rem] px-[1.5rem]"
+        className="mt-4 w-full py-[0.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem]"
         disabled={loading}
       >
-        {loading ? "Adding..." : <><Plus className="w-4 h-4" /> Add Task</>}
+        {loading ? "Adding..." : <><Plus className="w-4 h-4" /> <span className="text-[1rem] leading-[1.5rem] font-[600]">Add Task</span></>}
       </Button>
       
       {message && (

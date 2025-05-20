@@ -303,7 +303,8 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            {user && <TaskStreak userId={user.id} className="mb-6" />}
+            {/* Productivity Streak 비활성화 */}
+            {/* {user && <TaskStreak userId={user.id} className="mb-6" />} */}
             
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
               <h2 className="text-base font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
