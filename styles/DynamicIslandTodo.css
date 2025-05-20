@@ -163,3 +163,27 @@
   @apply h-5 w-5 rounded-md border-[#2a2a3c] text-indigo-500 
     focus:ring-indigo-500 focus:ring-offset-0 transition-all;
 }
+
+/* Calendar specific scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #464c58 transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #464c58;
+  border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #5a6169;
+}

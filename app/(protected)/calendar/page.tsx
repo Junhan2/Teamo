@@ -1,0 +1,126 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { CheckSquare, Calendar } from "lucide-react"
+import Navbar from "@/components/Navbar"
+import CalendarPage from "@/components/Calendar/CalendarPage"
+
+interface UserProfile {
+  id: string
+  email: string
+  full_name: string | null
+  avatar_url: string | null
+}
+
+export default function CalendarPageRoute() {
+  const [user, setUser] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        setLoading(true)
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error || !session) {
+          router.push('/auth/login')
+          return
+        }
+
+        // Fetch user profile
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError)
+          
+          // Create profile if it doesn't exist
+          if (profileError.code === 'PGRST116') {
+            const { data: newProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert([{ 
+                id: session.user.id,
+                email: session.user.email,
+                full_name: session.user.user_metadata?.full_name,
+                avatar_url: session.user.user_metadata?.avatar_url
+              }])
+              .select()
+              .single()
+              
+            if (!createError && newProfile) {
+              setUser(newProfile)
+            } else {
+              console.error('Error creating profile:', createError)
+            }
+          }
+          return
+        }
+
+        setUser(profile)
+      } catch (error) {
+        console.error('Error checking auth session:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkSession()
+  }, [router, supabase])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[#292C33]"></div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f1a_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f1a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+        </div>
+        <div className="text-lg text-white relative z-10 font-medium">Loading Calendar...</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-[#292c33]">
+      <Navbar user={user} />
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
+        <CalendarPage user={user} />
+      </main>
+      
+      {/* 화면 중앙 하단 플로팅 버튼 영역 */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2">
+        <Link href="/dashboard">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full shadow-lg bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] flex items-center gap-2 px-4 py-2 h-10"
+          >
+            <CheckSquare className="w-4 h-4" />
+            <span className="font-medium">My Tasks</span>
+          </Button>
+        </Link>
+        
+        <Link href="/calendar">
+          <Button
+            variant="default"
+            size="sm"
+            className="rounded-full shadow-lg bg-[#3F4249] text-white hover:bg-[#4C4F57] flex items-center gap-2 px-4 py-2 h-10 relative"
+          >
+            <Calendar className="w-4 h-4" />
+            <span className="font-medium">Calendar</span>
+            {/* Active indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF82C2] rounded-full border-2 border-[#292c33]"></div>
+          </Button>
+        </Link>
+      </div>
+    </div>
+  )
+}
