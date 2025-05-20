@@ -364,21 +364,30 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="border-b border-[#2a2a3c]">
+                <div className="border-b border-[#2a2a3c] relative">
                   <TabsList className="w-full bg-transparent p-0">
                     <TabsTrigger 
                       value="my-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-indigo-500 h-14 text-lg font-medium"
+                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
                       My Tasks
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-indigo-500 h-14 text-lg font-medium"
+                      className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
                       Team Tasks
                     </TabsTrigger>
                   </TabsList>
+                  
+                  {/* 활성화된 탭 표시 - 애니메이션 가능한 하단 바 */}
+                  <div 
+                    className="absolute bottom-0 left-0 h-0.5 bg-indigo-500 transition-all duration-300"
+                    style={{
+                      width: '50%',
+                      transform: activeTab === 'my-todos' ? 'translateX(0)' : 'translateX(100%)'
+                    }}
+                  />
                 </div>
                 
                 <TabsContent value="my-todos" className="p-6 focus:outline-none">

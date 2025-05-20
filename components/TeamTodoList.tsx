@@ -18,7 +18,7 @@ import {
   ThumbsUp,
   Sparkles
 } from "lucide-react"
-import { format } from "date-fns"
+import { format, differenceInCalendarDays } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { 
   DropdownMenu,
@@ -64,6 +64,16 @@ const snappyTransition = {
   stiffness: 500,
   damping: 30,
   mass: 1,
+}
+
+// 날짜로부터 남은 일수 계산 함수
+const calculateDaysLeft = (dueDate: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // 시간 제거
+  const targetDate = new Date(dueDate)
+  targetDate.setHours(0, 0, 0, 0) // 시간 제거
+  
+  return differenceInCalendarDays(targetDate, today)
 }
 
 export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) {
@@ -561,6 +571,11 @@ export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete 
                         <div className="flex items-center bg-[#2a2a3c]/50 px-3 py-1 rounded-md border border-[#2a2a3c] shadow-sm">
                           <Clock size={12} className="mr-1.5 text-indigo-400" />
                           <span>{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
+                          {calculateDaysLeft(todo.due_date) >= 0 && (
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-500/30 text-indigo-300">
+                              D-{calculateDaysLeft(todo.due_date)}
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
