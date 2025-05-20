@@ -76,7 +76,45 @@ const calculateDaysLeft = (dueDate: string) => {
   return differenceInCalendarDays(targetDate, today)
 }
 
-export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) {
+// 사용자 ID 기반 색상 선택 함수
+const getUserColor = (userId: string, type: 'badge' | 'container' | 'dot') => {
+  // 사용자 ID의 마지막 6자리를 가져와 고유한 값으로 사용
+  const hash = userId.substring(Math.max(0, userId.length - 6))
+  // 해시 값을 0-5 사이의 숫자로 변환 (6가지 색상 사용)
+  const colorIndex = parseInt(hash, 16) % 6
+  
+  // 사용 가능한 색상 조합 (배지, 컨테이너, 도트 색상)
+  const colorSchemes = [
+    { badge: 'bg-blue-900/30 text-blue-300 border-blue-700/20', container: 'bg-blue-950/40 border-blue-800/30', dot: 'bg-blue-400' },
+    { badge: 'bg-purple-900/30 text-purple-300 border-purple-700/20', container: 'bg-purple-950/40 border-purple-800/30', dot: 'bg-purple-400' },
+    { badge: 'bg-green-900/30 text-green-300 border-green-700/20', container: 'bg-green-950/40 border-green-800/30', dot: 'bg-green-400' },
+    { badge: 'bg-amber-900/30 text-amber-300 border-amber-700/20', container: 'bg-amber-950/40 border-amber-800/30', dot: 'bg-amber-400' },
+    { badge: 'bg-pink-900/30 text-pink-300 border-pink-700/20', container: 'bg-pink-950/40 border-pink-800/30', dot: 'bg-pink-400' },
+    { badge: 'bg-cyan-900/30 text-cyan-300 border-cyan-700/20', container: 'bg-cyan-950/40 border-cyan-800/30', dot: 'bg-cyan-400' }
+  ]
+  
+  // 내 태스크인 경우 별도 처리
+  // userId: 태스크 소유자, teamTodoListUserId: 현재 컴포넌트 사용자
+  const teamTodoListUserId = typeof window !== 'undefined' && window.__currentUserId 
+    ? window.__currentUserId 
+    : '';
+  
+  if (userId === teamTodoListUserId && type === 'container') {
+    return 'bg-indigo-950/40 border-indigo-800/30'
+  }
+  
+  return colorSchemes[colorIndex][type]
+}
+
+// 정적 프로퍼티로 현재 사용자 ID 저장
+const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoListProps) => {
+  // 컴포넌트가 마운트될 때 현재 사용자 ID 저장
+  useEffect(() => {
+    if (userId && typeof window !== 'undefined') {
+      // @ts-ignore - 전역 속성 추가
+      window.__currentUserId = userId;
+    }
+  }, [userId]);
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
@@ -427,7 +465,14 @@ export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete 
     )
   }
 
-  return (
+  // TypeScript용 Window 인터페이스 확장 (타입 오류 방지)
+declare global {
+  interface Window {
+    __currentUserId?: string;
+  }
+}
+
+return (
     <div className="text-white" ref={containerRef}>
       <div className="flex flex-wrap gap-3 mb-6">
         <Button 
@@ -501,7 +546,7 @@ export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete 
                           <span>{todo.title}</span>
                         )}
                         {todo.user_id !== userId && filter === "team" && (
-                          <span className="ml-2 text-xs bg-blue-900/30 text-blue-300 px-2 py-0.5 rounded-full">
+                          <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${getUserColor(todo.user_id, 'badge')}`}>
                             {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Other'}
                           </span>
                         )}
@@ -559,10 +604,8 @@ export default function TeamTodoList({ userId, filter, refreshTrigger, onDelete 
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">
                       {filter === "team" && (
-                        <span className="mr-3 bg-[#2a2a3c]/50 px-3 py-1 rounded-md border border-[#2a2a3c] shadow-sm flex items-center">
-                          {todo.user_id === userId ? (
-                            <span className="mr-1 inline-block w-2 h-2 bg-blue-400 rounded-full"></span>
-                          ) : null}
+                        <span className={`mr-3 px-3 py-1 rounded-md border shadow-sm flex items-center ${getUserColor(todo.user_id, 'container')}`}>
+                          <span className={`mr-1 inline-block w-2 h-2 rounded-full ${getUserColor(todo.user_id, 'dot')}`}></span>
                           {todo.user?.full_name || todo.user?.email || 'Unknown'}
                         </span>
                       )}
