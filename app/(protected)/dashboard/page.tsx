@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import TeamTodoList from "@/components/TeamTodoList"
@@ -11,6 +12,7 @@ import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import TaskStreak from "@/components/TaskStreak"
 import { motion } from "framer-motion"
+import { CheckSquare, Calendar } from "lucide-react"
 
 interface UserProfile {
   id: string
