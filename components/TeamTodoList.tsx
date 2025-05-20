@@ -460,7 +460,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
       case 'pending':
         return 'Pending'
       case 'in_progress':
-        return 'In Progress'
+        return 'Doing'
       case 'completed':
         return 'Complete'
       default:
@@ -508,7 +508,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 onClick={() => setStatusFilter("in_progress")}
                 className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
               >
-                In Progress
+                Doing
               </Button>
               <Button 
                 variant={statusFilter === "completed" ? "default" : "outline"} 
@@ -528,11 +528,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   size="sm" 
                   className="bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
                 >
-                  {dateFilter === null ? <><span className="font-light">Due Date: </span><span>All</span></> : 
-                   dateFilter === "today" ? <><span className="font-light">Due Date: </span><span>Today</span></> : 
-                   dateFilter === "week" ? <><span className="font-light">Due Date: </span><span>This Week</span></> :
-                   dateFilter === "month" ? <><span className="font-light">Due Date: </span><span>This Month</span></> :
-                   <><span className="font-light">Due Date: </span><span>This Year</span></>}
+                  {dateFilter === null ? <><span className="font-light">Due date: </span><span>All</span></> : 
+                   dateFilter === "today" ? <><span className="font-light">Due date: </span><span>Today</span></> : 
+                   dateFilter === "week" ? <><span className="font-light">Due date: </span><span>This week</span></> :
+                   dateFilter === "month" ? <><span className="font-light">Due date: </span><span>This month</span></> :
+                   <><span className="font-light">Due date: </span><span>This year</span></>}
                   <ChevronDown size={14} />
                 </Button>
               </DropdownMenuTrigger>
@@ -553,19 +553,19 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   onClick={() => setDateFilter("week")}
                   className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "week" ? 'bg-[#3F4249]/50' : ''}`}
                 >
-                  This Week
+                  This week
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("month")}
                   className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "month" ? 'bg-[#3F4249]/50' : ''}`}
                 >
-                  This Month
+                  This month
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("year")}
                   className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "year" ? 'bg-[#3F4249]/50' : ''}`}
                 >
-                  This Year
+                  This year
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -648,7 +648,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                             className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-blue-500/10 text-blue-400' : 'hover:bg-blue-500/10 hover:text-blue-400'}`}
                           >
                             <Activity size={14} className="mr-2" />
-                            <span>In Progress</span>
+                            <span>Doing</span>
                           </DropdownMenuItem>
                           
                           <DropdownMenuItem 
