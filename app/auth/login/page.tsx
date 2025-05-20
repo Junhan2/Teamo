@@ -36,48 +36,15 @@ export default function LoginPage() {
     }
   }
 
-  // Add mouse move handler for parallax effect
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Simplified hover effect - no mouse tracking, just add a class on hover
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     const container = e.currentTarget;
-    const { left, top, width, height } = container.getBoundingClientRect();
-    
-    // Calculate cursor position relative to container (-0.5 to 0.5 range)
-    const x = (e.clientX - left) / width - 0.5;
-    const y = (e.clientY - top) / height - 0.5;
-    
-    // Get elements for parallax effect
-    const imageWrapperEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
-    const sparkleEl = container.querySelector('.sparkle-effect') as HTMLElement;
-    const textEl = container.querySelector('.hero-text') as HTMLElement;
-    
-    // Apply subtle movement based on cursor position
-    if (imageWrapperEl) {
-      // Move image wrapper in opposite direction of cursor (more pronounced)
-      imageWrapperEl.style.transform = `translate3d(${x * -15}px, ${y * -15}px, 0)`;
-    }
-    
-    if (sparkleEl) {
-      // Move sparkles slightly faster than image for depth effect
-      sparkleEl.style.transform = `translate3d(${x * -20}px, ${y * -20}px, 0)`;
-    }
-    
-    if (textEl) {
-      // Move text slightly in direction of cursor (subtle effect)
-      textEl.style.transform = `translate3d(${x * 5}px, ${y * 5}px, 0)`;
-    }
+    container.classList.add('is-hovered');
   };
   
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     const container = e.currentTarget;
-    
-    // Reset positions with smooth transition (transition defined in CSS)
-    const imageWrapperEl = container.querySelector('.hero-image-wrapper') as HTMLElement;
-    const sparkleEl = container.querySelector('.sparkle-effect') as HTMLElement;
-    const textEl = container.querySelector('.hero-text') as HTMLElement;
-    
-    if (imageWrapperEl) imageWrapperEl.style.transform = 'translate3d(0, 0, 0)';
-    if (sparkleEl) sparkleEl.style.transform = 'translate3d(0, 0, 0)';
-    if (textEl) textEl.style.transform = 'translate3d(0, 0, 0)';
+    container.classList.remove('is-hovered');
   };
 
   return (
@@ -90,11 +57,11 @@ export default function LoginPage() {
       <div className="container relative z-10 max-w-md">
         <div 
           className="text-center mb-12 animate-fadeIn relative pt-28 hero-container"
-          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-        > {/* Added hero-container class and mouse event handlers */}
+        > {/* Simplified hover effect handlers */}
           {/* Hero image positioned with the Mocha text */}
-          <div className="absolute z-0 left-1/2 transform -translate-x-1/2 w-[260px] max-w-full hero-image-wrapper" style={{ top: "-80px" }}>
+          <div className="absolute z-0 left-1/2 transform -translate-x-1/2 w-[300px] max-w-full hero-image-wrapper" style={{ top: "-100px" }}>
             {/* Sparkle effects that appear on hover */}
             <div className="sparkle-effect">
               <div className="sparkle sparkle-1"></div>
@@ -105,11 +72,11 @@ export default function LoginPage() {
             </div>
             
             <img
-              src="/images/hero-jpg.jpg"
+              src="/images/hero-3d-svg.svg"
               alt="Mocha"
-              className="w-full h-auto object-contain drop-shadow-[0_5px_15px_rgba(165,70,233,0.2)] animate-float transition-all duration-500"
+              className="w-full h-auto object-contain animate-gentle-float transition-all duration-500"
               style={{ 
-                filter: "saturate(1.05) brightness(1.05)"
+                filter: "drop-shadow(0 5px 15px rgba(138, 104, 233, 0.25))"
               }}
             />
           </div>

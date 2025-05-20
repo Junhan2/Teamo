@@ -23,12 +23,22 @@ body {
     100% { transform: translateY(0px); }
   }
   
+  @keyframes gentle-float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(0.5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+  
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out forwards;
   }
   
   .animate-float {
     animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-gentle-float {
+    animation: gentle-float 8s ease-in-out infinite;
   }
   
   /* Sparkle animation */
@@ -40,28 +50,28 @@ body {
   
   /* Hero container hover effects */
   .hero-container {
-    perspective: 1000px;
     cursor: pointer;
   }
   
   .hero-image-wrapper {
-    transition: transform 0.3s ease-out;
+    transition: transform 0.8s ease-out;
   }
   
   .hero-image-wrapper img {
-    transition: all 0.5s ease;
+    transition: all 0.8s ease;
   }
   
   .hero-text {
     transition: all 0.5s ease;
   }
   
-  .hero-container:hover .hero-image-wrapper img {
-    filter: saturate(1.2) brightness(1.1);
-    box-shadow: 0 15px 30px rgba(127, 86, 217, 0.2);
+  /* More subtle hover effects */
+  .hero-container.is-hovered .hero-image-wrapper img {
+    filter: drop-shadow(0 8px 20px rgba(138, 104, 233, 0.4));
+    transform: translateY(-3px);
   }
   
-  .hero-container:hover .hero-text {
+  .hero-container.is-hovered .hero-text {
     text-shadow: 0 0 15px rgba(138, 104, 233, 0.4);
     background-image: linear-gradient(to right, #a881ff, #d775ff);
   }
@@ -73,51 +83,50 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 1;
-    transition: transform 0.3s ease-out;
   }
   
   .sparkle {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: white;
     opacity: 0;
     filter: blur(1px);
-    box-shadow: 0 0 10px 2px rgba(161, 92, 246, 0.8);
+    box-shadow: 0 0 8px 1px rgba(161, 92, 246, 0.6);
   }
   
-  .hero-container:hover .sparkle {
-    animation: sparkle 2s ease-in-out infinite;
+  .hero-container.is-hovered .sparkle {
+    animation: sparkle 3s ease-in-out infinite;
   }
   
   .sparkle-1 {
-    top: 10%;
+    top: 15%;
     left: 20%;
     animation-delay: 0.1s !important;
   }
   
   .sparkle-2 {
-    top: 20%;
+    top: 25%;
     right: 15%;
     animation-delay: 0.5s !important;
   }
   
   .sparkle-3 {
-    bottom: 30%;
-    left: 10%;
+    bottom: 35%;
+    left: 15%;
     animation-delay: 0.2s !important;
   }
   
   .sparkle-4 {
-    bottom: 10%;
+    bottom: 20%;
     right: 20%;
     animation-delay: 0.7s !important;
   }
   
   .sparkle-5 {
     top: 50%;
-    right: 10%;
+    right: 15%;
     animation-delay: 0.4s !important;
   }
 }
