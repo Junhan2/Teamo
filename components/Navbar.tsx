@@ -38,11 +38,11 @@ export default function Navbar({ user }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#292C33]">
+    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#B27CF7] shadow-md">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 py-2">
           <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2">
-            <span className="font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold var(--font-playfair)">Mung.</span>
+            <span className="font-serif text-[#000000] font-bold var(--font-playfair)">Mung.</span>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -51,36 +51,52 @@ export default function Navbar({ user }: NavbarProps) {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-9 w-9 rounded-full p-0 hover:bg-[#2a2a3c]/50">
-                    <Avatar className="h-9 w-9 ring-2 ring-indigo-500/30">
+                  <Button variant="ghost" className="h-10 w-10 rounded-full p-0 border-2 border-black hover:bg-white/20 transition-all duration-200 transform hover:scale-110">
+                    <Avatar className="h-full w-full">
                       {user.avatar_url ? (
-                        <AvatarImage src={user.avatar_url} alt={user.full_name || user.email} />
+                        <AvatarImage src={user.avatar_url} alt={user.full_name || user.email} className="border-2 border-white" />
                       ) : (
-                        <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
-                          <User size={14} />
+                        <AvatarFallback className="bg-white text-[#B27CF7] font-bold text-lg">
+                          {(user.full_name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
                         </AvatarFallback>
                       )}
                     </Avatar>
+                    <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#FF82C2] text-[10px] font-bold text-white border-2 border-white shadow-md">
+                      {Math.floor(Math.random() * 9) + 1}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="glass-card border-[#2a2a3c] text-white min-w-[180px]">
-                  <DropdownMenuLabel className="text-gray-300 text-xs">
-                    <p className="text-sm font-medium text-white">{user.full_name || 'User'}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{user.email}</p>
+                <DropdownMenuContent align="end" className="bg-white border-[#E0E0E0] text-black min-w-[200px] rounded-xl shadow-lg p-1">
+                  <DropdownMenuLabel className="flex items-center space-x-2 p-3 rounded-lg hover:bg-[#F8F0FF]">
+                    <div className="rounded-full bg-[#B27CF7] h-10 w-10 flex items-center justify-center text-white font-bold">
+                      {(user.full_name?.charAt(0) || user.email?.charAt(0) || 'U').toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-black">{user.full_name || 'User'}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#2a2a3c]" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-[#2a2a3c]/50 hover:text-white focus:bg-[#2a2a3c]/50 focus:text-white">
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem className="cursor-pointer rounded-lg my-1 hover:bg-[#F8F0FF] focus:bg-[#F8F0FF] text-gray-700 focus:text-gray-700 px-3 py-2">
+                    <div className="bg-[#FFD6E8] w-6 h-6 rounded-full flex items-center justify-center mr-2">
+                      <User size={14} className="text-[#FF82C2]" />
+                    </div>
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-[#2a2a3c]/50 hover:text-white focus:bg-[#2a2a3c]/50 focus:text-white">
+                  <DropdownMenuItem className="cursor-pointer rounded-lg my-1 hover:bg-[#F8F0FF] focus:bg-[#F8F0FF] text-gray-700 focus:text-gray-700 px-3 py-2">
+                    <div className="bg-[#D6E5FF] w-6 h-6 rounded-full flex items-center justify-center mr-2">
+                      <Calendar size={14} className="text-[#82A9FF]" />
+                    </div>
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#2a2a3c]" />
+                  <DropdownMenuSeparator className="bg-gray-200" />
                   <DropdownMenuItem 
                     onClick={handleSignOut} 
-                    className="text-red-400 cursor-pointer hover:bg-red-400/10 hover:text-red-300 focus:bg-red-400/10 focus:text-red-300"
+                    className="cursor-pointer rounded-lg my-1 hover:bg-red-50 focus:bg-red-50 text-red-500 focus:text-red-500 px-3 py-2"
                   >
-                    <LogOut className="w-3.5 h-3.5 mr-2" />
+                    <div className="bg-red-100 w-6 h-6 rounded-full flex items-center justify-center mr-2">
+                      <LogOut size={14} className="text-red-500" />
+                    </div>
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
