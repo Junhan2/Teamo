@@ -479,6 +479,15 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
     )
   }
 
+  const [expandedDescriptions, setExpandedDescriptions] = useState<{ [key: string]: boolean }>({});
+
+  const toggleDescription = (todoId: string) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [todoId]: !prev[todoId]
+    }));
+  };
+
   return (
     <div className="text-white" ref={containerRef}>
       <div className="flex flex-col space-y-6 mb-6">
@@ -602,7 +611,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 transition={snappyTransition}
                 whileHover={{ scale: 1.01 }}
               >
-                <div className="p-5">
+                <div 
+                  className="p-5 cursor-pointer"
+                  onClick={() => todo.description && toggleDescription(todo.id)}
+                >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-medium text-base text-white flex items-center">
@@ -618,29 +630,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         )}
                       </h3>
                     </div>
-                    
-                    {todo.description && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-7 w-7 p-0 rounded-lg transition-all duration-200 transform hover:bg-gray-700/30"
-                          >
-                            <ChevronDown size={14} className="text-gray-400" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent 
-                          sideOffset={5} 
-                          className="bg-[#292C33] border border-[#464c58]/40 text-gray-200 shadow-[0_0_25px_rgba(0,0,0,0.5)] max-w-md"
-                        >
-                          <div className="px-3 py-2 text-sm text-gray-400">
-                            {todo.description}
-                          </div>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
                   </div>
+                  
+                  {todo.description && expandedDescriptions[todo.id] && (
+                    <div className="mt-3 py-2 px-3 text-sm text-gray-400 bg-[#1F2125]/80 rounded-md border border-[#36393F]/50 transition-all duration-200 shadow-sm">
+                      {todo.description}
+                    </div>
+                  )}
                   
                   <div className="flex flex-wrap items-center justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-[#2a2a3c]/50">
                     <div className="flex items-center">

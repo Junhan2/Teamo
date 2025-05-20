@@ -300,13 +300,13 @@ export default function DashboardPage() {
                       value="my-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-base">MY TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm">MY TASKS</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
                       className="flex-1 rounded-none data-[state=active]:bg-transparent data-[state=active]:text-white h-14 text-lg font-medium hover:text-white transition-colors"
                     >
-                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-base">TEAM TASKS</span>
+                      <span className="uppercase tracking-[.1em] leading-[1.5rem] font-[500] font-['Inter'] text-sm">TEAM TASKS</span>
                     </TabsTrigger>
                   </TabsList>
                   
@@ -378,15 +378,15 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-4 mt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-base text-gray-300">Completed Tasks</span>
+                  <span className="text-base text-gray-300">Complete</span>
                   <div className="flex items-center">
-                    <span className="text-green-400 font-semibold text-lg">{todoStats.completed}</span>
+                    <span className="text-[#5AD363] font-semibold text-lg">{todoStats.completed}</span>
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-green-500 h-3 rounded-full"
+                    className="bg-[#5AD363] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.completed / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -394,15 +394,15 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">In Progress</span>
+                  <span className="text-base text-gray-300">Doing</span>
                   <div className="flex items-center">
-                    <span className="text-blue-400 font-semibold text-lg">{todoStats.inProgress}</span>
+                    <span className="text-[#FF82C2] font-semibold text-lg">{todoStats.inProgress}</span>
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-blue-500 h-3 rounded-full"
+                    className="bg-[#FF82C2] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.inProgress / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -410,15 +410,15 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">Pending Tasks</span>
+                  <span className="text-base text-gray-300">Not yet</span>
                   <div className="flex items-center">
-                    <span className="text-gray-400 font-semibold text-lg">{todoStats.pending}</span>
+                    <span className="text-[#FFDA40] font-semibold text-lg">{todoStats.pending}</span>
                     <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-3 overflow-hidden">
+                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-gray-500 h-3 rounded-full"
+                    className="bg-[#FFDA40] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.pending / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
