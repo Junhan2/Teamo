@@ -478,13 +478,12 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
       <div className="flex flex-col space-y-6 mb-6">
         {/* 상태 필터 */}
         <div>
-          <h3 className="text-sm text-gray-300 mb-3 font-medium uppercase tracking-wide">STATUS</h3>
           <div className="flex flex-wrap gap-2">
             <Button 
               variant={statusFilter === null ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter(null)}
-              className={`${statusFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
+              className={`${statusFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
             >
               All
             </Button>
@@ -492,7 +491,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "pending" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("pending")}
-              className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
+              className={`${statusFilter === "pending" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
             >
               Pending
             </Button>
@@ -500,7 +499,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "in_progress" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("in_progress")}
-              className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
+              className={`${statusFilter === "in_progress" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
             >
               In Progress
             </Button>
@@ -508,58 +507,63 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete }: TeamTodoList
               variant={statusFilter === "completed" ? "default" : "outline"} 
               size="sm"
               onClick={() => setStatusFilter("completed")}
-              className={`${statusFilter === "completed" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
+              className={`${statusFilter === "completed" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
             >
               Complete
             </Button>
           </div>
         </div>
 
-        {/* Due Date 필터 */}
+        {/* Due Date 필터 - 드롭다운 */}
         <div>
-          <h3 className="text-sm text-gray-300 mb-3 font-medium uppercase tracking-wide">DUE DATE</h3>
-          <div className="flex flex-wrap gap-2">
-            <Button 
-              variant={dateFilter === null ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setDateFilter(null)}
-              className={`${dateFilter === null ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
-            >
-              All
-            </Button>
-            <Button 
-              variant={dateFilter === "today" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setDateFilter("today")}
-              className={`${dateFilter === "today" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
-            >
-              Today
-            </Button>
-            <Button 
-              variant={dateFilter === "week" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setDateFilter("week")}
-              className={`${dateFilter === "week" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
-            >
-              This Week
-            </Button>
-            <Button 
-              variant={dateFilter === "month" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setDateFilter("month")}
-              className={`${dateFilter === "month" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
-            >
-              This Month
-            </Button>
-            <Button 
-              variant={dateFilter === "year" ? "default" : "outline"} 
-              size="sm"
-              onClick={() => setDateFilter("year")}
-              className={`${dateFilter === "year" ? 'bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]' : 'bg-transparent border border-[#464c58]/60 text-white hover:bg-[#3A3F4B]'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto`}
-            >
-              This Year
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
+              >
+                {dateFilter === null ? 'Due Date: All' : 
+                 dateFilter === "today" ? 'Due Date: Today' : 
+                 dateFilter === "week" ? 'Due Date: This Week' :
+                 dateFilter === "month" ? 'Due Date: This Month' :
+                 'Due Date: This Year'}
+                <ChevronDown size={14} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-[#292C33] border border-[#464c58]/40 text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] min-w-[180px]">
+              <DropdownMenuItem 
+                onClick={() => setDateFilter(null)}
+                className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === null ? 'bg-[#3F4249]/50' : ''}`}
+              >
+                All
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setDateFilter("today")}
+                className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "today" ? 'bg-[#3F4249]/50' : ''}`}
+              >
+                Today
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setDateFilter("week")}
+                className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "week" ? 'bg-[#3F4249]/50' : ''}`}
+              >
+                This Week
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setDateFilter("month")}
+                className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "month" ? 'bg-[#3F4249]/50' : ''}`}
+              >
+                This Month
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setDateFilter("year")}
+                className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${dateFilter === "year" ? 'bg-[#3F4249]/50' : ''}`}
+              >
+                This Year
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
