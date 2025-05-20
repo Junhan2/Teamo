@@ -63,6 +63,23 @@ body {
     100% { transform: translate(0, 0) rotate(0deg); }
   }
   
+  /* Mobile version with smaller distances */
+  @media (max-width: 768px) {
+    @keyframes space-float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      10% { transform: translate(25vw, -10vh) rotate(30deg); }
+      20% { transform: translate(25vw, 15vh) rotate(60deg); }
+      30% { transform: translate(0vw, 25vh) rotate(90deg); }
+      40% { transform: translate(-25vw, 15vh) rotate(150deg); }
+      50% { transform: translate(-25vw, -10vh) rotate(210deg); }
+      60% { transform: translate(-15vw, -25vh) rotate(270deg); }
+      70% { transform: translate(15vw, -25vh) rotate(330deg); }
+      80% { transform: translate(15vw, -5vh) rotate(350deg); }
+      90% { transform: translate(5vw, 0vh) rotate(355deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+  }
+  
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out forwards;
   }
@@ -139,6 +156,16 @@ body {
     opacity: 0;
     filter: blur(1px);
     box-shadow: 0 0 8px 1px rgba(161, 92, 246, 0.6);
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .sparkle {
+      width: 4px;
+      height: 4px;
+      filter: blur(0.7px);
+      box-shadow: 0 0 6px 1px rgba(161, 92, 246, 0.6);
+    }
   }
   
   /* Sparkles always visible with subtle animation */
