@@ -151,8 +151,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex items-center mb-3">
+    <form onSubmit={handleSubmit} className="space-y-2">
+      <div className="flex items-center mb-2">
         <div className="flex-grow relative">
           <Input
             id="title"
@@ -165,7 +165,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         </div>
       </div>
       
-      <div className="space-y-2">
+      <div className="space-y-1 mb-2">
         <Textarea
           id="description"
           placeholder="Description (optional)"
@@ -176,7 +176,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         />
       </div>
       
-      <div className="w-full">
+      <div className="w-full mb-3">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -208,7 +208,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-6 mb-2 w-full py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem]"
+        className="mt-2 mb-2 w-full py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem]"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[600]">Add Task</span></>}

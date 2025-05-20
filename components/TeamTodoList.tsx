@@ -744,24 +744,97 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
           
           {/* Pagination Controls */}
           {todos.length > itemsPerPage && (
-            <div className="flex justify-center mt-6 gap-4">
+            <div className="flex items-center mt-6 gap-2 justify-start">
               <Button
                 variant="outline"
                 size="icon"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                className="h-10 w-10 p-0 rounded-none bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none aspect-square shadow-md"
+                className="h-8 w-8 p-0 rounded-md bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none shadow-md"
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={16} />
               </Button>
+              
+              {/* Page Numbers */}
+              {Array.from({ length: Math.min(Math.ceil(todos.length / itemsPerPage), 5) }, (_, i) => {
+                // Calculate page number logic
+                const totalPages = Math.ceil(todos.length / itemsPerPage);
+                let pageNum = i + 1;
+                
+                // For many pages, show something like 1 2 ... 9 10 when on page 1 or 2
+                // Or 1 2 ... 9 10 when on page 9 or 10
+                // Or 1 ... 5 6 7 ... 10 when on page 6
+                if (totalPages > 5) {
+                  if (currentPage <= 3) {
+                    // Near start
+                    if (i < 3) {
+                      pageNum = i + 1;
+                    } else if (i === 3) {
+                      return (
+                        <span key="ellipsis-1" className="text-gray-400 mx-1">...</span>
+                      );
+                    } else {
+                      pageNum = totalPages;
+                    }
+                  } else if (currentPage >= totalPages - 2) {
+                    // Near end
+                    if (i === 0) {
+                      pageNum = 1;
+                    } else if (i === 1) {
+                      return (
+                        <span key="ellipsis-2" className="text-gray-400 mx-1">...</span>
+                      );
+                    } else {
+                      pageNum = totalPages - (4 - i);
+                    }
+                  } else {
+                    // Middle
+                    if (i === 0) {
+                      pageNum = 1;
+                    } else if (i === 1) {
+                      return (
+                        <span key="ellipsis-3" className="text-gray-400 mx-1">...</span>
+                      );
+                    } else if (i === 4) {
+                      return (
+                        <span key="ellipsis-4" className="text-gray-400 mx-1">...</span>
+                      );
+                    } else if (i === 3) {
+                      pageNum = totalPages;
+                    } else {
+                      pageNum = currentPage;
+                    }
+                  }
+                } else {
+                  pageNum = i + 1;
+                }
+                
+                // Return button for this page number
+                return (
+                  <Button
+                    key={`page-${pageNum}`}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-8 w-8 p-0 rounded-md ${
+                      currentPage === pageNum 
+                        ? 'bg-[#FF82C2] text-black border-none' 
+                        : 'bg-[#3F4249] text-white hover:bg-[#4C4F57] border-none'
+                    } shadow-md`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
               <Button
                 variant="outline"
                 size="icon"
                 disabled={currentPage >= Math.ceil(todos.length / itemsPerPage)}
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
-                className="h-10 w-10 p-0 rounded-none bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none aspect-square shadow-md"
+                className="h-8 w-8 p-0 rounded-md bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57] border-none shadow-md"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </Button>
             </div>
           )}
