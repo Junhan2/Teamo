@@ -298,13 +298,13 @@ export default function DashboardPage() {
                   <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">TEAM</span>
                     </TabsTrigger>
