@@ -294,30 +294,67 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start mb-4">
-                  <TabsList className="bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
+                  <div className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto flex gap-1">
+                    {/* Animated background slider */}
+                    <motion.div
+                      className="absolute top-1 bottom-1 bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
+                      initial={false}
+                      animate={{
+                        left: activeTab === 'my-todos' ? '4px' : '50%',
+                        width: activeTab === 'my-todos' ? 'calc(50% - 6px)' : 'calc(50% - 6px)',
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                        mass: 0.8,
+                      }}
+                    />
+                    
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 ${
-                        activeTab === 'my-todos' 
-                          ? 'bg-slate-50 text-slate-700 border border-slate-200 shadow-sm' 
-                          : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
-                      }`}
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent"
                     >
-                      <User size={16} className={activeTab === 'my-todos' ? 'text-slate-600' : 'text-slate-400'} />
-                      MY
+                      <motion.div
+                        animate={{
+                          color: activeTab === 'my-todos' ? '#475569' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <User size={16} />
+                      </motion.div>
+                      <motion.span
+                        animate={{
+                          color: activeTab === 'my-todos' ? '#374151' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        MY
+                      </motion.span>
                     </TabsTrigger>
+                    
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 ${
-                        activeTab === 'team-todos' 
-                          ? 'bg-slate-50 text-slate-700 border border-slate-200 shadow-sm' 
-                          : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
-                      }`}
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent"
                     >
-                      <Users size={16} className={activeTab === 'team-todos' ? 'text-slate-600' : 'text-slate-400'} />
-                      TEAM
+                      <motion.div
+                        animate={{
+                          color: activeTab === 'team-todos' ? '#475569' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Users size={16} />
+                      </motion.div>
+                      <motion.span
+                        animate={{
+                          color: activeTab === 'team-todos' ? '#374151' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        TEAM
+                      </motion.span>
                     </TabsTrigger>
-                  </TabsList>
+                  </div>
                 </div>
                 
                 <TabsContent value="my-todos" className="focus:outline-none">
