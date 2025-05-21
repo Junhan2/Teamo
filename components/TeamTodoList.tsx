@@ -688,7 +688,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     </div>
                   )}
                   
-                  <div className="flex flex-wrap items-center justify-between text-sm text-light-muted mt-3 pt-2 border-t border-light-border">
+                  <div className="flex flex-wrap items-center justify-between text-sm text-light-muted mt-4 pt-3 border-t border-light-border/60">
                     <div className="flex items-center gap-2">
                       {filter === "team" && (
                         <span className={`px-2 py-0.5 text-xs rounded-sm bg-gray-100 text-light-primary border border-light-border mr-1`}>

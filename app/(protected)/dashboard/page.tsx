@@ -12,7 +12,7 @@ import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
-import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote } from "lucide-react"
+import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote, User, Users } from "lucide-react"
 
 interface UserProfile {
   id: string
@@ -293,18 +293,28 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="flex justify-start mb-3">
-                  <TabsList className="bg-gray-100 rounded-full p-1 h-auto">
+                <div className="flex justify-start mb-4">
+                  <TabsList className="bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-full transition-all duration-200 px-6 py-2 text-sm font-medium font-dm-sans data-[state=active]:bg-[#525252] data-[state=active]:text-white data-[state=active]:shadow-sm ${activeTab === 'my-todos' ? 'bg-[#525252] text-white shadow-sm' : 'bg-transparent text-light-primary hover:bg-white/50'}`}
+                      className={`rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 ${
+                        activeTab === 'my-todos' 
+                          ? 'bg-slate-50 text-slate-700 border border-slate-200 shadow-sm' 
+                          : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
+                      }`}
                     >
+                      <User size={16} className={activeTab === 'my-todos' ? 'text-slate-600' : 'text-slate-400'} />
                       MY
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-full transition-all duration-200 px-6 py-2 text-sm font-medium font-dm-sans data-[state=active]:bg-[#525252] data-[state=active]:text-white data-[state=active]:shadow-sm ${activeTab === 'team-todos' ? 'bg-[#525252] text-white shadow-sm' : 'bg-transparent text-light-primary hover:bg-white/50'}`}
+                      className={`rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 ${
+                        activeTab === 'team-todos' 
+                          ? 'bg-slate-50 text-slate-700 border border-slate-200 shadow-sm' 
+                          : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50/50'
+                      }`}
                     >
+                      <Users size={16} className={activeTab === 'team-todos' ? 'text-slate-600' : 'text-slate-400'} />
                       TEAM
                     </TabsTrigger>
                   </TabsList>
