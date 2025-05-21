@@ -201,15 +201,15 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
 
   if (loading) {
     return (
-      <div className="flex items-center space-x-2 text-white p-2">
-        <div className="w-5 h-5 border-t-2 border-l-2 border-blue-500 rounded-full animate-spin"></div>
+      <div className="flex items-center space-x-2 text-[#171717] p-2">
+        <div className="w-5 h-5 border-t-2 border-l-2 border-[#3fcf8e] rounded-full animate-spin"></div>
         <span>Loading subscriptions...</span>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 text-white">
+    <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] text-[#171717]">
       <div 
         className="p-4 flex justify-between items-center cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
@@ -232,9 +232,9 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
             exit={{ height: 0, opacity: 0 }}
             transition={snappyTransition}
           >
-            <div className="px-4 pb-4 border-t border-[#464c58]/30">
+            <div className="px-4 pb-4 border-t border-[rgba(0,0,0,0.20)]">
               {teamMembers.length === 0 ? (
-                <div className="py-4 text-center text-gray-400">
+                <div className="py-4 text-center text-[#707070]">
                   No team members available
                 </div>
               ) : (
@@ -244,7 +244,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                       variant="outline"
                       size="sm"
                       onClick={toggleSelectAll}
-                      className="text-xs px-2 py-1 h-7 bg-[#3F4249] border-none hover:bg-[#4C4F57]"
+                      className="text-xs px-2 py-1 h-7 bg-[#FDFDFD] border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white"
                     >
                       {subscribedUserIds.length === teamMembers.length ? 'Deselect All' : 'Select All'}
                     </Button>
@@ -254,7 +254,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                       size="sm"
                       onClick={saveSubscriptions}
                       disabled={saving}
-                      className="text-xs px-3 py-1 h-7 bg-[#FF82C2] hover:bg-[#FF61B7] text-white flex items-center gap-1"
+                      className="text-xs px-3 py-1 h-7 bg-[#3fcf8e] hover:bg-[#3fcf8e]/90 text-white flex items-center gap-1"
                     >
                       {saving ? (
                         <>
@@ -274,12 +274,12 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                     {teamMembers.map(member => (
                       <motion.div
                         key={member.id}
-                        className="flex items-center justify-between p-2 bg-[#1F2125] rounded-md hover:bg-[#292C33] transition-colors"
+                        className="flex items-center justify-between p-2 bg-[#FDFDFD] rounded-md hover:bg-[#3fcf8e]/10 transition-colors border border-[rgba(0,0,0,0.10)]"
                         whileHover={{ scale: 1.01 }}
                         transition={snappyTransition}
                       >
                         <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-[#3F4249] flex items-center justify-center text-xs mr-3">
+                          <div className="w-8 h-8 rounded-full bg-[#FDFDFD] border border-[rgba(0,0,0,0.20)] flex items-center justify-center text-xs mr-3 text-[#171717]">
                             {member.avatar_url ? (
                               <img 
                                 src={member.avatar_url}
@@ -295,7 +295,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                               {member.full_name || member.email.split('@')[0]}
                             </div>
                             {member.full_name && (
-                              <div className="text-xs text-gray-400">{member.email}</div>
+                              <div className="text-xs text-[#707070]">{member.email}</div>
                             )}
                           </div>
                         </div>
@@ -303,7 +303,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                         <Checkbox
                           checked={subscribedUserIds.includes(member.id)}
                           onCheckedChange={() => toggleSubscription(member.id)}
-                          className="data-[state=checked]:bg-[#FF82C2] data-[state=checked]:border-[#FF82C2]"
+                          className="data-[state=checked]:bg-[#3fcf8e] data-[state=checked]:border-[#3fcf8e]"
                         />
                       </motion.div>
                     ))}

@@ -38,7 +38,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center p-8 text-white">
+      <div className="flex justify-center items-center p-8 text-[#171717]">
         <div className="text-center">
           <p className="text-lg font-medium">Please log in to view your calendar</p>
         </div>
@@ -49,7 +49,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   return (
     <div className="w-full animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-sm font-medium text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] flex items-center">
+        <h1 className="text-sm font-medium text-[#171717] uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] flex items-center">
           <Calendar className="mr-2" size={16} />
           CALENDAR
         </h1>
@@ -60,9 +60,9 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
               id="show-completed"
               checked={showCompletedTasks}
               onCheckedChange={setShowCompletedTasks}
-              className="data-[state=checked]:bg-[#5AD363]"
+              className="data-[state=checked]:bg-[#3fcf8e]"
             />
-            <Label htmlFor="show-completed" className="text-sm text-white flex items-center">
+            <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
               <Eye size={14} className="mr-1" />
               Show completed tasks
             </Label>
@@ -88,17 +88,17 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
             onSubscriptionChange={handleSubscriptionChange}
           />
           
-          <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-4 text-white">
+          <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] p-4 text-[#171717]">
             <div className="flex items-center mb-3">
               <Users size={18} className="mr-2" />
               <h3 className="font-medium">Subscription Info</h3>
             </div>
             
-            <p className="text-sm text-gray-300 mb-3">
+            <p className="text-sm text-[#707070] mb-3">
               Subscribe to team members to view their tasks on your calendar. This helps you coordinate work and deadlines.
             </p>
             
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-[#707070]">
               <div className="flex items-start mb-2">
                 <span className="font-medium mr-1">•</span>
                 <span>You are currently subscribed to {subscribedUserIds.length} team member{subscribedUserIds.length !== 1 ? 's' : ''}</span>

@@ -683,7 +683,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   </div>
                   
                   {todo.description && expandedDescriptions[todo.id] && (
-                    <div className="mt-3 py-2 px-3 text-sm text-light-muted bg-gray-50 rounded-md border border-light-border transition-all duration-200 shadow-sm">
+                    <div className="mt-3 py-2 px-3 text-sm text-light-muted bg-[#F1F1F1] rounded-md border border-light-border transition-all duration-200 shadow-sm">
                       {todo.description}
                     </div>
                   )}

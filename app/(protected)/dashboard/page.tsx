@@ -12,7 +12,7 @@ import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
-import { CheckSquare, Calendar } from "lucide-react"
+import { CheckSquare, Calendar, Plus, BarChart3 } from "lucide-react"
 
 interface UserProfile {
   id: string
@@ -344,7 +344,10 @@ export default function DashboardPage() {
             {/* 할일 추가 섹션 */}
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono">ADD NEW TASK</h2>
+                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  ADD NEW TASK
+                </h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -359,7 +362,10 @@ export default function DashboardPage() {
             
             {/* 통계 섹션 */}
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono">STATISTICS</h2>
+              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                STATISTICS
+              </h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-base text-gray-300">Complete</span>
