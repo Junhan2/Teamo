@@ -403,7 +403,7 @@ export default function UnifiedTaskGrid() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">전체</SelectItem>
-                      <SelectItem value="pending">진행중</SelectItem>
+                      <SelectItem value="pending">Not yet</SelectItem>
                       <SelectItem value="completed">완료</SelectItem>
                     </SelectContent>
                   </Select>
