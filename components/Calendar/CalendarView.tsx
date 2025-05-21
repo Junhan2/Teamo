@@ -658,7 +658,11 @@ const CalendarView = ({
                       {todo.user_id === userId && (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Badge className={`${getStatusColor(todo.status)} px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
+                            <Badge className={`${getStatusColor(todo.status)} px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 ${
+                              todo.status === 'pending' ? 'hover:bg-[#FFD700] hover:text-black' :
+                              todo.status === 'in_progress' ? 'hover:bg-[#FF69B4] hover:text-black' :
+                              'hover:bg-[#32CD32] hover:text-black'
+                            }`}>
                               {getStatusIcon(todo.status)}
                               <span className="ml-1 text-xs">
                                 {todo.status === 'pending' ? 'Not yet' : 

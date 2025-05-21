@@ -724,7 +724,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       {(filter === "my" || todo.user_id === userId) ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 hover:opacity-90 transition-opacity`}>
+                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 ${
+                              todo.status === 'pending' ? 'hover:bg-amber-500 hover:text-white' :
+                              todo.status === 'in_progress' ? 'hover:bg-pink-500 hover:text-white' :
+                              'hover:bg-emerald-600 hover:text-white'
+                            }`}>
                               <span>{getStatusText(todo.status)}</span>
                               <ChevronDown size={10} />
                             </Badge>
