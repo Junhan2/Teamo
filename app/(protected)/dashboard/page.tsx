@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -300,8 +300,10 @@ export default function DashboardPage() {
                       className="absolute top-1 bottom-1 bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
                       initial={false}
                       animate={{
-                        left: activeTab === 'my-todos' ? '4px' : '50%',
-                        width: activeTab === 'my-todos' ? 'calc(50% - 6px)' : 'calc(50% - 6px)',
+                        x: activeTab === 'my-todos' ? 4 : (myTabRef.current?.offsetWidth || 0) + 8,
+                        width: activeTab === 'my-todos' 
+                          ? (myTabRef.current?.offsetWidth || 0) 
+                          : (teamTabRef.current?.offsetWidth || 0),
                       }}
                       transition={{
                         type: "spring",
@@ -312,6 +314,7 @@ export default function DashboardPage() {
                     />
                     
                     <TabsTrigger 
+                      ref={myTabRef}
                       value="my-todos" 
                       className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
@@ -334,6 +337,7 @@ export default function DashboardPage() {
                     </TabsTrigger>
                     
                     <TabsTrigger 
+                      ref={teamTabRef}
                       value="team-todos" 
                       className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
