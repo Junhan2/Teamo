@@ -45,6 +45,7 @@ interface CalendarViewProps {
   onTaskUpdate?: () => void
   showCompletedTasks?: boolean
   subscribedUserIds?: string[]
+  onSelectedDateChange?: (date: Date | null, todos: Todo[]) => void
 }
 
 type ViewMode = 'month' | 'week'
@@ -60,7 +61,8 @@ const CalendarView = ({
   userId,
   onTaskUpdate,
   showCompletedTasks = true,
-  subscribedUserIds = []
+  subscribedUserIds = [],
+  onSelectedDateChange
 }: CalendarViewProps) => {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [todos, setTodos] = useState<Todo[]>([])
@@ -211,10 +213,12 @@ const CalendarView = ({
         return isSameDay(new Date(todo.due_date), selectedDate)
       })
       setSelectedTodos(todosForSelectedDate)
+      onSelectedDateChange?.(selectedDate, todosForSelectedDate)
     } else {
       setSelectedTodos([])
+      onSelectedDateChange?.(null, [])
     }
-  }, [selectedDate, todos])
+  }, [selectedDate, todos, onSelectedDateChange])
 
   // Get todos for a specific day
   const getTodosForDay = (day: Date) => {
@@ -501,8 +505,8 @@ const CalendarView = ({
             })}
           </div>
         ) : (
-          // Week view - one day per row
-          <div className="space-y-2">
+          // Week view - horizontal layout
+          <div className="grid grid-cols-7 gap-2">
             {calendarDays.map((day, i) => {
               const dayTodos = getTodosForDay(day)
               const isDaySelected = selectedDate && isSameDay(day, selectedDate)
@@ -513,85 +517,79 @@ const CalendarView = ({
                 <motion.div
                   key={i}
                   className={`
-                    p-4 border rounded-lg cursor-pointer bg-white
+                    min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white
                     ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : 'border-[rgba(0,0,0,0.20)]'}
                     ${isCurrentDay ? 'border-[#3fcf8e] border-2' : ''}
                     hover:border-[rgba(0,0,0,0.30)] transition-colors
                   `}
                   onClick={() => setSelectedDate(day)}
-                  whileHover={{ scale: 1.005 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={snappyTransition}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span 
-                        className={`
-                          text-lg font-semibold rounded-full w-10 h-10 flex items-center justify-center
-                          ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                          ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f5f5f5]'}
-                        `}
-                      >
-                        {format(day, 'd')}
-                      </span>
-                      <div>
-                        <h3 className={`text-lg font-medium ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
-                          {dayName}
-                        </h3>
-                        <p className="text-sm text-[#707070]">{format(day, 'MMMM d, yyyy')}</p>
-                      </div>
-                    </div>
-                    
+                  <div className="flex flex-col items-center mb-2">
+                    <span 
+                      className={`
+                        text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center mb-1
+                        ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
+                        ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f5f5f5]'}
+                      `}
+                    >
+                      {format(day, 'd')}
+                    </span>
+                    <h3 className={`text-sm font-medium ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
+                      {dayName}
+                    </h3>
                     {dayTodos.length > 0 && (
-                      <div className="w-8 h-8 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-sm font-medium">
+                      <div className="w-5 h-5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium mt-1">
                         {dayTodos.length}
                       </div>
                     )}
                   </div>
                   
                   {/* Task items for the day */}
-                  {dayTodos.length > 0 ? (
-                    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-                      {dayTodos.map(todo => (
-                        <div
-                          key={todo.id}
-                          className={`
-                            p-3 rounded-md border relative overflow-hidden
-                            ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 border-[#3fcf8e]/20' : 'bg-[#FDFDFD] border-[rgba(0,0,0,0.20)]'}
-                          `}
-                        >
-                          {/* User color indicator */}
-                          <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
-                          
-                          <div className="pl-2">
-                            <h4 className={`font-medium text-sm ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
-                              {todo.title}
-                            </h4>
-                            {todo.description && (
-                              <p className="text-xs text-[#707070] mt-1 line-clamp-2">{todo.description}</p>
-                            )}
-                            <div className="flex items-center justify-between mt-2">
-                              {todo.user_id !== userId && (
-                                <span className="text-xs text-[#707070] bg-[#f5f5f5] px-2 py-1 rounded">
-                                  {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                                </span>
-                              )}
-                              <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-2 py-1 text-xs flex items-center gap-1`}>
-                                {getStatusIcon(todo.status)}
-                                <span>
-                                  {todo.status === 'pending' ? 'Not yet' : 
-                                   todo.status === 'in_progress' ? 'Doing' : 'Complete'}
-                                </span>
+                  <div className="space-y-1 max-h-[150px] overflow-y-auto scrollbar-thin">
+                    {dayTodos.slice(0, 4).map(todo => (
+                      <div
+                        key={todo.id}
+                        className={`
+                          text-xs p-2 rounded border relative overflow-hidden
+                          ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 border-[#3fcf8e]/20' : 'bg-[#FDFDFD] border-[rgba(0,0,0,0.10)]'}
+                        `}
+                      >
+                        {/* User color indicator */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
+                        
+                        <div className="pl-1.5">
+                          <h4 className={`font-medium text-xs truncate ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
+                            {todo.title}
+                          </h4>
+                          <div className="flex items-center justify-between mt-1">
+                            {todo.user_id !== userId && (
+                              <span className="text-xs text-[#707070] bg-[#f5f5f5] px-1 py-0.5 rounded text-xs">
+                                {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
                               </span>
-                            </div>
+                            )}
+                            <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1 py-0.5 text-xs flex items-center`}>
+                              {getStatusIcon(todo.status)}
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 text-[#707070] text-sm">
-                      No tasks for this day
-                    </div>
-                  )}
+                      </div>
+                    ))}
+                    
+                    {/* If there are more tasks than can be shown, show a "more" indicator */}
+                    {dayTodos.length > 4 && (
+                      <div className="text-xs text-[#707070] text-center py-1">
+                        +{dayTodos.length - 4} more
+                      </div>
+                    )}
+                    
+                    {dayTodos.length === 0 && (
+                      <div className="text-center py-4 text-[#707070] text-xs">
+                        No tasks
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               )
             })}
@@ -599,115 +597,6 @@ const CalendarView = ({
         )}
       </div>
 
-      {/* Selected date tasks panel */}
-      <AnimatePresence>
-        {selectedDate && selectedTodos.length > 0 && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={snappyTransition}
-            className="border-t border-[rgba(0,0,0,0.20)] overflow-hidden"
-          >
-            <div className="p-4">
-              <h3 className="text-lg font-medium mb-3">
-                Tasks for {format(selectedDate, 'MMMM d, yyyy')}
-              </h3>
-              
-              <div className="space-y-2">
-                {selectedTodos.map(todo => (
-                  <motion.div
-                    key={todo.id}
-                    className="bg-[#FDFDFD] p-3 rounded-md border border-[rgba(0,0,0,0.20)]"
-                    initial={{ y: 10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={snappyTransition}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className={`font-medium ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
-                          {todo.title}
-                        </h4>
-                        
-                        {todo.description && (
-                          <p className="text-sm text-[#707070] mt-1">{todo.description}</p>
-                        )}
-                        
-                        <div className="flex items-center gap-2 mt-2">
-                          {/* Show user name for team tasks */}
-                          {todo.user_id !== userId && (
-                            <>
-                              <span className="px-1.5 py-0.5 text-xs rounded-sm bg-[#FDFDFD] text-[#171717] border border-[rgba(0,0,0,0.20)]">
-                                {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                              </span>
-                              
-                              {/* Status badge for team tasks (read-only) */}
-                              <Badge className={`${getStatusColor(todo.status)} px-2 py-0.5 h-5 rounded-sm text-xs flex items-center gap-1`}>
-                                {getStatusIcon(todo.status)}
-                                <span>
-                                  {todo.status === 'pending' ? 'Not yet' : 
-                                   todo.status === 'in_progress' ? 'Doing' : 'Complete'}
-                                </span>
-                              </Badge>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Status dropdown for the user's own tasks */}
-                      {todo.user_id === userId && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Badge className={`${getStatusColor(todo.status)} px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 ${
-                              todo.status === 'pending' ? 'hover:bg-[#FFD700] hover:text-black' :
-                              todo.status === 'in_progress' ? 'hover:bg-[#FF69B4] hover:text-black' :
-                              'hover:bg-[#32CD32] hover:text-black'
-                            }`}>
-                              {getStatusIcon(todo.status)}
-                              <span className="ml-1 text-xs">
-                                {todo.status === 'pending' ? 'Not yet' : 
-                                 todo.status === 'in_progress' ? 'Doing' : 'Complete'}
-                              </span>
-                            </Badge>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent 
-                            sideOffset={5} 
-                            className="bg-[#fcfcfc] border border-[rgba(0,0,0,0.20)] text-[#171717] shadow-[0_0_25px_rgba(0,0,0,0.15)] p-1"
-                          >
-                            <DropdownMenuItem 
-                              onClick={() => updateTodoStatus(todo.id, 'pending')}
-                              className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 mb-1 ${todo.status === 'pending' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'hover:bg-amber-100 hover:text-amber-700'}`}
-                            >
-                              <ListTodo size={14} className="mr-2" />
-                              <span>Not yet</span>
-                            </DropdownMenuItem>
-                            
-                            <DropdownMenuItem 
-                              onClick={() => updateTodoStatus(todo.id, 'in_progress')}
-                              className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 mb-1 ${todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'hover:bg-blue-100 hover:text-blue-700'}`}
-                            >
-                              <Activity size={14} className="mr-2" />
-                              <span>Doing</span>
-                            </DropdownMenuItem>
-                            
-                            <DropdownMenuItem 
-                              onClick={() => updateTodoStatus(todo.id, 'completed')}
-                              className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 ${todo.status === 'completed' ? 'bg-green-100 text-green-700 border border-green-200' : 'hover:bg-green-100 hover:text-green-700'}`}
-                            >
-                              <CheckCircle size={14} className="mr-2" />
-                              <span>Complete</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

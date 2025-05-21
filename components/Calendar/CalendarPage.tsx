@@ -6,7 +6,10 @@ import CalendarView from "./CalendarView"
 import TeamMemberSubscription from "./TeamMemberSubscription"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Calendar, Eye, Users } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Calendar, Eye, Users, ListTodo, Activity, CheckCircle } from "lucide-react"
+import { format } from "date-fns"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface UserProfile {
   id: string
@@ -23,6 +26,8 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   const [showCompletedTasks, setShowCompletedTasks] = useState(true)
   const [subscribedUserIds, setSubscribedUserIds] = useState<string[]>([])
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedTodos, setSelectedTodos] = useState<any[]>([])
   const supabase = createClient()
 
   // Handle subscription changes
@@ -34,6 +39,40 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   // Handle task updates
   const handleTaskUpdate = () => {
     setRefreshTrigger(prev => prev + 1)
+  }
+
+  // Handle selected date change
+  const handleSelectedDateChange = (date: Date | null, todos: any[]) => {
+    setSelectedDate(date)
+    setSelectedTodos(todos)
+  }
+
+  // Get status color for badges
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-[#FFDA40] text-black'
+      case 'in_progress':
+        return 'bg-[#FF82C2] text-black'
+      case 'completed':
+        return 'bg-[#3fcf8e] text-black'
+      default:
+        return 'bg-[#FFDA40] text-black'
+    }
+  }
+
+  // Get status icon for tasks
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <ListTodo size={12} />
+      case 'in_progress':
+        return <Activity size={12} />
+      case 'completed':
+        return <CheckCircle size={12} />
+      default:
+        return <ListTodo size={12} />
+    }
   }
 
   if (!user) {
@@ -53,40 +92,104 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
           <Calendar className="mr-2" size={16} />
           CALENDAR
         </h1>
-        
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="show-completed"
-              checked={showCompletedTasks}
-              onCheckedChange={setShowCompletedTasks}
-              className="data-[state=checked]:bg-[#3fcf8e]"
-            />
-            <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
-              <Eye size={14} className="mr-1" />
-              Show completed tasks
-            </Label>
-          </div>
-        </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Main calendar view */}
-        <div className="lg:col-span-3">
+        <div className="xl:col-span-2">
           <CalendarView
             userId={user.id}
             onTaskUpdate={handleTaskUpdate}
             showCompletedTasks={showCompletedTasks}
             subscribedUserIds={subscribedUserIds}
+            onSelectedDateChange={handleSelectedDateChange}
           />
         </div>
         
-        {/* Sidebar with subscription controls */}
-        <div className="lg:col-span-1 space-y-6">
-          <TeamMemberSubscription
-            userId={user.id}
-            onSubscriptionChange={handleSubscriptionChange}
-          />
+        {/* Sidebar with controls and selected date tasks */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Control panel */}
+          <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] p-4">
+            <div className="space-y-4">
+              <TeamMemberSubscription
+                userId={user.id}
+                onSubscriptionChange={handleSubscriptionChange}
+              />
+              
+              <div className="border-t border-[rgba(0,0,0,0.20)] pt-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="show-completed"
+                    checked={showCompletedTasks}
+                    onCheckedChange={setShowCompletedTasks}
+                    className="data-[state=checked]:bg-[#3fcf8e]"
+                  />
+                  <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
+                    <Eye size={14} className="mr-1" />
+                    Show completed tasks
+                  </Label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Selected date tasks */}
+          <AnimatePresence>
+            {selectedDate && selectedTodos.length > 0 && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)]"
+              >
+                <div className="p-4">
+                  <h3 className="text-lg font-medium mb-3 text-[#171717]">
+                    Tasks for {format(selectedDate, 'MMMM d, yyyy')}
+                  </h3>
+                  
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {selectedTodos.map(todo => (
+                      <motion.div
+                        key={todo.id}
+                        className="bg-white p-3 rounded-md border border-[rgba(0,0,0,0.10)]"
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className={`font-medium text-sm ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
+                              {todo.title}
+                            </h4>
+                            
+                            {todo.description && (
+                              <p className="text-xs text-[#707070] mt-1 line-clamp-2">{todo.description}</p>
+                            )}
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                              {/* Show user name for team tasks */}
+                              {todo.user_id !== user?.id && (
+                                <span className="px-2 py-1 text-xs rounded-sm bg-[#f5f5f5] text-[#171717] border border-[rgba(0,0,0,0.10)]">
+                                  {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
+                                </span>
+                              )}
+                              
+                              <Badge className={`${getStatusColor(todo.status)} px-2 py-1 text-xs flex items-center gap-1`}>
+                                {getStatusIcon(todo.status)}
+                                <span>
+                                  {todo.status === 'pending' ? 'Not yet' : 
+                                   todo.status === 'in_progress' ? 'Doing' : 'Complete'}
+                                </span>
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
