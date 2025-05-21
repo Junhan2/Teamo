@@ -700,7 +700,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         </span>
                       )}
                       
-                      {todo.due_date && (
+                      {todo.due_date && todo.status !== 'completed' && (
                         <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-light-border shadow-sm">
                           <Clock size={12} className="mr-1.5 text-light-muted" />
                           <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
@@ -719,6 +719,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                               Overdue
                             </span>
                           )}
+                        </div>
+                      )}
+                      
+                      {todo.due_date && todo.status === 'completed' && (
+                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-light-border shadow-sm">
+                          <Clock size={12} className="mr-1.5 text-light-muted" />
+                          <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                         </div>
                       )}
                     </div>
