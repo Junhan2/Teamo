@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import {
   ChevronLeft,
@@ -69,6 +69,10 @@ const CalendarView = ({
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('month')
   const supabase = createClient()
+  
+  // Refs for animated tabs
+  const monthTabRef = useRef<HTMLButtonElement>(null)
+  const weekTabRef = useRef<HTMLButtonElement>(null)
 
   // Handler for navigating to previous period
   const prevPeriod = () => {
@@ -316,29 +320,56 @@ const CalendarView = ({
             </h2>
             
             {/* View Mode Toggle */}
-            <div className="flex bg-[#f5f5f5] rounded-md p-1">
-              <Button
-                variant={viewMode === 'month' ? 'default' : 'ghost'}
-                size="sm"
+            <div className="relative bg-transparent border border-slate-200 rounded-lg p-1">
+              {/* Animated background slider */}
+              <motion.div
+                className="absolute bg-slate-50 border border-slate-200 shadow-sm rounded-md"
+                initial={false}
+                animate={{
+                  left: viewMode === 'month' ? '4px' : `${(monthTabRef.current?.offsetLeft || 0) + (monthTabRef.current?.offsetWidth || 0)}px`,
+                  width: viewMode === 'month' 
+                    ? `${monthTabRef.current?.offsetWidth || 0}px`
+                    : `${weekTabRef.current?.offsetWidth || 0}px`,
+                  top: '4px',
+                  bottom: '4px',
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 30,
+                  mass: 0.8,
+                }}
+              />
+              
+              <button
+                ref={monthTabRef}
                 onClick={() => setViewMode('month')}
-                className={`h-7 px-3 text-xs ${viewMode === 'month' 
-                  ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' 
-                  : 'text-[#171717] hover:bg-white'
-                }`}
+                className="relative z-10 rounded-md transition-all duration-300 px-3 py-1.5 text-xs font-medium flex items-center gap-1 bg-transparent border-transparent"
               >
-                Month
-              </Button>
-              <Button
-                variant={viewMode === 'week' ? 'default' : 'ghost'}
-                size="sm"
+                <motion.span
+                  animate={{
+                    color: viewMode === 'month' ? '#374151' : '#94a3b8',
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Month
+                </motion.span>
+              </button>
+              
+              <button
+                ref={weekTabRef}
                 onClick={() => setViewMode('week')}
-                className={`h-7 px-3 text-xs ${viewMode === 'week' 
-                  ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' 
-                  : 'text-[#171717] hover:bg-white'
-                }`}
+                className="relative z-10 rounded-md transition-all duration-300 px-3 py-1.5 text-xs font-medium flex items-center gap-1 bg-transparent border-transparent"
               >
-                Week
-              </Button>
+                <motion.span
+                  animate={{
+                    color: viewMode === 'week' ? '#374151' : '#94a3b8',
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Week
+                </motion.span>
+              </button>
             </div>
           </div>
           
@@ -371,39 +402,66 @@ const CalendarView = ({
         </div>
 
         {/* Status filters */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Button 
-            variant={statusFilter === null ? "default" : "outline"} 
-            size="sm"
+        <div className="flex flex-wrap gap-3 mt-4">
+          {/* All */}
+          <div 
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' : 'bg-transparent border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+            className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all duration-200 ${
+              statusFilter === null 
+                ? 'border-slate-300 bg-slate-50' 
+                : 'border-slate-200 bg-white hover:border-slate-300'
+            }`}
           >
-            All
-          </Button>
-          <Button 
-            variant={statusFilter === "pending" ? "default" : "outline"} 
-            size="sm"
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-slate-400"></div>
+              <span className="text-xs font-medium text-slate-700">All</span>
+            </div>
+          </div>
+
+          {/* Not yet */}
+          <div 
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' : 'bg-transparent border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+            className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all duration-200 ${
+              statusFilter === "pending" 
+                ? 'border-amber-300 bg-amber-50' 
+                : 'border-amber-200 bg-amber-50/50 hover:border-amber-300'
+            }`}
           >
-            Not yet
-          </Button>
-          <Button 
-            variant={statusFilter === "in_progress" ? "default" : "outline"} 
-            size="sm"
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+              <span className="text-xs font-medium text-amber-700">Not yet</span>
+            </div>
+          </div>
+
+          {/* Doing */}
+          <div 
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' : 'bg-transparent border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+            className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all duration-200 ${
+              statusFilter === "in_progress" 
+                ? 'border-blue-300 bg-blue-50' 
+                : 'border-blue-200 bg-blue-50/50 hover:border-blue-300'
+            }`}
           >
-            Doing
-          </Button>
-          <Button 
-            variant={statusFilter === "completed" ? "default" : "outline"} 
-            size="sm"
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              <span className="text-xs font-medium text-blue-700">Doing</span>
+            </div>
+          </div>
+
+          {/* Complete */}
+          <div 
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' : 'bg-transparent border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+            className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all duration-200 ${
+              statusFilter === "completed" 
+                ? 'border-emerald-300 bg-emerald-50' 
+                : 'border-emerald-200 bg-emerald-50/50 hover:border-emerald-300'
+            }`}
           >
-            Complete
-          </Button>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+              <span className="text-xs font-medium text-emerald-700">Complete</span>
+            </div>
+          </div>
         </div>
       </div>
 
