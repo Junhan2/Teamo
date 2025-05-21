@@ -12,7 +12,7 @@ import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
-import { CheckSquare, Calendar, Plus, BarChart3 } from "lucide-react"
+import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList } from "lucide-react"
 
 interface UserProfile {
   id: string
@@ -294,24 +294,25 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start py-3 mb-6">
-                  <TabsList className="bg-transparent space-x-2">
+                  <TabsList className="bg-gray-100 rounded-full p-1">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-md transition-all duration-200 outline outline-1 outline-light-border outline-offset-[-1px] ${activeTab === 'my-todos' ? 'bg-light-primary text-white' : 'bg-light-background text-light-primary hover:bg-light-hover hover:text-white'}`}
+                      className={`rounded-full transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#525252] text-white shadow-sm' : 'bg-transparent text-light-primary hover:bg-white/50'}`}
                     >
-                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">MY</span>
+                      <span className="px-6 py-2 text-sm font-medium font-dm-sans">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-md transition-all duration-200 outline outline-1 outline-light-border outline-offset-[-1px] ${activeTab === 'team-todos' ? 'bg-light-primary text-white' : 'bg-light-background text-light-primary hover:bg-light-hover hover:text-white'}`}
+                      className={`rounded-full transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#525252] text-white shadow-sm' : 'bg-transparent text-light-primary hover:bg-white/50'}`}
                     >
-                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">TEAM</span>
+                      <span className="px-6 py-2 text-sm font-medium font-dm-sans">TEAM</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
                 
                 <TabsContent value="my-todos" className="focus:outline-none">
                   <TeamTodoList 
+                    key={`my-todos-${activeTab}`}
                     userId={user?.id} 
                     filter="my" 
                     refreshTrigger={refreshTrigger}
@@ -325,6 +326,7 @@ export default function DashboardPage() {
                 
                 <TabsContent value="team-todos" className="focus:outline-none">
                   <TeamTodoList 
+                    key={`team-todos-${activeTab}`}
                     userId={user?.id} 
                     filter="team" 
                     refreshTrigger={refreshTrigger}
@@ -345,7 +347,7 @@ export default function DashboardPage() {
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border mb-6" id="addTodoForm">
               <div className="p-6">
                 <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
+                  <ClipboardList className="w-4 h-4" />
                   ADD NEW TASK
                 </h2>
                 {user && (
@@ -368,15 +370,15 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-base text-gray-300">Complete</span>
+                  <span className="text-base text-light-muted">Complete</span>
                   <div className="flex items-center">
-                    <span className="text-[#5AD363] font-semibold text-lg">{todoStats.completed}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-[#22c55e] font-semibold text-lg">{todoStats.completed}</span>
+                    <span className="text-base text-light-muted ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-[#5AD363] h-5 rounded-full"
+                    className="bg-[#22c55e] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.completed / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -384,15 +386,15 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">Doing</span>
+                  <span className="text-base text-light-muted">Doing</span>
                   <div className="flex items-center">
-                    <span className="text-[#FF82C2] font-semibold text-lg">{todoStats.inProgress}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-[#3b82f6] font-semibold text-lg">{todoStats.inProgress}</span>
+                    <span className="text-base text-light-muted ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-[#FF82C2] h-5 rounded-full"
+                    className="bg-[#3b82f6] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.inProgress / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -400,15 +402,15 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">Not yet</span>
+                  <span className="text-base text-light-muted">Not yet</span>
                   <div className="flex items-center">
-                    <span className="text-[#FFDA40] font-semibold text-lg">{todoStats.pending}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-[#f59e0b] font-semibold text-lg">{todoStats.pending}</span>
+                    <span className="text-base text-light-muted ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
                   <motion.div 
-                    className="bg-[#FFDA40] h-5 rounded-full"
+                    className="bg-[#f59e0b] h-5 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: todoStats.total > 0 ? `${(todoStats.pending / todoStats.total) * 100}%` : '0%' }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -429,12 +431,12 @@ export default function DashboardPage() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
             <span className="font-medium">My Tasks</span>
             {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF82C2] rounded-full border-2 border-light-background"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
           </Button>
         </Link>
         

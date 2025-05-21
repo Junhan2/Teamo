@@ -42,7 +42,7 @@ export default function Navbar({ user }: NavbarProps) {
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 py-2">
           <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2">
-            <span className="font-serif text-light-primary font-bold">Muung.</span>
+            <span className="font-serif text-light-primary font-bold font-fira-mono">tide.</span>
           </Link>
 
           <div className="flex items-center gap-4">

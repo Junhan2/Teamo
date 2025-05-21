@@ -452,13 +452,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-[#FFDA40] text-black'
+        return 'bg-amber-100 text-amber-700 border border-amber-200'
       case 'in_progress':
-        return 'bg-[#FF82C2] text-black'
+        return 'bg-blue-100 text-blue-700 border border-blue-200'
       case 'completed':
-        return 'bg-[#5AD363] text-black'
+        return 'bg-green-100 text-green-700 border border-green-200'
       default:
-        return 'bg-[#FFDA40] text-black'
+        return 'bg-amber-100 text-amber-700 border border-amber-200'
     }
   }
 
@@ -499,7 +499,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
+                className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 All
               </Button>
@@ -507,7 +507,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
+                className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Not yet
               </Button>
@@ -515,7 +515,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
+                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Doing
               </Button>
@@ -523,7 +523,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
+                className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Complete
               </Button>
@@ -580,14 +580,14 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-gray-50 text-sm px-4 py-1.5 h-8 transition-all duration-200 font-normal rounded-md flex items-center gap-2 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
-                  {dateFilter === null ? <><span className="font-light">Due date: </span><span>All</span></> : 
-                   dateFilter === "today" ? <><span className="font-light">Due date: </span><span>Today</span></> : 
-                   dateFilter === "week" ? <><span className="font-light">Due date: </span><span>This week</span></> :
-                   dateFilter === "month" ? <><span className="font-light">Due date: </span><span>This month</span></> :
-                   <><span className="font-light">Due date: </span><span>This year</span></>}
-                  <ChevronDown size={14} />
+                  {dateFilter === null ? <><span className="font-light">Due: </span><span>All</span></> : 
+                   dateFilter === "today" ? <><span className="font-light">Due: </span><span>Today</span></> : 
+                   dateFilter === "week" ? <><span className="font-light">Due: </span><span>Week</span></> :
+                   dateFilter === "month" ? <><span className="font-light">Due: </span><span>Month</span></> :
+                   <><span className="font-light">Due: </span><span>Year</span></>}
+                  <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px]">
@@ -701,18 +701,12 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           <Clock size={12} className="mr-1.5 text-light-muted" />
                           <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) >= 0 ? (
-                            calculateDaysLeft(todo.due_date) <= 7 ? (
-                              calculateDaysLeft(todo.due_date) === 0 ? (
-                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">
-                                  Today
-                                </span>
-                              ) : (
-                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-light-secondary text-white">
-                                  D-{calculateDaysLeft(todo.due_date)}
-                                </span>
-                              )
+                            calculateDaysLeft(todo.due_date) === 0 ? (
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">
+                                Today
+                              </span>
                             ) : (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
                                 D-{calculateDaysLeft(todo.due_date)}
                               </span>
                             )
@@ -879,7 +873,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     onClick={() => setCurrentPage(pageNum)}
                     className={`h-8 w-8 p-0 rounded-md ${
                       currentPage === pageNum 
-                        ? 'bg-light-accent text-white' 
+                        ? 'bg-[#525252] text-white' 
                         : 'bg-transparent text-light-primary hover:bg-gray-50'
                     } outline outline-1 outline-light-border outline-offset-[-1px]`}
                   >

@@ -97,7 +97,7 @@ export default function CalendarPageRoute() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-md shadow-lg bg-light-background text-light-primary hover:bg-light-accent hover:text-white flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
             <span className="font-medium">My Tasks</span>
@@ -108,12 +108,12 @@ export default function CalendarPageRoute() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-md shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>
             {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF82C2] rounded-full border-2 border-light-background"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
           </Button>
         </Link>
       </div>

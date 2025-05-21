@@ -75,10 +75,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-light-background">
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0f0f13] via-[#171720] to-[#0f0f13]"></div>
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-light-background via-gray-50 to-light-background"></div>
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#e5e5e51e_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e51e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
       </div>
       
       <div className="container relative z-10 max-w-md">
@@ -100,17 +100,17 @@ export default function LoginPage() {
               
               <img
                 src="/images/hero-3d-svg.svg"
-                alt="Muung"
+                alt="tide"
                 className="w-full h-auto object-contain animate-gentle-float transition-all duration-500"
                 style={{ 
-                  filter: "drop-shadow(0 5px 15px rgba(138, 104, 233, 0.25))"
+                  filter: "drop-shadow(0 5px 15px rgba(63, 207, 142, 0.25))"
                 }}
               />
             </div>
             
             {/* Mung. text overlapping with the image */}
             <h1 
-              className={`font-serif text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold relative z-10 hero-text transition-all duration-500 ${isMobileView ? 'mt-[-40px]' : 'mt-[-80px]'}`}
+              className={`font-serif text-transparent bg-clip-text bg-gradient-to-r from-light-accent to-light-primary font-bold relative z-10 hero-text transition-all duration-500 ${isMobileView ? 'mt-[-40px]' : 'mt-[-80px]'}`}
               style={{
                 fontSize: "clamp(48px, 10vw, 80px)", 
                 lineHeight: "1.1",
@@ -118,16 +118,16 @@ export default function LoginPage() {
                 letterSpacing: "-0.03em",
                 display: "block",
                 padding: "0 20px",
-                fontFamily: "var(--font-playfair)"
+                fontFamily: "var(--font-fira-mono)"
               }}
             >
-              Muung.
+              tide.
             </h1>
           </div>
           <p 
-            className="text-gray-300 text-lg mt-2 relative z-10" /* Larger, brighter subtitle */
+            className="text-light-muted text-lg mt-2 relative z-10" /* Larger, brighter subtitle */
             style={{
-              fontFamily: "var(--es-text-font-family, var(--inter-font))"
+              fontFamily: "var(--font-dm-sans)"
             }}
           >
             Effortlessly Manage Your Tasks
@@ -135,12 +135,12 @@ export default function LoginPage() {
         </div>
         
         <div className="animate-fadeIn mt-4">
-          <Card className="glass-card border-[#2a2a3c] shadow-xl border-2"> {/* Reduced margin top */}
+          <Card className="bg-light-background border-light-border shadow-lg border"> {/* Reduced margin top */}
             <CardHeader className="space-y-1 text-center pb-4">
             </CardHeader>
             <CardContent className="flex flex-col gap-5"> {/* Increased gap */}
               {error && (
-                <div className="p-3 rounded-lg bg-red-900/30 text-red-400 border border-red-800/50 text-sm">
+                <div className="p-3 rounded-lg bg-red-100 text-red-700 border border-red-200 text-sm">
                   {error}
                 </div>
               )}
@@ -148,7 +148,7 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full py-6 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md text-lg font-medium" /* Increased size and font */
+                className="w-full py-6 rounded-xl bg-light-accent hover:bg-light-hover text-white shadow-md text-lg font-medium outline outline-1 outline-light-border outline-offset-[-1px]" /* Increased size and font */
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -174,13 +174,13 @@ export default function LoginPage() {
                     d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
                   />
                 </svg>
-                <span style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}>
+                <span style={{ fontFamily: "var(--font-dm-sans)" }}>
                   {isLoading ? "Signing in..." : "Sign in with Google"}
                 </span>
               </Button>
             </CardContent>
-            <CardFooter className="text-center text-sm text-gray-400 pt-2 pb-4"> {/* Increased text size */}
-              <span style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}>
+            <CardFooter className="text-center text-sm text-light-muted pt-2 pb-4"> {/* Increased text size */}
+              <span style={{ fontFamily: "var(--font-dm-sans)" }}>
                 By signing in, you agree to our Terms of Service and Privacy Policy.
               </span>
             </CardFooter>
@@ -189,10 +189,10 @@ export default function LoginPage() {
         
         <div className="mt-12 text-center animate-fadeIn">
           <p 
-            className="text-sm text-gray-400" /* Increased text size */
-            style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}
+            className="text-sm text-light-muted" /* Increased text size */
+            style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            © 2025 Muung. All rights reserved.
+            © 2025 tide. All rights reserved.
           </p>
         </div>
       </div>
