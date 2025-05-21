@@ -294,7 +294,7 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start mb-4">
-                  <div className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto flex gap-1">
+                  <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto flex gap-1">
                     {/* Animated background slider */}
                     <motion.div
                       className="absolute top-1 bottom-1 bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
@@ -313,7 +313,7 @@ export default function DashboardPage() {
                     
                     <TabsTrigger 
                       value="my-todos" 
-                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent"
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
                       <motion.div
                         animate={{
@@ -335,7 +335,7 @@ export default function DashboardPage() {
                     
                     <TabsTrigger 
                       value="team-todos" 
-                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent"
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
                       <motion.div
                         animate={{
@@ -354,7 +354,7 @@ export default function DashboardPage() {
                         TEAM
                       </motion.span>
                     </TabsTrigger>
-                  </div>
+                  </TabsList>
                 </div>
                 
                 <TabsContent value="my-todos" className="focus:outline-none">

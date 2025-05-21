@@ -46,6 +46,11 @@ export const metadata: Metadata = {
   applicationName: "tide",
   generator: 'Next.js',
   referrer: 'origin-when-cross-origin',
+  icons: {
+    icon: '/placeholder-logo.svg',
+    shortcut: '/placeholder-logo.svg',
+    apple: '/placeholder-logo.svg',
+  },
 }
 
 export default function RootLayout({
