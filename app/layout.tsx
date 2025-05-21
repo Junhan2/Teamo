@@ -1,5 +1,4 @@
 import "@/app/globals.css"
-import "@/styles/DynamicIslandTodo.css"
 import type { Metadata } from "next"
 import { Inter, Poppins } from "next/font/google"
 import { Zilla_Slab, Playfair_Display } from 'next/font/google'
@@ -38,7 +37,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Mung. | Team Task Management",
+  title: "Muung. | Team Task Management",
   description: "Elegant team collaboration and task management service",
   generator: 'v0.dev'
 }

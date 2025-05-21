@@ -11,7 +11,6 @@ import TeamTodoList from "@/components/TeamTodoList"
 import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
-import TaskStreak from "@/components/TaskStreak"
 import { motion } from "framer-motion"
 import { CheckSquare, Calendar } from "lucide-react"
 
@@ -288,13 +287,13 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
           <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md mb-6 md:mb-0">
+            <div className="mb-6 md:mb-0">
               <Tabs 
                 value={activeTab}
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="flex justify-start py-3 pl-6">
+                <div className="flex justify-start py-3 mb-6">
                   <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
@@ -311,7 +310,7 @@ export default function DashboardPage() {
                   </TabsList>
                 </div>
                 
-                <TabsContent value="my-todos" className="p-6 focus:outline-none">
+                <TabsContent value="my-todos" className="focus:outline-none">
                   <TeamTodoList 
                     userId={user?.id} 
                     filter="my" 
@@ -324,7 +323,7 @@ export default function DashboardPage() {
                   />
                 </TabsContent>
                 
-                <TabsContent value="team-todos" className="p-6 focus:outline-none">
+                <TabsContent value="team-todos" className="focus:outline-none">
                   <TeamTodoList 
                     userId={user?.id} 
                     filter="team" 
@@ -357,9 +356,6 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
-            
-            {/* Productivity Streak 비활성화 */}
-            {/* {user && <TaskStreak userId={user.id} className="mb-6" />} */}
             
             {/* 통계 섹션 */}
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>

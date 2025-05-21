@@ -100,7 +100,7 @@ export default function LoginPage() {
               
               <img
                 src="/images/hero-3d-svg.svg"
-                alt="Mung"
+                alt="Muung"
                 className="w-full h-auto object-contain animate-gentle-float transition-all duration-500"
                 style={{ 
                   filter: "drop-shadow(0 5px 15px rgba(138, 104, 233, 0.25))"
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 fontFamily: "var(--font-playfair)"
               }}
             >
-              Mung.
+              Muung.
             </h1>
           </div>
           <p 
@@ -192,7 +192,7 @@ export default function LoginPage() {
             className="text-sm text-gray-400" /* Increased text size */
             style={{ fontFamily: "var(--es-text-font-family, var(--inter-font))" }}
           >
-            © 2025 Mung. All rights reserved.
+            © 2025 Muung. All rights reserved.
           </p>
         </div>
       </div>
