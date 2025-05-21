@@ -637,7 +637,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         </div>
       ) : (
         <div className="space-y-3">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {todos
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((todo) => (
@@ -737,7 +737,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                                 e.stopPropagation();
                                 updateTodoStatus(todo.id, 'pending', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
                               }}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'hover:bg-amber-100 hover:text-amber-700'}`}
+                              className={`flex items-center px-3 py-2 text-sm rounded-md ${todo.status === 'pending' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'hover:bg-amber-50 hover:text-amber-700 hover:border hover:border-amber-200'}`}
                             >
                               <ListTodo size={14} className="mr-2" />
                               <span>Not yet</span>
@@ -748,7 +748,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                                 e.stopPropagation();
                                 updateTodoStatus(todo.id, 'in_progress', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
                               }}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-pink-100 text-pink-700' : 'hover:bg-pink-100 hover:text-pink-700'}`}
+                              className={`flex items-center px-3 py-2 text-sm rounded-md ${todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'hover:bg-blue-50 hover:text-blue-700 hover:border hover:border-blue-200'}`}
                             >
                               <Activity size={14} className="mr-2" />
                               <span>Doing</span>
@@ -759,7 +759,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                                 e.stopPropagation();
                                 updateTodoStatus(todo.id, 'completed', e.currentTarget as unknown as React.MouseEvent<HTMLDivElement>);
                               }}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-green-100 text-green-700' : 'hover:bg-green-100 hover:text-green-700'}`}
+                              className={`flex items-center px-3 py-2 text-sm rounded-md ${todo.status === 'completed' ? 'bg-green-100 text-green-700 border border-green-200' : 'hover:bg-green-50 hover:text-green-700 hover:border hover:border-green-200'}`}
                             >
                               <CheckCircle size={14} className="mr-2" />
                               <span>Complete</span>

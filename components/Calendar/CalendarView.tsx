@@ -389,7 +389,7 @@ const CalendarView = ({
                     className={`
                       text-sm font-semibold rounded-full w-6 h-6 flex items-center justify-center
                       ${!isCurrentMonth ? 'text-[#707070]' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                      ${isCurrentDay ? 'bg-[#3fcf8e] text-white' : ''}
+                      ${isCurrentDay ? 'bg-[#525252] text-white' : ''}
                     `}
                   >
                     {format(day, 'd')}
@@ -498,7 +498,7 @@ const CalendarView = ({
                           >
                             <DropdownMenuItem 
                               onClick={() => updateTodoStatus(todo.id, 'pending')}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-[#FFDA40]/10 text-[#FFDA40]' : 'hover:bg-[#FFDA40]/10 hover:text-[#FFDA40]'}`}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'pending' ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'hover:bg-amber-100 hover:text-amber-700 hover:border hover:border-amber-200'}`}
                             >
                               <ListTodo size={14} className="mr-2" />
                               <span>Not yet</span>
@@ -506,7 +506,7 @@ const CalendarView = ({
                             
                             <DropdownMenuItem 
                               onClick={() => updateTodoStatus(todo.id, 'in_progress')}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-[#FF82C2]/10 text-[#FF82C2]' : 'hover:bg-[#FF82C2]/10 hover:text-[#FF82C2]'}`}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'hover:bg-blue-100 hover:text-blue-700 hover:border hover:border-blue-200'}`}
                             >
                               <Activity size={14} className="mr-2" />
                               <span>Doing</span>
@@ -514,7 +514,7 @@ const CalendarView = ({
                             
                             <DropdownMenuItem 
                               onClick={() => updateTodoStatus(todo.id, 'completed')}
-                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 text-[#3fcf8e]' : 'hover:bg-[#3fcf8e]/10 hover:text-[#3fcf8e]'}`}
+                              className={`flex items-center px-3 py-2 text-sm ${todo.status === 'completed' ? 'bg-green-100 text-green-700 border border-green-200' : 'hover:bg-green-100 hover:text-green-700 hover:border hover:border-green-200'}`}
                             >
                               <CheckCircle size={14} className="mr-2" />
                               <span>Complete</span>
