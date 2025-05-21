@@ -49,9 +49,9 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   return (
     <div className="w-full animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold text-white flex items-center">
-          <Calendar className="mr-2" size={20} />
-          Calendar
+        <h1 className="text-sm font-medium text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] flex items-center">
+          <Calendar className="mr-2" size={16} />
+          CALENDAR
         </h1>
         
         <div className="flex items-center space-x-6">
