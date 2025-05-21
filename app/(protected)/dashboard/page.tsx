@@ -39,16 +39,29 @@ export default function DashboardPage() {
   const myTabRef = useRef<HTMLButtonElement>(null)
   const teamTabRef = useRef<HTMLButtonElement>(null)
 
-  // 통계 데이터 가져오기
+  // 통계 데이터 가져오기 (MY/TEAM 탭에 따라 다른 데이터)
   const fetchTodoStats = useCallback(async () => {
     if (!user?.id) return;
     
     try {
-      console.log('통계 데이터 가져오는 중...');
-      const { data, error } = await supabase
-        .from('todos')
-        .select('status')
-        .eq('user_id', user.id);
+      console.log('통계 데이터 가져오는 중...', activeTab);
+      
+      let query;
+      
+      if (activeTab === "my-todos") {
+        // MY: 본인 할일만
+        query = supabase
+          .from('todos')
+          .select('status')
+          .eq('user_id', user.id);
+      } else {
+        // TEAM: 팀 전체 할일
+        query = supabase
+          .from('todos')
+          .select('status, user_id');
+      }
+      
+      const { data, error } = await query;
         
       if (error) {
         console.error('통계 데이터 가져오기 오류:', error);
@@ -60,7 +73,7 @@ export default function DashboardPage() {
       const inProgress = data.filter(todo => todo.status === 'in_progress').length;
       const pending = data.filter(todo => todo.status === 'pending').length;
       
-      console.log('통계 업데이트:', { total, completed, inProgress, pending });
+      console.log('통계 업데이트:', { activeTab, total, completed, inProgress, pending });
       
       // 명시적 상태 업데이트 (리렌더링 보장)
       setTodoStats(prev => {
@@ -82,7 +95,7 @@ export default function DashboardPage() {
     } catch (err) {
       console.error('통계 가져오기 중 오류:', err);
     }
-  }, [supabase, user?.id]);
+  }, [supabase, user?.id, activeTab]);
 
   // 할 일 목록 새로고침 함수
   const refreshTodos = useCallback(() => {
@@ -272,6 +285,14 @@ export default function DashboardPage() {
     };
   }, [user?.id, supabase, fetchTodoStats]);
 
+  // 탭 변경 시 통계 새로고침
+  useEffect(() => {
+    if (user?.id) {
+      console.log('탭 변경됨:', activeTab);
+      fetchTodoStats();
+    }
+  }, [activeTab, user?.id, fetchTodoStats]);
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -423,7 +444,7 @@ export default function DashboardPage() {
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
               <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
-                STATISTICS
+                {activeTab === "my-todos" ? "MY STATISTICS" : "TEAM STATISTICS"}
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
