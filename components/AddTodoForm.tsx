@@ -176,7 +176,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         />
       </div>
       
-      <div className="w-full mb-4">
+      <div className="w-full mb-2">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -199,6 +199,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
                 setCalendarOpen(false);
               }}
               initialFocus
+              defaultMonth={new Date()}
               className="bg-[#292C33] rounded-sm border-[#464c58]/40"
             />
           </PopoverContent>
@@ -208,7 +209,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-4 mb-2 w-full py-[1.6rem] md:py-[2rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
+        className="mt-6 mb-2 w-full py-[1.28rem] md:py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[600]">Add Task</span></>}

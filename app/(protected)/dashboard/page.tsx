@@ -413,7 +413,7 @@ export default function DashboardPage() {
                   ></motion.div>
                 </div>
               </div>
-              <div className="mt-6" style={{ overflow: 'visible' }}>
+              <div className="mt-8" style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
               </div>
             </div>
