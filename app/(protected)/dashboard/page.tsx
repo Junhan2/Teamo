@@ -34,6 +34,10 @@ export default function DashboardPage() {
   })
   const router = useRouter()
   const supabase = createClient()
+  
+  // Tab refs for dynamic width calculation
+  const myTabRef = useRef<HTMLButtonElement>(null)
+  const teamTabRef = useRef<HTMLButtonElement>(null)
 
   // 통계 데이터 가져오기
   const fetchTodoStats = useCallback(async () => {
@@ -294,25 +298,71 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start mb-4">
-                  <TabsList className="relative bg-slate-100 border border-slate-200 rounded-xl p-1 h-auto">
+                  <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
+                    {/* Animated background slider */}
+                    <motion.div
+                      className="absolute bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
+                      initial={false}
+                      animate={{
+                        left: activeTab === 'my-todos' ? '4px' : `${(myTabRef.current?.offsetLeft || 0) + (myTabRef.current?.offsetWidth || 0)}px`,
+                        width: activeTab === 'my-todos' 
+                          ? `${myTabRef.current?.offsetWidth || 0}px`
+                          : `${teamTabRef.current?.offsetWidth || 0}px`,
+                        top: '4px',
+                        bottom: '4px',
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                        mass: 0.8,
+                      }}
+                    />
+                    
                     <TabsTrigger 
+                      ref={myTabRef}
                       value="my-todos" 
-                      className="relative rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200"
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
-                      <User size={16} className={activeTab === 'my-todos' ? 'text-slate-600' : 'text-slate-400'} />
-                      <span className={activeTab === 'my-todos' ? 'text-slate-700' : 'text-slate-500'}>
+                      <motion.div
+                        animate={{
+                          color: activeTab === 'my-todos' ? '#475569' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <User size={16} />
+                      </motion.div>
+                      <motion.span
+                        animate={{
+                          color: activeTab === 'my-todos' ? '#374151' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
                         MY
-                      </span>
+                      </motion.span>
                     </TabsTrigger>
                     
                     <TabsTrigger 
+                      ref={teamTabRef}
                       value="team-todos" 
-                      className="relative rounded-lg transition-all duration-300 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-slate-200"
+                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
-                      <Users size={16} className={activeTab === 'team-todos' ? 'text-slate-600' : 'text-slate-400'} />
-                      <span className={activeTab === 'team-todos' ? 'text-slate-700' : 'text-slate-500'}>
+                      <motion.div
+                        animate={{
+                          color: activeTab === 'team-todos' ? '#475569' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Users size={16} />
+                      </motion.div>
+                      <motion.span
+                        animate={{
+                          color: activeTab === 'team-todos' ? '#374151' : '#94a3b8',
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
                         TEAM
-                      </span>
+                      </motion.span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
