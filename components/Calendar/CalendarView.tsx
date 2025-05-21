@@ -322,7 +322,7 @@ const CalendarView = ({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
                   <span className="font-light">View: </span>
                   <span>{viewMode === 'month' ? 'Month' : 'Week'}</span>
@@ -381,7 +381,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+            className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             All
           </Button>
@@ -389,7 +389,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+            className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Not yet
           </Button>
@@ -397,7 +397,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+            className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Doing
           </Button>
@@ -405,7 +405,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+            className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Complete
           </Button>
