@@ -299,13 +299,13 @@ export default function DashboardPage() {
                       value="my-todos" 
                       className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
-                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">MY</span>
+                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
                       className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
-                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">TEAM</span>
+                      <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">TEAM</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
@@ -344,7 +344,7 @@ export default function DashboardPage() {
             {/* 할일 추가 섹션 */}
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
+                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono">ADD NEW TASK</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -359,7 +359,7 @@ export default function DashboardPage() {
             
             {/* 통계 섹션 */}
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
+              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono">STATISTICS</h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-base text-gray-300">Complete</span>

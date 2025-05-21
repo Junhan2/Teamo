@@ -212,7 +212,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         className="mt-10 mb-2 w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
         disabled={loading}
       >
-        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400]">ADD TASK</span></>}
+        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400] font-fira-mono">ADD TASK</span></>}
       </Button>
       
       {message && (

@@ -10,6 +10,10 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			'dm-sans': ['var(--font-dm-sans)', 'sans-serif'],
+  			'fira-mono': ['var(--font-fira-mono)', 'monospace'],
+  		},
   		colors: {
   			// Light mode color scheme
   			light: {
