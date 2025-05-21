@@ -319,29 +319,27 @@ const CalendarView = ({
             {/* View Mode Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 rounded-md bg-white text-[#171717] border border-[rgba(0,0,0,0.20)] hover:bg-gray-50 flex items-center gap-2"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
-                  <span className="text-sm">View: {viewMode === 'month' ? 'Month' : 'Week'}</span>
-                  <ChevronDown size={14} />
+                  <span className="font-light">View: </span>
+                  <span>{viewMode === 'month' ? 'Month' : 'Week'}</span>
+                  <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                sideOffset={5} 
-                className="bg-white border border-[rgba(0,0,0,0.20)] text-[#171717] shadow-[0_0_25px_rgba(0,0,0,0.15)] p-1"
-              >
+              <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setViewMode('month')}
-                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-slate-100 text-slate-700 border border-slate-200' : 'hover:bg-slate-100 hover:text-slate-700'}`}
+                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-light-primary text-white' : 'hover:bg-light-hover/10'}`}
                 >
                   <span>Month</span>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem 
                   onClick={() => setViewMode('week')}
-                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-slate-100 text-slate-700 border border-slate-200' : 'hover:bg-slate-100 hover:text-slate-700'}`}
+                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-light-primary text-white' : 'hover:bg-light-hover/10'}`}
                 >
                   <span>Week</span>
                 </DropdownMenuItem>
@@ -380,26 +378,34 @@ const CalendarView = ({
         {/* Status filters */}
         <div className="flex flex-wrap gap-2 mt-4">
           <Button 
+            variant="outline"
+            size="sm"
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'} text-sm px-4 py-2 h-8 transition-all duration-200 font-medium rounded-full`}
+            className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             All
           </Button>
           <Button 
+            variant="outline"
+            size="sm"
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'} text-sm px-4 py-2 h-8 transition-all duration-200 font-medium rounded-full`}
+            className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Not yet
           </Button>
           <Button 
+            variant="outline"
+            size="sm"
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'} text-sm px-4 py-2 h-8 transition-all duration-200 font-medium rounded-full`}
+            className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Doing
           </Button>
           <Button 
+            variant="outline"
+            size="sm"
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'} text-sm px-4 py-2 h-8 transition-all duration-200 font-medium rounded-full`}
+            className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-xs px-2 py-0.5 h-6 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
           >
             Complete
           </Button>
