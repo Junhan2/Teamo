@@ -637,19 +637,22 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         </div>
       ) : (
         <div className="space-y-3">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {todos
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-              .map((todo) => (
+              .map((todo, index) => (
               <motion.div 
-                key={todo.id}
+                key={`${todo.id}-${currentPage}`}
                 className={`bg-light-background rounded-xl overflow-hidden border border-light-border hover:border-light-secondary/40 transition-all duration-200 hover:bg-gray-50`}
-                initial={{ opacity: 0, y: 5 }}
+                initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={smoothTransition}
+                exit={{ opacity: 0, y: 0 }}
+                transition={{ 
+                  duration: 0.2,
+                  delay: index * 0.05,
+                  ease: "easeOut"
+                }}
                 whileHover={{ scale: 1.01 }}
-                layout
               >
                 <div 
                   className="p-5 cursor-pointer"

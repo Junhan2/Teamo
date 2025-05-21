@@ -444,7 +444,7 @@ export default function DashboardPage() {
             <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
               <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
-                {activeTab === "my-todos" ? "MY STATISTICS" : "TEAM STATISTICS"}
+                STATISTICS
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
