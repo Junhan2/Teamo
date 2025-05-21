@@ -87,32 +87,6 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
             userId={user.id}
             onSubscriptionChange={handleSubscriptionChange}
           />
-          
-          <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] p-4 text-[#171717]">
-            <div className="flex items-center mb-3">
-              <Users size={18} className="mr-2" />
-              <h3 className="font-medium">Subscription Info</h3>
-            </div>
-            
-            <p className="text-sm text-[#707070] mb-3">
-              Subscribe to team members to view their tasks on your calendar. This helps you coordinate work and deadlines.
-            </p>
-            
-            <div className="text-sm text-[#707070]">
-              <div className="flex items-start mb-2">
-                <span className="font-medium mr-1">•</span>
-                <span>You are currently subscribed to {subscribedUserIds.length} team member{subscribedUserIds.length !== 1 ? 's' : ''}</span>
-              </div>
-              <div className="flex items-start mb-2">
-                <span className="font-medium mr-1">•</span>
-                <span>Tasks from subscribed members appear in your calendar with color-coded indicators</span>
-              </div>
-              <div className="flex items-start">
-                <span className="font-medium mr-1">•</span>
-                <span>You can view details but only edit your own tasks</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

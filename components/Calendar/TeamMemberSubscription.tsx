@@ -216,7 +216,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       >
         <div className="flex items-center">
           <Users size={18} className="mr-2" />
-          <h3 className="font-medium">Team Calendar Subscriptions</h3>
+          <h3 className="font-medium">Subscription</h3>
         </div>
         <ChevronDown 
           size={18} 
@@ -244,7 +244,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                       variant="outline"
                       size="sm"
                       onClick={toggleSelectAll}
-                      className="text-xs px-2 py-1 h-7 bg-[#FDFDFD] border border-[rgba(0,0,0,0.20)] text-[#171717] hover:bg-[#3fcf8e] hover:text-white"
+                      className="text-xs px-2 py-1 h-7 bg-[#FDFDFD] text-[#171717] hover:bg-[#3fcf8e] hover:text-white outline outline-1 outline-[rgba(0,0,0,0.20)] outline-offset-[-1px] rounded-md"
                     >
                       {subscribedUserIds.length === teamMembers.length ? 'Deselect All' : 'Select All'}
                     </Button>
@@ -254,7 +254,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                       size="sm"
                       onClick={saveSubscriptions}
                       disabled={saving}
-                      className="text-xs px-3 py-1 h-7 bg-[#3fcf8e] hover:bg-[#3fcf8e]/90 text-white flex items-center gap-1"
+                      className="text-xs px-3 py-1 h-7 bg-[#3fcf8e] hover:bg-[#3fcf8e]/90 text-white flex items-center gap-1 outline outline-1 outline-[rgba(0,0,0,0.20)] outline-offset-[-1px] rounded-md"
                     >
                       {saving ? (
                         <>

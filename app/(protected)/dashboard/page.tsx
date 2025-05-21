@@ -297,13 +297,13 @@ export default function DashboardPage() {
                   <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
+                      className={`rounded-md transition-all duration-200 outline outline-1 outline-light-border outline-offset-[-1px] ${activeTab === 'my-todos' ? 'bg-light-primary text-white' : 'bg-light-background text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
+                      className={`rounded-md transition-all duration-200 outline outline-1 outline-light-border outline-offset-[-1px] ${activeTab === 'team-todos' ? 'bg-light-primary text-white' : 'bg-light-background text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-fira-mono">TEAM</span>
                     </TabsTrigger>
@@ -429,7 +429,7 @@ export default function DashboardPage() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative"
+            className="rounded-full shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
             <span className="font-medium">My Tasks</span>
@@ -442,7 +442,7 @@ export default function DashboardPage() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10"
+            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>

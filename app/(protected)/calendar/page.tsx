@@ -97,7 +97,7 @@ export default function CalendarPageRoute() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10"
+            className="rounded-md shadow-lg bg-light-background text-light-primary hover:bg-light-accent hover:text-white flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
             <span className="font-medium">My Tasks</span>
@@ -108,7 +108,7 @@ export default function CalendarPageRoute() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative"
+            className="rounded-md shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>

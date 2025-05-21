@@ -493,37 +493,37 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         {/* 필터 영역 - 상태 필터와 날짜 드롭다운 같은 줄에 배치 */}
         <div>
           <div className="flex justify-between items-center">
-            {/* Desktop pill-shaped filter buttons */}
+            {/* Desktop minimal filter buttons */}
             <div className="hidden md:flex flex-wrap gap-2">
               <Button 
-                variant={statusFilter === null ? "default" : "outline"} 
+                variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
+                className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
               >
                 All
               </Button>
               <Button 
-                variant={statusFilter === "pending" ? "default" : "outline"} 
+                variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
+                className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
               >
                 Not yet
               </Button>
               <Button 
-                variant={statusFilter === "in_progress" ? "default" : "outline"} 
+                variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
+                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
               >
                 Doing
               </Button>
               <Button 
-                variant={statusFilter === "completed" ? "default" : "outline"} 
+                variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
+                className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary'} text-sm px-3 py-1 h-7 transition-all duration-200 font-normal rounded-md outline outline-1 outline-light-border outline-offset-[-1px] hover:bg-gray-50`}
               >
                 Complete
               </Button>
@@ -536,7 +536,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
+                    className="bg-transparent text-light-primary hover:bg-gray-50 text-sm px-4 py-1.5 h-8 transition-all duration-200 font-normal rounded-md flex items-center gap-2 outline outline-1 outline-light-border outline-offset-[-1px]"
                   >
                     {statusFilter === null ? <><span className="font-light">Status: </span><span>All</span></> : 
                      statusFilter === "pending" ? <><span className="font-light">Status: </span><span>Not yet</span></> : 
@@ -580,7 +580,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
+                  className="bg-transparent text-light-primary hover:bg-gray-50 text-sm px-4 py-1.5 h-8 transition-all duration-200 font-normal rounded-md flex items-center gap-2 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
                   {dateFilter === null ? <><span className="font-light">Due date: </span><span>All</span></> : 
                    dateFilter === "today" ? <><span className="font-light">Due date: </span><span>Today</span></> : 
@@ -702,17 +702,23 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) >= 0 ? (
                             calculateDaysLeft(todo.due_date) <= 7 ? (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-light-accent text-white">
-                                D-{calculateDaysLeft(todo.due_date)}
-                              </span>
+                              calculateDaysLeft(todo.due_date) === 0 ? (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">
+                                  Today
+                                </span>
+                              ) : (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-light-secondary text-white">
+                                  D-{calculateDaysLeft(todo.due_date)}
+                                </span>
+                              )
                             ) : (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-light-accent text-white">
+                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">
                                 D-{calculateDaysLeft(todo.due_date)}
                               </span>
                             )
                           ) : (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-normal bg-gray-200 text-light-muted">
-                              D+{Math.abs(calculateDaysLeft(todo.due_date))}
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-normal bg-red-100 text-red-700 border border-red-200">
+                              Overdue
                             </span>
                           )}
                         </div>
@@ -805,7 +811,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 size="icon"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                className="h-8 w-8 p-0 rounded-md bg-light-secondary text-white hover:bg-light-muted border-none shadow-md"
+                className="h-8 w-8 p-0 rounded-md bg-transparent text-light-primary hover:bg-gray-50 outline outline-1 outline-light-border outline-offset-[-1px]"
               >
                 <ChevronLeft size={16} />
               </Button>
@@ -873,9 +879,9 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     onClick={() => setCurrentPage(pageNum)}
                     className={`h-8 w-8 p-0 rounded-md ${
                       currentPage === pageNum 
-                        ? 'bg-light-accent text-white border-none' 
-                        : 'bg-light-secondary text-white hover:bg-light-muted border-none'
-                    } shadow-md`}
+                        ? 'bg-light-accent text-white' 
+                        : 'bg-transparent text-light-primary hover:bg-gray-50'
+                    } outline outline-1 outline-light-border outline-offset-[-1px]`}
                   >
                     {pageNum}
                   </Button>
@@ -887,7 +893,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 size="icon"
                 disabled={currentPage >= Math.ceil(todos.length / itemsPerPage)}
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
-                className="h-8 w-8 p-0 rounded-md bg-light-secondary text-white hover:bg-light-muted border-none shadow-md"
+                className="h-8 w-8 p-0 rounded-md bg-transparent text-light-primary hover:bg-gray-50 outline outline-1 outline-light-border outline-offset-[-1px]"
               >
                 <ChevronRight size={16} />
               </Button>
