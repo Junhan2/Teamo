@@ -458,7 +458,7 @@ const CalendarView = ({
                     </span>
                     
                     {dayTodos.length > 0 && (
-                      <div className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                      <div className="w-5 h-5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium">
                         {dayTodos.length}
                       </div>
                     )}
@@ -537,7 +537,7 @@ const CalendarView = ({
                     </div>
                     
                     {dayTodos.length > 0 && (
-                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                      <div className="w-8 h-8 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-sm font-medium">
                         {dayTodos.length}
                       </div>
                     )}
