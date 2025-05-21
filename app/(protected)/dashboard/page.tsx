@@ -436,17 +436,15 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-emerald-600">{todoStats.completed}</span>
                       <span className="text-xs text-emerald-500">/ {todoStats.total}</span>
-                      <span className="text-xs text-emerald-600 font-medium">
-                        {todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%
-                      </span>
                     </div>
                   </div>
                   <div className="w-full bg-emerald-100 rounded-full h-2">
                     <div 
-                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      className="h-2 rounded-full progress-bar-complete"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#72e3ad'
+                        backgroundColor: '#72e3ad',
+                        animation: 'progressFill 1.2s ease-out'
                       }}
                     ></div>
                   </div>
@@ -462,17 +460,15 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-blue-600">{todoStats.inProgress}</span>
                       <span className="text-xs text-blue-500">/ {todoStats.total}</span>
-                      <span className="text-xs text-blue-600 font-medium">
-                        {todoStats.total > 0 ? Math.round((todoStats.inProgress / todoStats.total) * 100) : 0}%
-                      </span>
                     </div>
                   </div>
                   <div className="w-full bg-blue-100 rounded-full h-2">
                     <div 
-                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      className="h-2 rounded-full progress-bar-doing"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#60a5fa'
+                        backgroundColor: '#60a5fa',
+                        animation: 'progressFill 1.2s ease-out 0.2s backwards'
                       }}
                     ></div>
                   </div>
@@ -488,17 +484,15 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold text-amber-600">{todoStats.pending}</span>
                       <span className="text-xs text-amber-500">/ {todoStats.total}</span>
-                      <span className="text-xs text-amber-600 font-medium">
-                        {todoStats.total > 0 ? Math.round((todoStats.pending / todoStats.total) * 100) : 0}%
-                      </span>
                     </div>
                   </div>
                   <div className="w-full bg-amber-100 rounded-full h-2">
                     <div 
-                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      className="h-2 rounded-full progress-bar-pending"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#fbbf24'
+                        backgroundColor: '#fbbf24',
+                        animation: 'progressFill 1.2s ease-out 0.4s backwards'
                       }}
                     ></div>
                   </div>

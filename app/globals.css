@@ -29,6 +29,10 @@ body {
     100% { transform: rotate(-10deg); }
   }
   
+  @keyframes progressFill {
+    from { width: 0%; }
+  }
+  
   /* Space floating animation with fewer, simpler keyframes */
   @keyframes space-float {
     /* Starting point */
