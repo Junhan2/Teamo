@@ -100,15 +100,19 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       const randomX = Math.floor(Math.random() * 800) + 100
       const randomY = Math.floor(Math.random() * 600) + 100
 
-      // Get team ID (use first available team for now)
-      let teamId = ""
-      const { data: teams } = await supabase
-        .from('teams')
-        .select('id')
-        .limit(1)
-      
-      if (teams && teams.length > 0) {
-        teamId = teams[0].id
+      // Get team ID (use first available team or null)
+      let teamId = null
+      try {
+        const { data: teams } = await supabase
+          .from('teams')
+          .select('id')
+          .limit(1)
+        
+        if (teams && teams.length > 0) {
+          teamId = teams[0].id
+        }
+      } catch (teamError) {
+        console.log('No teams found, creating memo without team association')
       }
 
       const { error } = await supabase

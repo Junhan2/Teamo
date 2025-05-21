@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS team_memos (
   position_x INTEGER DEFAULT 100,
   position_y INTEGER DEFAULT 100,
   user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
+  team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
   reactions JSONB DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
@@ -21,18 +21,21 @@ CREATE INDEX IF NOT EXISTS idx_team_memos_created_at ON team_memos(created_at);
 ALTER TABLE team_memos ENABLE ROW LEVEL SECURITY;
 
 -- Create policy for team_memos
-CREATE POLICY "Users can view team memos for their teams" ON team_memos
+CREATE POLICY "Users can view team memos" ON team_memos
   FOR SELECT USING (
+    team_id IS NULL OR
     team_id IN (
       SELECT team_id FROM team_members WHERE user_id = auth.uid()
     )
   );
 
-CREATE POLICY "Users can insert team memos for their teams" ON team_memos
+CREATE POLICY "Users can insert team memos" ON team_memos
   FOR INSERT WITH CHECK (
-    user_id = auth.uid() AND
-    team_id IN (
-      SELECT team_id FROM team_members WHERE user_id = auth.uid()
+    user_id = auth.uid() AND (
+      team_id IS NULL OR
+      team_id IN (
+        SELECT team_id FROM team_members WHERE user_id = auth.uid()
+      )
     )
   );
 
