@@ -11,6 +11,19 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+  			// Light mode color scheme
+  			light: {
+  				background: '#fcfcfc',
+  				primary: '#171717',
+  				secondary: '#525252', 
+  				muted: '#707070',
+  				accent: '#3fcf8e',
+  				hover: '#00bb68',
+  				'green-button': '#72E3AD',
+  				'button-text': '#171717',
+  				border: 'rgba(0, 0, 0, 0.20)',
+  				input: '#FDFDFD'
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

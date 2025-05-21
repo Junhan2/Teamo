@@ -160,7 +160,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm pl-4 py-2 h-10 text-sm"
+            className="w-full bg-light-input border-light-border focus:border-light-primary focus:ring-0 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px]"
           />
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm text-sm w-full resize-none pl-4 py-2"
+          className="bg-light-input border-light-border focus:border-light-primary focus:ring-0 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px]"
         />
       </div>
       
@@ -182,15 +182,15 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-[#1F2125] border-[#464c58]/40 hover:bg-[#2E3238] hover:border-[#464c58]/60 px-4 py-2 h-10 text-sm",
-                !dueDate && "text-gray-400"
+                "w-full justify-start text-left font-normal bg-light-input border-light-border hover:bg-light-input hover:border-light-primary px-4 py-2 h-10 text-sm outline outline-1 outline-light-border outline-offset-[-1px] rounded-md",
+                !dueDate && "text-light-muted"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-[#292C33] border-[#464c58]/40">
+          <PopoverContent className="w-auto p-0 bg-light-input border-light-border">
             <Calendar
               mode="single"
               selected={dueDate}
@@ -200,7 +200,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
               }}
               initialFocus
               defaultMonth={new Date()}
-              className="bg-[#292C33] rounded-sm border-[#464c58]/40"
+              className="bg-light-input rounded-md border-light-border"
             />
           </PopoverContent>
         </Popover>
@@ -209,15 +209,15 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-10 mb-2 w-full py-[1.28rem] md:py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
+        className="mt-10 mb-2 w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
         disabled={loading}
       >
-        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[500]">ADD TASK</span></>}
+        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400]">ADD TASK</span></>}
       </Button>
       
       {message && (
-        <div className={`p-3 text-sm rounded-sm ${
-          message.type === "success" ? "bg-[#1F2125] text-white border border-[#464c58]/40" : "bg-[#1F2125] text-red-400 border border-[#464c58]/40"
+        <div className={`p-3 text-sm rounded-md ${
+          message.type === "success" ? "bg-light-input text-light-primary border border-light-border" : "bg-light-input text-red-500 border border-light-border"
         }`}>
           {message.text}
         </div>

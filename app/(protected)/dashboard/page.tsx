@@ -281,7 +281,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#292c33]">
+    <div className="min-h-screen bg-light-background">
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex flex-col md:flex-row gap-8">
@@ -297,13 +297,13 @@ export default function DashboardPage() {
                   <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#e7e7e7] text-black' : 'bg-[#ffffff] text-black hover:bg-[#e7e7e7]'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#e7e7e7] text-black' : 'bg-[#ffffff] text-black hover:bg-[#e7e7e7]'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-light-primary text-white' : 'bg-light-input text-light-primary hover:bg-light-hover hover:text-white'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">TEAM</span>
                     </TabsTrigger>
@@ -342,9 +342,9 @@ export default function DashboardPage() {
           {/* 할일 추가 및 통계 섹션 */}
           <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
             {/* 할일 추가 섹션 */}
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6" id="addTodoForm">
+            <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
+                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -358,8 +358,8 @@ export default function DashboardPage() {
             </div>
             
             {/* 통계 섹션 */}
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
+            <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
+              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-base text-gray-300">Complete</span>
