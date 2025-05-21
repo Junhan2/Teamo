@@ -429,12 +429,12 @@ export default function DashboardPage() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-[#3F4249] text-white hover:bg-[#4C4F57] flex items-center gap-2 px-4 py-2 h-10 relative"
+            className="rounded-full shadow-lg bg-light-accent text-white hover:bg-light-hover flex items-center gap-2 px-4 py-2 h-10 relative"
           >
             <CheckSquare className="w-4 h-4" />
             <span className="font-medium">My Tasks</span>
             {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF82C2] rounded-full border-2 border-[#292c33]"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FF82C2] rounded-full border-2 border-light-background"></div>
           </Button>
         </Link>
         
@@ -442,7 +442,7 @@ export default function DashboardPage() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-transparent border border-white/30 text-white hover:bg-[#3A3F4B] flex items-center gap-2 px-4 py-2 h-10"
+            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10"
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>
