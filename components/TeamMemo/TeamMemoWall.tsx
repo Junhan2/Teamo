@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Heart, ThumbsUp, Smile, X, Edit3 } from "lucide-react"
+import { motion, AnimatePresence, useDragControls } from "framer-motion"
+import { Plus, Heart, ThumbsUp, Smile, X, Edit3, Grid3X3, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -17,6 +17,7 @@ interface TeamMemo {
   user_id: string
   team_id: string
   reactions: Record<string, string[]>
+  tags: string[]
   created_at: string
   updated_at: string
   user?: {
@@ -60,8 +61,11 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [showAddMemo, setShowAddMemo] = useState(false)
   const [newMemoContent, setNewMemoContent] = useState("")
   const [newMemoColor, setNewMemoColor] = useState("yellow")
+  const [newMemoTags, setNewMemoTags] = useState<string[]>([])
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState("")
+  const [showAutoArrange, setShowAutoArrange] = useState(false)
+  const [draggedMemo, setDraggedMemo] = useState<string | null>(null)
   
   const supabase = createClient()
 
@@ -124,7 +128,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           position_y: randomY,
           user_id: user.id,
           team_id: teamId,
-          reactions: {}
+          reactions: {},
+          tags: newMemoTags
         }])
 
       if (error) {
@@ -133,6 +138,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       }
 
       setNewMemoContent("")
+      setNewMemoTags([])
       setShowAddMemo(false)
       fetchMemos()
     } catch (error) {
@@ -222,6 +228,72 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     }
   }
 
+  // Update memo position
+  const updateMemoPosition = async (memoId: string, x: number, y: number) => {
+    try {
+      const { error } = await supabase
+        .from('team_memos')
+        .update({ position_x: x, position_y: y })
+        .eq('id', memoId)
+
+      if (error) {
+        console.error('Error updating memo position:', error)
+        return
+      }
+
+      // Update local state immediately for better UX
+      setMemos(prevMemos => 
+        prevMemos.map(memo => 
+          memo.id === memoId 
+            ? { ...memo, position_x: x, position_y: y }
+            : memo
+        )
+      )
+    } catch (error) {
+      console.error('Error updating memo position:', error)
+    }
+  }
+
+  // Auto arrange memos in grid
+  const autoArrangeMemos = async () => {
+    const gridCols = 4
+    const cardWidth = 280
+    const cardHeight = 200
+    const padding = 20
+
+    const updates = memos.map((memo, index) => {
+      const row = Math.floor(index / gridCols)
+      const col = index % gridCols
+      const x = col * (cardWidth + padding) + padding
+      const y = row * (cardHeight + padding) + padding
+
+      return {
+        id: memo.id,
+        position_x: x,
+        position_y: y
+      }
+    })
+
+    try {
+      for (const update of updates) {
+        await supabase
+          .from('team_memos')
+          .update({ position_x: update.position_x, position_y: update.position_y })
+          .eq('id', update.id)
+      }
+
+      // Update local state
+      setMemos(prevMemos => 
+        prevMemos.map(memo => {
+          const update = updates.find(u => u.id === memo.id)
+          return update ? { ...memo, position_x: update.position_x, position_y: update.position_y } : memo
+        })
+      )
+    } catch (error) {
+      console.error('Error auto arranging memos:', error)
+    }
+  }
+
   // Get memo color classes
   const getMemoColorClasses = (colorName: string) => {
     const color = MEMO_COLORS.find(c => c.name === colorName) || MEMO_COLORS[0]
@@ -265,7 +337,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   }
 
   return (
-    <div className="w-full h-full min-h-[600px] relative bg-gradient-to-br from-indigo-50 to-white rounded-xl border border-light-border overflow-hidden">
+    <div className="w-full h-full min-h-[800px] relative bg-gradient-to-br from-indigo-50 to-white rounded-xl border border-light-border overflow-auto">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-light-border p-4 flex justify-between items-center">
         <div>
@@ -273,17 +345,28 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <p className="text-sm text-light-muted">Share ideas and communicate with your team</p>
         </div>
         
-        <Button
-          onClick={() => setShowAddMemo(true)}
-          className="bg-light-green-button hover:bg-light-accent text-light-button-text rounded-lg px-4 py-2 flex items-center gap-2"
-        >
-          <Plus size={16} />
-          Add Memo
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={autoArrangeMemos}
+            variant="outline"
+            size="sm"
+            className="px-3 py-1 text-xs flex items-center gap-1"
+          >
+            <Grid3X3 size={12} />
+            Auto Arrange
+          </Button>
+          <Button
+            onClick={() => setShowAddMemo(true)}
+            className="bg-light-green-button hover:bg-light-accent text-light-button-text rounded-lg px-4 py-2 flex items-center gap-2"
+          >
+            <Plus size={16} />
+            Add Memo
+          </Button>
+        </div>
       </div>
 
       {/* Memo Wall */}
-      <div className="relative w-full h-full p-8">
+      <div className="relative w-full min-h-[700px] p-8" style={{ minHeight: '700px', position: 'relative' }}>
         <AnimatePresence>
           {memos.map((memo, index) => {
             const colorClasses = getMemoColorClasses(memo.color)
@@ -295,10 +378,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 initial={{ opacity: 0, scale: 0.8, rotate: Math.random() * 10 - 5 }}
                 animate={{ 
                   opacity: 1, 
-                  scale: 1, 
-                  rotate: Math.random() * 6 - 3,
-                  x: memo.position_x,
-                  y: memo.position_y
+                  scale: draggedMemo === memo.id ? 1.1 : 1, 
+                  rotate: draggedMemo === memo.id ? 0 : Math.random() * 6 - 3,
                 }}
                 exit={{ opacity: 0, scale: 0.5 }}
                 transition={{ 
@@ -307,7 +388,16 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                   damping: 25,
                   delay: index * 0.1 
                 }}
-                className={`absolute w-64 min-h-40 p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-lg shadow-lg ${colorClasses.shadow} cursor-move hover:shadow-xl transition-all duration-200 group`}
+                drag
+                dragMomentum={false}
+                onDragStart={() => setDraggedMemo(memo.id)}
+                onDragEnd={(event, info) => {
+                  setDraggedMemo(null)
+                  const newX = Math.max(0, Math.min(1200, memo.position_x + info.offset.x))
+                  const newY = Math.max(0, Math.min(800, memo.position_y + info.offset.y))
+                  updateMemoPosition(memo.id, newX, newY)
+                }}
+                className={`absolute w-64 min-h-40 p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-lg shadow-lg ${colorClasses.shadow} cursor-move hover:shadow-xl transition-all duration-200 group ${draggedMemo === memo.id ? 'z-50' : 'z-10'}`}
                 whileHover={{ scale: 1.05, rotate: 0 }}
                 style={{
                   left: memo.position_x,
@@ -382,6 +472,21 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                   <p className="text-sm text-light-primary leading-relaxed mb-4">
                     {memo.content}
                   </p>
+                )}
+
+                {/* Tags */}
+                {!isEditing && memo.tags && memo.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {memo.tags.map((tag, tagIndex) => (
+                      <Badge
+                        key={tagIndex}
+                        variant="secondary"
+                        className="text-xs px-2 py-0.5 bg-white/60 text-light-primary border border-white/40"
+                      >
+                        #{tag}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
 
                 {/* Reactions */}
@@ -478,6 +583,35 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                     rows={4}
                     className="w-full"
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2 flex items-center gap-1">
+                    <Tag size={14} />
+                    Tags (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={newMemoTags.join(', ')}
+                    onChange={(e) => {
+                      const tags = e.target.value
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(tag => tag.length > 0)
+                      setNewMemoTags(tags)
+                    }}
+                    placeholder="Enter tags separated by commas (e.g., idea, urgent, meeting)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  />
+                  {newMemoTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {newMemoTags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex gap-2 justify-end">
