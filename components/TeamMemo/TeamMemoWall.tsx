@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { motion, AnimatePresence, useDragControls } from "framer-motion"
-import { Plus, Heart, ThumbsUp, Smile, X, Edit3, Grid3X3, Tag } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Plus, Heart, ThumbsUp, Smile, X, Edit3, Grid3X3, Tag, Filter, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface TeamMemo {
   id: string
@@ -64,8 +65,10 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [newMemoTags, setNewMemoTags] = useState<string[]>([])
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState("")
-  const [showAutoArrange, setShowAutoArrange] = useState(false)
-  const [draggedMemo, setDraggedMemo] = useState<string | null>(null)
+  const [selectedTagFilter, setSelectedTagFilter] = useState<string>("")
+  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [filteredMemos, setFilteredMemos] = useState<TeamMemo[]>([])
+  const [searchText, setSearchText] = useState("")
   
   const supabase = createClient()
 
@@ -88,6 +91,11 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       }
 
       setMemos(data || [])
+      
+      // Extract unique tags
+      const allTags = data?.flatMap(memo => memo.tags || []) || []
+      const uniqueTags = Array.from(new Set(allTags)).sort()
+      setAvailableTags(uniqueTags)
     } catch (error) {
       console.error('Error fetching memos:', error)
     } finally {
@@ -254,14 +262,38 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     }
   }
 
-  // Auto arrange memos in grid
+  // Filter memos based on selected tag and search text
+  const filterMemos = () => {
+    let filtered = memos
+
+    // Filter by tag
+    if (selectedTagFilter) {
+      filtered = filtered.filter(memo => 
+        memo.tags && memo.tags.includes(selectedTagFilter)
+      )
+    }
+
+    // Filter by search text
+    if (searchText.trim()) {
+      const searchLower = searchText.toLowerCase()
+      filtered = filtered.filter(memo => 
+        memo.content.toLowerCase().includes(searchLower) ||
+        (memo.tags && memo.tags.some(tag => tag.toLowerCase().includes(searchLower)))
+      )
+    }
+
+    setFilteredMemos(filtered)
+  }
+
+  // Auto arrange memos in grid - using filtered memos
   const autoArrangeMemos = async () => {
+    const memosToArrange = filteredMemos.length > 0 ? filteredMemos : memos
     const gridCols = 4
     const cardWidth = 280
     const cardHeight = 200
     const padding = 20
 
-    const updates = memos.map((memo, index) => {
+    const updates = memosToArrange.map((memo, index) => {
       const row = Math.floor(index / gridCols)
       const col = index % gridCols
       const x = col * (cardWidth + padding) + padding
@@ -328,6 +360,11 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     }
   }, [user?.id])
 
+  // Filter memos when filters change
+  useEffect(() => {
+    filterMemos()
+  }, [memos, selectedTagFilter, searchText])
+
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
@@ -345,7 +382,39 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <p className="text-sm text-light-muted">Share ideas and communicate with your team</p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Tag Filter */}
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-light-muted" />
+            <Select value={selectedTagFilter} onValueChange={setSelectedTagFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="All Tags" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Tags</SelectItem>
+                {availableTags.map((tag) => (
+                  <SelectItem key={tag} value={tag}>
+                    #{tag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Search */}
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search size={16} className="absolute left-2 top-1/2 transform -translate-y-1/2 text-light-muted" />
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search memos..."
+                className="w-40 pl-8 pr-3 py-1 text-sm border border-light-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-green-button"
+              />
+            </div>
+          </div>
+
           <Button
             onClick={autoArrangeMemos}
             variant="outline"
@@ -368,7 +437,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       {/* Memo Wall */}
       <div className="relative w-full min-h-[700px] p-8" style={{ minHeight: '700px', position: 'relative' }}>
         <AnimatePresence>
-          {memos.map((memo, index) => {
+          {(filteredMemos.length > 0 ? filteredMemos : memos).map((memo, index) => {
             const colorClasses = getMemoColorClasses(memo.color)
             const isEditing = editingMemoId === memo.id
             
@@ -378,8 +447,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 initial={{ opacity: 0, scale: 0.8, rotate: Math.random() * 10 - 5 }}
                 animate={{ 
                   opacity: 1, 
-                  scale: draggedMemo === memo.id ? 1.1 : 1, 
-                  rotate: draggedMemo === memo.id ? 0 : Math.random() * 6 - 3,
+                  scale: 1, 
+                  rotate: Math.random() * 6 - 3,
                 }}
                 exit={{ opacity: 0, scale: 0.5 }}
                 transition={{ 
@@ -388,16 +457,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                   damping: 25,
                   delay: index * 0.1 
                 }}
-                drag
-                dragMomentum={false}
-                onDragStart={() => setDraggedMemo(memo.id)}
-                onDragEnd={(event, info) => {
-                  setDraggedMemo(null)
-                  const newX = Math.max(0, Math.min(1200, memo.position_x + info.offset.x))
-                  const newY = Math.max(0, Math.min(800, memo.position_y + info.offset.y))
-                  updateMemoPosition(memo.id, newX, newY)
-                }}
-                className={`absolute w-64 min-h-40 p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-lg shadow-lg ${colorClasses.shadow} cursor-move hover:shadow-xl transition-all duration-200 group ${draggedMemo === memo.id ? 'z-50' : 'z-10'}`}
+                className={`absolute w-64 min-h-40 p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-lg shadow-lg ${colorClasses.shadow} hover:shadow-xl transition-all duration-200 group z-10`}
                 whileHover={{ scale: 1.05, rotate: 0 }}
                 style={{
                   left: memo.position_x,
@@ -526,6 +586,26 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         </AnimatePresence>
 
         {/* Empty State */}
+        {(filteredMemos.length === 0 && selectedTagFilter) && (
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+              <Tag size={32} className="text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-light-primary mb-2">No memos found</h3>
+            <p className="text-light-muted max-w-xs">
+              No memos found with the selected tag "{selectedTagFilter}". Try a different tag or clear the filter.
+            </p>
+            <Button
+              onClick={() => setSelectedTagFilter("")}
+              variant="outline"
+              size="sm"
+              className="mt-3"
+            >
+              Clear Filter
+            </Button>
+          </div>
+        )}
+
         {memos.length === 0 && (
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <div className="w-20 h-20 mb-4 rounded-full bg-yellow-100 flex items-center justify-center">

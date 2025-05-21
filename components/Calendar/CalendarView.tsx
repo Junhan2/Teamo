@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, isToday } from "date-fns"
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, isToday, startOfDay, endOfDay, addWeeks, subWeeks } from "date-fns"
 
 interface Todo {
   id: string
@@ -46,6 +46,8 @@ interface CalendarViewProps {
   subscribedUserIds?: string[]
 }
 
+type ViewMode = 'month' | 'week'
+
 const snappyTransition = {
   type: "spring",
   stiffness: 500,
@@ -65,16 +67,25 @@ const CalendarView = ({
   const [selectedTodos, setSelectedTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('month')
   const supabase = createClient()
 
-  // Handler for navigating to previous month
-  const prevMonth = () => {
-    setCurrentDate(prev => addMonths(prev, -1))
+  // Handler for navigating to previous period
+  const prevPeriod = () => {
+    if (viewMode === 'month') {
+      setCurrentDate(prev => addMonths(prev, -1))
+    } else {
+      setCurrentDate(prev => subWeeks(prev, 1))
+    }
   }
 
-  // Handler for navigating to next month
-  const nextMonth = () => {
-    setCurrentDate(prev => addMonths(prev, 1))
+  // Handler for navigating to next period
+  const nextPeriod = () => {
+    if (viewMode === 'month') {
+      setCurrentDate(prev => addMonths(prev, 1))
+    } else {
+      setCurrentDate(prev => addWeeks(prev, 1))
+    }
   }
 
   // Handler for navigating to today
@@ -83,23 +94,39 @@ const CalendarView = ({
     setSelectedDate(new Date())
   }
 
-  // Calculate calendar days for the current month
+  // Calculate calendar days based on view mode
   const calendarDays = useMemo(() => {
-    const monthStart = startOfMonth(currentDate)
-    const monthEnd = endOfMonth(currentDate)
-    const startDate = startOfWeek(monthStart)
-    const endDate = endOfWeek(monthEnd)
+    if (viewMode === 'month') {
+      const monthStart = startOfMonth(currentDate)
+      const monthEnd = endOfMonth(currentDate)
+      const startDate = startOfWeek(monthStart)
+      const endDate = endOfWeek(monthEnd)
 
-    const days = []
-    let day = startDate
+      const days = []
+      let day = startDate
 
-    while (day <= endDate) {
-      days.push(day)
-      day = addDays(day, 1)
+      while (day <= endDate) {
+        days.push(day)
+        day = addDays(day, 1)
+      }
+
+      return days
+    } else {
+      // Week view
+      const weekStart = startOfWeek(currentDate)
+      const weekEnd = endOfWeek(currentDate)
+      
+      const days = []
+      let day = weekStart
+
+      while (day <= weekEnd) {
+        days.push(day)
+        day = addDays(day, 1)
+      }
+
+      return days
     }
-
-    return days
-  }, [currentDate])
+  }, [currentDate, viewMode])
 
   // Fetch todos from Supabase
   const fetchTodos = async () => {
@@ -280,14 +307,46 @@ const CalendarView = ({
       {/* Calendar Header */}
       <div className="p-4 border-b border-[rgba(0,0,0,0.20)]">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">
-            {format(currentDate, 'MMMM yyyy')}
-          </h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-semibold">
+              {viewMode === 'month' 
+                ? format(currentDate, 'MMMM yyyy')
+                : `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`
+              }
+            </h2>
+            
+            {/* View Mode Toggle */}
+            <div className="flex bg-[#f5f5f5] rounded-md p-1">
+              <Button
+                variant={viewMode === 'month' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('month')}
+                className={`h-7 px-3 text-xs ${viewMode === 'month' 
+                  ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' 
+                  : 'text-[#171717] hover:bg-white'
+                }`}
+              >
+                Month
+              </Button>
+              <Button
+                variant={viewMode === 'week' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('week')}
+                className={`h-7 px-3 text-xs ${viewMode === 'week' 
+                  ? 'bg-[#3fcf8e] text-white hover:bg-[#3fcf8e]/90' 
+                  : 'text-[#171717] hover:bg-white'
+                }`}
+              >
+                Week
+              </Button>
+            </div>
+          </div>
+          
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={prevMonth}
+              onClick={prevPeriod}
               className="h-8 w-8 p-0 rounded-md bg-[#FDFDFD] text-[#171717] hover:bg-[#3fcf8e] hover:text-white border border-[rgba(0,0,0,0.20)]"
             >
               <ChevronLeft size={16} />
@@ -303,7 +362,7 @@ const CalendarView = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={nextMonth}
+              onClick={nextPeriod}
               className="h-8 w-8 p-0 rounded-md bg-[#FDFDFD] text-[#171717] hover:bg-[#3fcf8e] hover:text-white border border-[rgba(0,0,0,0.20)]"
             >
               <ChevronRight size={16} />
@@ -363,10 +422,10 @@ const CalendarView = ({
         </div>
 
         {/* Calendar days */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className={`grid ${viewMode === 'week' ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
           {calendarDays.map((day, i) => {
             const dayTodos = getTodosForDay(day)
-            const isCurrentMonth = isSameMonth(day, currentDate)
+            const isCurrentMonth = viewMode === 'week' || isSameMonth(day, currentDate)
             const isDaySelected = selectedDate && isSameDay(day, selectedDate)
             const isCurrentDay = isToday(day)
             
@@ -374,14 +433,14 @@ const CalendarView = ({
               <motion.div
                 key={i}
                 className={`
-                  min-h-[100px] p-1 border relative rounded-md cursor-pointer
+                  ${viewMode === 'week' ? 'min-h-[150px]' : 'min-h-[100px]'} p-1 border relative rounded-md cursor-pointer
                   ${isCurrentMonth ? 'border-[rgba(0,0,0,0.20)]' : 'border-[rgba(0,0,0,0.10)] bg-[rgba(0,0,0,0.02)]'} 
                   ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : ''}
                   ${isCurrentDay ? 'border-[#3fcf8e]' : ''}
                   hover:border-[rgba(0,0,0,0.30)] transition-colors
                 `}
                 onClick={() => setSelectedDate(day)}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: viewMode === 'week' ? 1.01 : 1.02 }}
                 transition={snappyTransition}
               >
                 <div className="flex justify-between items-start p-1">
@@ -401,8 +460,8 @@ const CalendarView = ({
                 </div>
                 
                 {/* Task items in each day */}
-                <div className="mt-1 space-y-1 max-h-[70px] overflow-y-auto scrollbar-thin">
-                  {dayTodos.slice(0, 3).map(todo => (
+                <div className={`mt-1 space-y-1 ${viewMode === 'week' ? 'max-h-[120px]' : 'max-h-[70px]'} overflow-y-auto scrollbar-thin`}>
+                  {dayTodos.slice(0, viewMode === 'week' ? 5 : 3).map(todo => (
                     <div
                       key={todo.id}
                       className={`
@@ -420,10 +479,10 @@ const CalendarView = ({
                     </div>
                   ))}
                   
-                  {/* If there are more than 3 tasks, show a "more" indicator */}
-                  {dayTodos.length > 3 && (
+                  {/* If there are more tasks than can be shown, show a "more" indicator */}
+                  {dayTodos.length > (viewMode === 'week' ? 5 : 3) && (
                     <div className="text-xs text-[#707070] text-center">
-                      +{dayTodos.length - 3} more
+                      +{dayTodos.length - (viewMode === 'week' ? 5 : 3)} more
                     </div>
                   )}
                 </div>
