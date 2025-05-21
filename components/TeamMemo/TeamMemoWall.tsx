@@ -65,7 +65,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [newMemoTags, setNewMemoTags] = useState<string[]>([])
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState("")
-  const [selectedTagFilter, setSelectedTagFilter] = useState<string>("")
+  const [selectedTagFilter, setSelectedTagFilter] = useState<string>("all")
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const [filteredMemos, setFilteredMemos] = useState<TeamMemo[]>([])
   const [searchText, setSearchText] = useState("")
@@ -267,7 +267,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     let filtered = memos
 
     // Filter by tag
-    if (selectedTagFilter) {
+    if (selectedTagFilter && selectedTagFilter !== "all") {
       filtered = filtered.filter(memo => 
         memo.tags && memo.tags.includes(selectedTagFilter)
       )
@@ -391,7 +391,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 <SelectValue placeholder="All Tags" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Tags</SelectItem>
+                <SelectItem value="all">All Tags</SelectItem>
                 {availableTags.map((tag) => (
                   <SelectItem key={tag} value={tag}>
                     #{tag}
@@ -586,7 +586,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         </AnimatePresence>
 
         {/* Empty State */}
-        {(filteredMemos.length === 0 && selectedTagFilter) && (
+        {(filteredMemos.length === 0 && selectedTagFilter && selectedTagFilter !== "all") && (
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
               <Tag size={32} className="text-gray-400" />
@@ -596,7 +596,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
               No memos found with the selected tag "{selectedTagFilter}". Try a different tag or clear the filter.
             </p>
             <Button
-              onClick={() => setSelectedTagFilter("")}
+              onClick={() => setSelectedTagFilter("all")}
               variant="outline"
               size="sm"
               className="mt-3"
