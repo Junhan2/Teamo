@@ -409,87 +409,189 @@ const CalendarView = ({
 
       {/* Calendar grid */}
       <div className="p-4">
-        {/* Day names header */}
-        <div className="grid grid-cols-7 mb-2">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-            <div 
-              key={day} 
-              className={`text-center py-2 text-sm font-medium ${index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-[#707070]'}`}
-            >
-              {day}
-            </div>
-          ))}
-        </div>
+        {/* Day names header - only for month view */}
+        {viewMode === 'month' && (
+          <div className="grid grid-cols-7 mb-2">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
+              <div 
+                key={day} 
+                className={`text-center py-2 text-sm font-medium ${index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-[#707070]'}`}
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Calendar days */}
-        <div className={`grid ${viewMode === 'week' ? 'grid-cols-7' : 'grid-cols-7'} gap-1`}>
-          {calendarDays.map((day, i) => {
-            const dayTodos = getTodosForDay(day)
-            const isCurrentMonth = viewMode === 'week' || isSameMonth(day, currentDate)
-            const isDaySelected = selectedDate && isSameDay(day, selectedDate)
-            const isCurrentDay = isToday(day)
-            
-            return (
-              <motion.div
-                key={i}
-                className={`
-                  ${viewMode === 'week' ? 'min-h-[150px]' : 'min-h-[100px]'} p-1 border relative rounded-md cursor-pointer
-                  ${isCurrentMonth ? 'border-[rgba(0,0,0,0.20)]' : 'border-[rgba(0,0,0,0.10)] bg-[rgba(0,0,0,0.02)]'} 
-                  ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : ''}
-                  ${isCurrentDay ? 'border-[#3fcf8e]' : ''}
-                  hover:border-[rgba(0,0,0,0.30)] transition-colors
-                `}
-                onClick={() => setSelectedDate(day)}
-                whileHover={{ scale: viewMode === 'week' ? 1.01 : 1.02 }}
-                transition={snappyTransition}
-              >
-                <div className="flex justify-between items-start p-1">
-                  <span 
-                    className={`
-                      text-sm font-semibold rounded-full w-6 h-6 flex items-center justify-center
-                      ${!isCurrentMonth ? 'text-[#707070]' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                      ${isCurrentDay ? 'bg-[#525252] text-white' : ''}
-                    `}
-                  >
-                    {format(day, 'd')}
-                  </span>
-                  
-                  {dayTodos.length > 0 && (
-                    <Badge className="text-xs px-1.5">{dayTodos.length}</Badge>
-                  )}
-                </div>
-                
-                {/* Task items in each day */}
-                <div className={`mt-1 space-y-1 ${viewMode === 'week' ? 'max-h-[120px]' : 'max-h-[70px]'} overflow-y-auto scrollbar-thin`}>
-                  {dayTodos.slice(0, viewMode === 'week' ? 5 : 3).map(todo => (
-                    <div
-                      key={todo.id}
+        {viewMode === 'month' ? (
+          <div className="grid grid-cols-7 gap-1">
+            {calendarDays.map((day, i) => {
+              const dayTodos = getTodosForDay(day)
+              const isCurrentMonth = isSameMonth(day, currentDate)
+              const isDaySelected = selectedDate && isSameDay(day, selectedDate)
+              const isCurrentDay = isToday(day)
+              
+              return (
+                <motion.div
+                  key={i}
+                  className={`
+                    min-h-[100px] p-1 border relative rounded-md cursor-pointer
+                    ${isCurrentMonth ? 'border-[rgba(0,0,0,0.20)]' : 'border-[rgba(0,0,0,0.10)] bg-[rgba(0,0,0,0.02)]'} 
+                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : ''}
+                    ${isCurrentDay ? 'border-[#3fcf8e]' : ''}
+                    hover:border-[rgba(0,0,0,0.30)] transition-colors
+                  `}
+                  onClick={() => setSelectedDate(day)}
+                  whileHover={{ scale: 1.02 }}
+                  transition={snappyTransition}
+                >
+                  <div className="flex justify-between items-start p-1">
+                    <span 
                       className={`
-                        text-xs p-1 rounded flex items-center gap-1 relative overflow-hidden
-                        ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10' : 'bg-[#FDFDFD] border border-[rgba(0,0,0,0.10)]'}
+                        text-sm font-semibold rounded-full w-6 h-6 flex items-center justify-center
+                        ${!isCurrentMonth ? 'text-[#707070]' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
+                        ${isCurrentDay ? 'bg-[#525252] text-white' : ''}
                       `}
                     >
-                      {/* User color indicator */}
-                      <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
-                      
-                      <span className="pl-1.5 truncate text-[#171717]">{todo.title}</span>
-                      <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
-                        {getStatusIcon(todo.status)}
-                      </span>
-                    </div>
-                  ))}
+                      {format(day, 'd')}
+                    </span>
+                    
+                    {dayTodos.length > 0 && (
+                      <div className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                        {dayTodos.length}
+                      </div>
+                    )}
+                  </div>
                   
-                  {/* If there are more tasks than can be shown, show a "more" indicator */}
-                  {dayTodos.length > (viewMode === 'week' ? 5 : 3) && (
-                    <div className="text-xs text-[#707070] text-center">
-                      +{dayTodos.length - (viewMode === 'week' ? 5 : 3)} more
+                  {/* Task items in each day */}
+                  <div className="mt-1 space-y-1 max-h-[70px] overflow-y-auto scrollbar-thin">
+                    {dayTodos.slice(0, 3).map(todo => (
+                      <div
+                        key={todo.id}
+                        className={`
+                          text-xs p-1 rounded flex items-center gap-1 relative overflow-hidden
+                          ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10' : 'bg-[#FDFDFD] border border-[rgba(0,0,0,0.10)]'}
+                        `}
+                      >
+                        {/* User color indicator */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
+                        
+                        <span className="pl-1.5 truncate text-[#171717]">{todo.title}</span>
+                        <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
+                          {getStatusIcon(todo.status)}
+                        </span>
+                      </div>
+                    ))}
+                    
+                    {/* If there are more tasks than can be shown, show a "more" indicator */}
+                    {dayTodos.length > 3 && (
+                      <div className="text-xs text-[#707070] text-center">
+                        +{dayTodos.length - 3} more
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        ) : (
+          // Week view - one day per row
+          <div className="space-y-2">
+            {calendarDays.map((day, i) => {
+              const dayTodos = getTodosForDay(day)
+              const isDaySelected = selectedDate && isSameDay(day, selectedDate)
+              const isCurrentDay = isToday(day)
+              const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]
+              
+              return (
+                <motion.div
+                  key={i}
+                  className={`
+                    p-4 border rounded-lg cursor-pointer bg-white
+                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : 'border-[rgba(0,0,0,0.20)]'}
+                    ${isCurrentDay ? 'border-[#3fcf8e] border-2' : ''}
+                    hover:border-[rgba(0,0,0,0.30)] transition-colors
+                  `}
+                  onClick={() => setSelectedDate(day)}
+                  whileHover={{ scale: 1.005 }}
+                  transition={snappyTransition}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span 
+                        className={`
+                          text-lg font-semibold rounded-full w-10 h-10 flex items-center justify-center
+                          ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
+                          ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f5f5f5]'}
+                        `}
+                      >
+                        {format(day, 'd')}
+                      </span>
+                      <div>
+                        <h3 className={`text-lg font-medium ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
+                          {dayName}
+                        </h3>
+                        <p className="text-sm text-[#707070]">{format(day, 'MMMM d, yyyy')}</p>
+                      </div>
+                    </div>
+                    
+                    {dayTodos.length > 0 && (
+                      <div className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        {dayTodos.length}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Task items for the day */}
+                  {dayTodos.length > 0 ? (
+                    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+                      {dayTodos.map(todo => (
+                        <div
+                          key={todo.id}
+                          className={`
+                            p-3 rounded-md border relative overflow-hidden
+                            ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 border-[#3fcf8e]/20' : 'bg-[#FDFDFD] border-[rgba(0,0,0,0.20)]'}
+                          `}
+                        >
+                          {/* User color indicator */}
+                          <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
+                          
+                          <div className="pl-2">
+                            <h4 className={`font-medium text-sm ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
+                              {todo.title}
+                            </h4>
+                            {todo.description && (
+                              <p className="text-xs text-[#707070] mt-1 line-clamp-2">{todo.description}</p>
+                            )}
+                            <div className="flex items-center justify-between mt-2">
+                              {todo.user_id !== userId && (
+                                <span className="text-xs text-[#707070] bg-[#f5f5f5] px-2 py-1 rounded">
+                                  {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
+                                </span>
+                              )}
+                              <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-2 py-1 text-xs flex items-center gap-1`}>
+                                {getStatusIcon(todo.status)}
+                                <span>
+                                  {todo.status === 'pending' ? 'Not yet' : 
+                                   todo.status === 'in_progress' ? 'Doing' : 'Complete'}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 text-[#707070] text-sm">
+                      No tasks for this day
                     </div>
                   )}
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Selected date tasks panel */}
