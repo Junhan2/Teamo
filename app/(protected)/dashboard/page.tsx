@@ -427,38 +427,80 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-emerald-200 bg-emerald-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <span className="text-sm font-medium text-emerald-700">Complete</span>
+                <div className="p-4 rounded-lg border border-emerald-200 bg-emerald-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                      <span className="text-sm font-medium text-emerald-700">Complete</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold text-emerald-600">{todoStats.completed}</span>
+                      <span className="text-xs text-emerald-500">/ {todoStats.total}</span>
+                      <span className="text-xs text-emerald-600 font-medium">
+                        {todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-emerald-600">{todoStats.completed}</span>
-                    <span className="text-xs text-emerald-500">/ {todoStats.total}</span>
+                  <div className="w-full bg-emerald-100 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{
+                        width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
+                        backgroundColor: '#72e3ad'
+                      }}
+                    ></div>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-blue-200 bg-blue-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span className="text-sm font-medium text-blue-700">Doing</span>
+                <div className="p-4 rounded-lg border border-blue-200 bg-blue-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                      <span className="text-sm font-medium text-blue-700">Doing</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold text-blue-600">{todoStats.inProgress}</span>
+                      <span className="text-xs text-blue-500">/ {todoStats.total}</span>
+                      <span className="text-xs text-blue-600 font-medium">
+                        {todoStats.total > 0 ? Math.round((todoStats.inProgress / todoStats.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-blue-600">{todoStats.inProgress}</span>
-                    <span className="text-xs text-blue-500">/ {todoStats.total}</span>
+                  <div className="w-full bg-blue-100 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{
+                        width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
+                        backgroundColor: '#60a5fa'
+                      }}
+                    ></div>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-amber-200 bg-amber-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                    <span className="text-sm font-medium text-amber-700">Not yet</span>
+                <div className="p-4 rounded-lg border border-amber-200 bg-amber-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                      <span className="text-sm font-medium text-amber-700">Not yet</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold text-amber-600">{todoStats.pending}</span>
+                      <span className="text-xs text-amber-500">/ {todoStats.total}</span>
+                      <span className="text-xs text-amber-600 font-medium">
+                        {todoStats.total > 0 ? Math.round((todoStats.pending / todoStats.total) * 100) : 0}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-amber-600">{todoStats.pending}</span>
-                    <span className="text-xs text-amber-500">/ {todoStats.total}</span>
+                  <div className="w-full bg-amber-100 rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{
+                        width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
+                        backgroundColor: '#fbbf24'
+                      }}
+                    ></div>
                   </div>
                 </div>
               </div>
