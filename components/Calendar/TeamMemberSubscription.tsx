@@ -254,7 +254,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                       size="sm"
                       onClick={saveSubscriptions}
                       disabled={saving}
-                      className="text-xs px-3 py-1 h-7 w-[110px] bg-[#3fcf8e] hover:bg-[#3fcf8e]/90 text-white flex items-center justify-center gap-1 outline outline-1 outline-[rgba(0,0,0,0.20)] outline-offset-[-1px] rounded-md"
+                      className="text-xs px-3 py-1 h-7 flex-1 bg-[#3fcf8e] hover:bg-[#3fcf8e]/90 text-white flex items-center justify-center gap-1 outline outline-1 outline-[rgba(0,0,0,0.20)] outline-offset-[-1px] rounded-md"
                     >
                       {saving ? (
                         <>
