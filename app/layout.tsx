@@ -20,30 +20,30 @@ const firaMono = Fira_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Tide | Team Task Management",
+  title: "tide | Team Task Management",
   description: "Elegant team collaboration and task management platform for seamless productivity",
   keywords: ["task management", "team collaboration", "productivity", "project management", "team workspace"],
-  authors: [{ name: "Tide Team" }],
-  creator: "Tide",
-  publisher: "Tide",
+  authors: [{ name: "tide team" }],
+  creator: "tide",
+  publisher: "tide",
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: "Tide | Team Task Management",
+    title: "tide | Team Task Management",
     description: "Elegant team collaboration and task management platform for seamless productivity",
     type: "website",
-    siteName: "Tide",
+    siteName: "tide",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tide | Team Task Management",
+    title: "tide | Team Task Management",
     description: "Elegant team collaboration and task management platform for seamless productivity",
-    creator: "@TideApp",
+    creator: "@tideapp",
   },
-  applicationName: "Tide",
+  applicationName: "tide",
   generator: 'Next.js',
   referrer: 'origin-when-cross-origin',
 }
