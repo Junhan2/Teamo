@@ -467,15 +467,23 @@ const CalendarView = ({
                           <p className="text-sm text-[#707070] mt-1">{todo.description}</p>
                         )}
                         
-                        <div className="flex items-center text-sm text-[#707070] mt-2">
-                          <Clock size={12} className="mr-1" />
-                          <span>{format(new Date(todo.due_date!), 'HH:mm')}</span>
-                          
+                        <div className="flex items-center gap-2 mt-2">
                           {/* Show user name for team tasks */}
                           {todo.user_id !== userId && (
-                            <span className="ml-2 px-1.5 py-0.5 text-xs rounded-sm bg-[#FDFDFD] text-[#171717] border border-[rgba(0,0,0,0.20)]">
-                              {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                            </span>
+                            <>
+                              <span className="px-1.5 py-0.5 text-xs rounded-sm bg-[#FDFDFD] text-[#171717] border border-[rgba(0,0,0,0.20)]">
+                                {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
+                              </span>
+                              
+                              {/* Status badge for team tasks (read-only) */}
+                              <Badge className={`${getStatusColor(todo.status)} px-2 py-0.5 h-5 rounded-sm text-xs flex items-center gap-1`}>
+                                {getStatusIcon(todo.status)}
+                                <span>
+                                  {todo.status === 'pending' ? 'Not yet' : 
+                                   todo.status === 'in_progress' ? 'Doing' : 'Complete'}
+                                </span>
+                              </Badge>
+                            </>
                           )}
                         </div>
                       </div>

@@ -368,76 +368,40 @@ export default function DashboardPage() {
                 <BarChart3 className="w-4 h-4" />
                 STATISTICS
               </h2>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Complete */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-sm"></div>
-                      <span className="text-sm font-medium text-light-primary">Complete</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-emerald-500">{todoStats.completed}</span>
-                      <span className="text-sm text-light-muted">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-emerald-200 bg-emerald-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <span className="text-sm font-medium text-emerald-700">Complete</span>
                   </div>
-                  <div className="relative w-full bg-gray-100 rounded-lg h-4 overflow-hidden shadow-inner">
-                    <motion.div 
-                      className="h-full rounded-lg bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-sm relative"
-                      initial={{ width: 0 }}
-                      animate={{ width: todoStats.total > 0 ? `${(todoStats.completed / todoStats.total) * 100}%` : '0%' }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.1 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-lg"></div>
-                    </motion.div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-emerald-600">{todoStats.completed}</span>
+                    <span className="text-xs text-emerald-500">/ {todoStats.total}</span>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 shadow-sm"></div>
-                      <span className="text-sm font-medium text-light-primary">Doing</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-blue-500">{todoStats.inProgress}</span>
-                      <span className="text-sm text-light-muted">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-blue-200 bg-blue-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span className="text-sm font-medium text-blue-700">Doing</span>
                   </div>
-                  <div className="relative w-full bg-gray-100 rounded-lg h-4 overflow-hidden shadow-inner">
-                    <motion.div 
-                      className="h-full rounded-lg bg-gradient-to-r from-blue-400 to-blue-500 shadow-sm relative"
-                      initial={{ width: 0 }}
-                      animate={{ width: todoStats.total > 0 ? `${(todoStats.inProgress / todoStats.total) * 100}%` : '0%' }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.2 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-lg"></div>
-                    </motion.div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-blue-600">{todoStats.inProgress}</span>
+                    <span className="text-xs text-blue-500">/ {todoStats.total}</span>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm"></div>
-                      <span className="text-sm font-medium text-light-primary">Not yet</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-amber-500">{todoStats.pending}</span>
-                      <span className="text-sm text-light-muted">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-amber-200 bg-amber-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                    <span className="text-sm font-medium text-amber-700">Not yet</span>
                   </div>
-                  <div className="relative w-full bg-gray-100 rounded-lg h-4 overflow-hidden shadow-inner">
-                    <motion.div 
-                      className="h-full rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 shadow-sm relative"
-                      initial={{ width: 0 }}
-                      animate={{ width: todoStats.total > 0 ? `${(todoStats.pending / todoStats.total) * 100}%` : '0%' }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.3 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-lg"></div>
-                    </motion.div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold text-amber-600">{todoStats.pending}</span>
+                    <span className="text-xs text-amber-500">/ {todoStats.total}</span>
                   </div>
                 </div>
               </div>
@@ -458,7 +422,7 @@ export default function DashboardPage() {
             className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
-            <span className="font-medium">My Tasks</span>
+            <span className="font-medium">Tasks</span>
             {/* Active indicator */}
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
           </Button>

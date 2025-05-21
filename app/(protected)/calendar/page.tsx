@@ -100,7 +100,7 @@ export default function CalendarPageRoute() {
             className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <CheckSquare className="w-4 h-4" />
-            <span className="font-medium">My Tasks</span>
+            <span className="font-medium">Tasks</span>
           </Button>
         </Link>
         
