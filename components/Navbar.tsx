@@ -41,8 +41,30 @@ export default function Navbar({ user }: NavbarProps) {
     <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-light-background shadow-md border-b border-light-border">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 py-2">
-          <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2">
-            <span className="text-light-primary font-black font-dm-sans">tide.</span>
+          <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2 relative">
+            <div className="relative flex items-center">
+              {/* Hero image behind text */}
+              <div className="relative w-[60px] h-[40px] mr-[-20px]">
+                <img
+                  src="/images/hero-3d-svg.svg"
+                  alt="tide"
+                  className="w-full h-full object-contain opacity-30 relative z-0"
+                  style={{ 
+                    filter: "drop-shadow(0 2px 8px rgba(63, 207, 142, 0.15))"
+                  }}
+                />
+              </div>
+              
+              {/* tide text overlapping with the image */}
+              <span 
+                className="text-light-primary font-black font-dm-sans relative z-10"
+                style={{
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)"
+                }}
+              >
+                tide.
+              </span>
+            </div>
           </Link>
 
           <div className="flex items-center gap-4">

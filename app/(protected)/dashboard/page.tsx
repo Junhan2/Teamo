@@ -293,7 +293,7 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="flex justify-start py-3 mb-3">
+                <div className="flex justify-start mb-3">
                   <TabsList className="bg-gray-100 rounded-full p-1 h-auto">
                     <TabsTrigger 
                       value="my-todos" 
