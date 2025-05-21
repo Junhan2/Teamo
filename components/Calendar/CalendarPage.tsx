@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import CalendarView from "./CalendarView"
 import TeamMemberSubscription from "./TeamMemberSubscription"
@@ -42,10 +42,10 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   }
 
   // Handle selected date change
-  const handleSelectedDateChange = (date: Date | null, todos: any[]) => {
+  const handleSelectedDateChange = useCallback((date: Date | null, todos: any[]) => {
     setSelectedDate(date)
     setSelectedTodos(todos)
-  }
+  }, [])
 
   // Get status color for badges
   const getStatusColor = (status: string) => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import {
   ChevronLeft,
@@ -72,6 +72,12 @@ const CalendarView = ({
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('month')
   const supabase = createClient()
+  const onSelectedDateChangeRef = useRef(onSelectedDateChange)
+  
+  // Update ref when prop changes
+  useEffect(() => {
+    onSelectedDateChangeRef.current = onSelectedDateChange
+  }, [onSelectedDateChange])
 
   // Handler for navigating to previous period
   const prevPeriod = () => {
@@ -213,12 +219,12 @@ const CalendarView = ({
         return isSameDay(new Date(todo.due_date), selectedDate)
       })
       setSelectedTodos(todosForSelectedDate)
-      onSelectedDateChange?.(selectedDate, todosForSelectedDate)
+      onSelectedDateChangeRef.current?.(selectedDate, todosForSelectedDate)
     } else {
       setSelectedTodos([])
-      onSelectedDateChange?.(null, [])
+      onSelectedDateChangeRef.current?.(null, [])
     }
-  }, [selectedDate, todos, onSelectedDateChange])
+  }, [selectedDate, todos])
 
   // Get todos for a specific day
   const getTodosForDay = (day: Date) => {
