@@ -239,7 +239,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                 </div>
               ) : (
                 <>
-                  <div className="flex justify-between items-center py-2 mb-2">
+                  <div className="flex justify-between items-center gap-2 py-2 mb-2">
                     <Button
                       variant="outline"
                       size="sm"
