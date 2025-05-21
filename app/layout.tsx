@@ -47,9 +47,9 @@ export const metadata: Metadata = {
   generator: 'Next.js',
   referrer: 'origin-when-cross-origin',
   icons: {
-    icon: '/placeholder-logo.svg',
-    shortcut: '/placeholder-logo.svg',
-    apple: '/placeholder-logo.svg',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
 }
 
