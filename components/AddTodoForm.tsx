@@ -151,65 +151,69 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-1">
-      <div className="flex items-center mb-1">
-        <div className="flex-grow relative">
-          <Input
-            id="title"
-            placeholder="Enter your task"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Input fields group */}
+      <div className="space-y-3 p-4 bg-white rounded-lg border border-light-border">
+        <div className="flex items-center">
+          <div className="flex-grow relative">
+            <Input
+              id="title"
+              placeholder="Enter your task"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <Textarea
+            id="description"
+            placeholder="Description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={2}
+            className="bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
           />
+        </div>
+        
+        <div className="w-full">
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal bg-light-input border-light-border hover:bg-light-input hover:border-light-accent focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-light-border outline-offset-[-1px] rounded-md transition-all duration-200",
+                  dueDate ? "text-light-primary" : "text-light-muted"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-light-input border-light-border">
+              <Calendar
+                mode="single"
+                selected={dueDate}
+                onSelect={(date) => {
+                  setDueDate(date);
+                  setCalendarOpen(false);
+                }}
+                initialFocus
+                defaultMonth={new Date()}
+                className="bg-light-input rounded-md border-light-border"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
       
-      <div className="space-y-1 mb-1">
-        <Textarea
-          id="description"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-          className="bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
-        />
-      </div>
-      
-      <div className="w-full mb-6">
-        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal bg-light-input border-light-border hover:bg-light-input hover:border-light-accent focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-light-border outline-offset-[-1px] rounded-md transition-all duration-200",
-                !dueDate && "text-light-muted"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-light-input border-light-border">
-            <Calendar
-              mode="single"
-              selected={dueDate}
-              onSelect={(date) => {
-                setDueDate(date);
-                setCalendarOpen(false);
-              }}
-              initialFocus
-              defaultMonth={new Date()}
-              className="bg-light-input rounded-md border-light-border"
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      
+      {/* ADD TASK button */}
       <Button 
         type="submit" 
         variant="default"
-        className="mt-2 mb-2 w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
+        className="w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
         disabled={loading}
       >
         {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400] font-fira-mono">ADD TASK</span></>}
