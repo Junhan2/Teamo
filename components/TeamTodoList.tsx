@@ -66,11 +66,11 @@ interface CompletionEffectPosition {
   height: number
 }
 
-const snappyTransition = {
+const smoothTransition = {
   type: "spring",
-  stiffness: 500,
-  damping: 30,
-  mass: 1,
+  stiffness: 300,
+  damping: 40,
+  mass: 0.8,
 }
 
 // 날짜로부터 남은 일수 계산 함수
@@ -637,18 +637,19 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         </div>
       ) : (
         <div className="space-y-3">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {todos
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((todo) => (
               <motion.div 
                 key={todo.id}
                 className={`bg-light-background rounded-xl overflow-hidden border border-light-border hover:border-light-secondary/40 transition-all duration-200 hover:bg-gray-50`}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={snappyTransition}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={smoothTransition}
                 whileHover={{ scale: 1.01 }}
+                layout
               >
                 <div 
                   className="p-5 cursor-pointer"
