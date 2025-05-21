@@ -332,14 +332,14 @@ const CalendarView = ({
               <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setViewMode('month')}
-                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-light-primary text-white' : 'hover:bg-light-hover/10'}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-light-secondary/20' : ''}`}
                 >
                   <span>Month</span>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem 
                   onClick={() => setViewMode('week')}
-                  className={`flex items-center px-3 py-2 text-sm rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-light-primary text-white' : 'hover:bg-light-hover/10'}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-light-secondary/20' : ''}`}
                 >
                   <span>Week</span>
                 </DropdownMenuItem>
