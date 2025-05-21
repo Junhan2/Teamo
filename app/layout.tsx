@@ -20,9 +20,32 @@ const firaMono = Fira_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Muung. | Team Task Management",
-  description: "Elegant team collaboration and task management service",
-  generator: 'v0.dev'
+  title: "Tide | Team Task Management",
+  description: "Elegant team collaboration and task management platform for seamless productivity",
+  keywords: ["task management", "team collaboration", "productivity", "project management", "team workspace"],
+  authors: [{ name: "Tide Team" }],
+  creator: "Tide",
+  publisher: "Tide",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Tide | Team Task Management",
+    description: "Elegant team collaboration and task management platform for seamless productivity",
+    type: "website",
+    siteName: "Tide",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tide | Team Task Management",
+    description: "Elegant team collaboration and task management platform for seamless productivity",
+    creator: "@TideApp",
+  },
+  applicationName: "Tide",
+  generator: 'Next.js',
+  referrer: 'origin-when-cross-origin',
 }
 
 export default function RootLayout({
