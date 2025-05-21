@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 interface UserProfile {
   id: string
@@ -38,15 +39,15 @@ export default function Navbar({ user }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#292c33] shadow-md">
+    <header className="sticky top-0 z-10 supertape-nav backdrop-blur-lg py-2 bg-[#292c33] dark:bg-[#292c33] bg-white/80 shadow-md border-b border-white/20">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 py-2">
           <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2">
-            <span className="font-serif text-[#FFFFFF] font-bold var(--font-playfair)">Mung.</span>
+            <span className="font-serif text-[#FFFFFF] dark:text-[#FFFFFF] text-[#1a1a1a] font-bold var(--font-playfair)">Mung.</span>
           </Link>
 
           <div className="flex items-center gap-4">
-            {/* 플로팅 버튼으로 이동됨 */}
+            <ThemeToggle />
 
             {user && (
               <DropdownMenu>

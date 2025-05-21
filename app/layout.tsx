@@ -5,6 +5,7 @@ import { Inter, Poppins } from "next/font/google"
 import { Zilla_Slab, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { ThemeProvider } from '@/components/theme-provider'
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,9 +50,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${poppins.variable} ${zillaSlab.variable} ${playfair.variable}`}>
-      <body className={`${inter.className} bg-[#292C33] text-white min-h-screen`}>
-        {children}
+    <html lang="en" className={`${inter.variable} ${poppins.variable} ${zillaSlab.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

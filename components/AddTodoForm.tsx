@@ -160,7 +160,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm pl-4 py-2 h-10 text-sm"
+            className="w-full bg-[#1F2125] dark:bg-[#1F2125] bg-white/70 border-[#464c58]/40 dark:border-[#464c58]/40 border-white/40 focus:border-white dark:focus:border-white focus:border-[#87CEEB] focus:ring-0 rounded-sm pl-4 py-2 h-10 text-sm text-white dark:text-white text-gray-800 placeholder-gray-400 dark:placeholder-gray-400 placeholder-gray-500"
           />
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="bg-[#1F2125] border-[#464c58]/40 focus:border-white focus:ring-0 rounded-sm text-sm w-full resize-none pl-4 py-2"
+          className="bg-[#1F2125] dark:bg-[#1F2125] bg-white/70 border-[#464c58]/40 dark:border-[#464c58]/40 border-white/40 focus:border-white dark:focus:border-white focus:border-[#87CEEB] focus:ring-0 rounded-sm text-sm w-full resize-none pl-4 py-2 text-white dark:text-white text-gray-800 placeholder-gray-400 dark:placeholder-gray-400 placeholder-gray-500"
         />
       </div>
       
@@ -182,8 +182,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-[#1F2125] border-[#464c58]/40 hover:bg-[#2E3238] hover:border-[#464c58]/60 px-4 py-2 h-10 text-sm",
-                !dueDate && "text-gray-400"
+                "w-full justify-start text-left font-normal bg-[#1F2125] dark:bg-[#1F2125] bg-white/70 border-[#464c58]/40 dark:border-[#464c58]/40 border-white/40 hover:bg-[#2E3238] dark:hover:bg-[#2E3238] hover:bg-white/80 hover:border-[#464c58]/60 dark:hover:border-[#464c58]/60 hover:border-[#87CEEB]/60 px-4 py-2 h-10 text-sm text-white dark:text-white text-gray-800",
+                !dueDate && "text-gray-400 dark:text-gray-400 text-gray-500"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -209,7 +209,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-6 mb-2 w-full py-[1.28rem] md:py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
+        className="mt-10 mb-2 w-full py-[1.28rem] md:py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
         disabled={loading}
       >
         {loading ? "Adding..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[600]">Add Task</span></>}

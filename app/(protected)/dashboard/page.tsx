@@ -282,13 +282,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#292c33]">
+    <div className="min-h-screen bg-[#292c33] dark:bg-[#292c33] bg-gradient-to-br from-[#81A8F0] via-[#D4E5F1] to-[#B3D9EE]">
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
           <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md mb-6 md:mb-0">
+            <div className="bg-[#292C33] dark:bg-[#292C33] bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-md mb-6 md:mb-0 border border-white/20">
               <Tabs 
                 value={activeTab}
                 onValueChange={setActiveTab}
@@ -298,13 +298,13 @@ export default function DashboardPage() {
                   <TabsList className="bg-transparent space-x-2">
                     <TabsTrigger 
                       value="my-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'my-todos' ? 'bg-[#212226] dark:bg-[#212226] bg-[#87CEEB]/30 text-white dark:text-white text-[#1a1a1a]' : 'bg-[#3a3b40] dark:bg-[#3a3b40] bg-[#B3D9EE]/50 text-gray-300 dark:text-gray-300 text-gray-600'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">MY</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="team-todos" 
-                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] text-white' : 'bg-[#3a3b40] text-gray-300'}`}
+                      className={`rounded-none transition-all duration-200 ${activeTab === 'team-todos' ? 'bg-[#212226] dark:bg-[#212226] bg-[#87CEEB]/30 text-white dark:text-white text-[#1a1a1a]' : 'bg-[#3a3b40] dark:bg-[#3a3b40] bg-[#B3D9EE]/50 text-gray-300 dark:text-gray-300 text-gray-600'}`}
                     >
                       <span className="px-10 py-3 text-sm uppercase tracking-[.1em] font-[500] font-['Inter']">TEAM</span>
                     </TabsTrigger>
@@ -343,9 +343,9 @@ export default function DashboardPage() {
           {/* 할일 추가 및 통계 섹션 */}
           <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
             {/* 할일 추가 섹션 */}
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 mb-6" id="addTodoForm">
+            <div className="bg-[#292C33] dark:bg-[#292C33] bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 dark:border-[#464c58]/20 border-white/20 mb-6" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
+                <h2 className="text-sm font-medium mb-4 text-white dark:text-white text-[#1a1a1a] uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">ADD NEW TASK</h2>
                 {user && (
                   <AddTodoForm 
                     userId={user.id} 
@@ -362,17 +362,17 @@ export default function DashboardPage() {
             {/* {user && <TaskStreak userId={user.id} className="mb-6" />} */}
             
             {/* 통계 섹션 */}
-            <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
+            <div className="bg-[#292C33] dark:bg-[#292C33] bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 dark:border-[#464c58]/20 border-white/20 p-6" style={{ overflow: 'visible' }}>
+              <h2 className="text-sm font-medium mb-4 text-white dark:text-white text-[#1a1a1a] uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-base text-gray-300">Complete</span>
+                  <span className="text-base text-gray-300 dark:text-gray-300 text-gray-600">Complete</span>
                   <div className="flex items-center">
                     <span className="text-[#5AD363] font-semibold text-lg">{todoStats.completed}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-base text-gray-500 dark:text-gray-500 text-gray-600 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-[#1F2125] dark:bg-[#1F2125] bg-[#E3F2FD]/50 rounded-full h-5 overflow-hidden">
                   <motion.div 
                     className="bg-[#5AD363] h-5 rounded-full"
                     initial={{ width: 0 }}
@@ -382,13 +382,13 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">Doing</span>
+                  <span className="text-base text-gray-300 dark:text-gray-300 text-gray-600">Doing</span>
                   <div className="flex items-center">
                     <span className="text-[#FF82C2] font-semibold text-lg">{todoStats.inProgress}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-base text-gray-500 dark:text-gray-500 text-gray-600 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-[#1F2125] dark:bg-[#1F2125] bg-[#E3F2FD]/50 rounded-full h-5 overflow-hidden">
                   <motion.div 
                     className="bg-[#FF82C2] h-5 rounded-full"
                     initial={{ width: 0 }}
@@ -398,13 +398,13 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-4">
-                  <span className="text-base text-gray-300">Not yet</span>
+                  <span className="text-base text-gray-300 dark:text-gray-300 text-gray-600">Not yet</span>
                   <div className="flex items-center">
                     <span className="text-[#FFDA40] font-semibold text-lg">{todoStats.pending}</span>
-                    <span className="text-base text-gray-500 ml-1">/ {todoStats.total}</span>
+                    <span className="text-base text-gray-500 dark:text-gray-500 text-gray-600 ml-1">/ {todoStats.total}</span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1F2125] rounded-full h-5 overflow-hidden">
+                <div className="w-full bg-[#1F2125] dark:bg-[#1F2125] bg-[#E3F2FD]/50 rounded-full h-5 overflow-hidden">
                   <motion.div 
                     className="bg-[#FFDA40] h-5 rounded-full"
                     initial={{ width: 0 }}
