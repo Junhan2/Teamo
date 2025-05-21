@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Heart, ThumbsUp, Smile, X, Edit3, Grid3X3, Tag, Filter, Search } from "lucide-react"
+import { Plus, Heart, ThumbsUp, Smile, X, Edit3, Grid3X3, Tag, Filter, Search, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -69,6 +69,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const [filteredMemos, setFilteredMemos] = useState<TeamMemo[]>([])
   const [searchText, setSearchText] = useState("")
+  const [sortBy, setSortBy] = useState<string>("recent")
   
   const supabase = createClient()
 
@@ -262,8 +263,57 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     }
   }
 
-  // Filter memos based on selected tag and search text
-  const filterMemos = () => {
+  // Get reaction count for a memo
+  const getReactionCount = (memo: TeamMemo) => {
+    if (!memo.reactions) return 0
+    return Object.values(memo.reactions).reduce((total, userList) => total + userList.length, 0)
+  }
+
+  // Sort memos based on selected criteria
+  const sortMemos = (memosToSort: TeamMemo[]) => {
+    const sorted = [...memosToSort]
+    
+    switch (sortBy) {
+      case "recent":
+        return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      
+      case "oldest":
+        return sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+      
+      case "updated":
+        return sorted.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+      
+      case "author":
+        return sorted.sort((a, b) => {
+          const nameA = a.user?.full_name || a.user?.email || ''
+          const nameB = b.user?.full_name || b.user?.email || ''
+          return nameA.localeCompare(nameB)
+        })
+      
+      case "reactions":
+        return sorted.sort((a, b) => getReactionCount(b) - getReactionCount(a))
+      
+      case "tags":
+        return sorted.sort((a, b) => {
+          const tagsA = a.tags?.length || 0
+          const tagsB = b.tags?.length || 0
+          if (tagsA !== tagsB) return tagsB - tagsA
+          // If same number of tags, sort by first tag alphabetically
+          const firstTagA = a.tags?.[0] || ''
+          const firstTagB = b.tags?.[0] || ''
+          return firstTagA.localeCompare(firstTagB)
+        })
+      
+      case "color":
+        return sorted.sort((a, b) => a.color.localeCompare(b.color))
+      
+      default:
+        return sorted
+    }
+  }
+
+  // Filter and sort memos based on selected tag, search text, and sort criteria
+  const filterAndSortMemos = () => {
     let filtered = memos
 
     // Filter by tag
@@ -278,11 +328,15 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       const searchLower = searchText.toLowerCase()
       filtered = filtered.filter(memo => 
         memo.content.toLowerCase().includes(searchLower) ||
-        (memo.tags && memo.tags.some(tag => tag.toLowerCase().includes(searchLower)))
+        (memo.tags && memo.tags.some(tag => tag.toLowerCase().includes(searchLower))) ||
+        (memo.user?.full_name?.toLowerCase().includes(searchLower)) ||
+        (memo.user?.email?.toLowerCase().includes(searchLower))
       )
     }
 
-    setFilteredMemos(filtered)
+    // Sort the filtered memos
+    const sorted = sortMemos(filtered)
+    setFilteredMemos(sorted)
   }
 
   // Auto arrange memos in grid - using filtered memos
@@ -360,10 +414,10 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     }
   }, [user?.id])
 
-  // Filter memos when filters change
+  // Filter and sort memos when filters or sort criteria change
   useEffect(() => {
-    filterMemos()
-  }, [memos, selectedTagFilter, searchText])
+    filterAndSortMemos()
+  }, [memos, selectedTagFilter, searchText, sortBy])
 
   if (loading) {
     return (
@@ -383,6 +437,25 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Sort By */}
+          <div className="flex items-center gap-2">
+            <ArrowUpDown size={16} className="text-light-muted" />
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Sort by..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Most Recent</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="updated">Recently Updated</SelectItem>
+                <SelectItem value="author">By Author</SelectItem>
+                <SelectItem value="reactions">Most Discussed</SelectItem>
+                <SelectItem value="tags">By Topic</SelectItem>
+                <SelectItem value="color">By Color</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Tag Filter */}
           <div className="flex items-center gap-2">
             <Filter size={16} className="text-light-muted" />
@@ -409,7 +482,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 type="text"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Search memos..."
+                placeholder="Search content, tags, author..."
                 className="w-40 pl-8 pr-3 py-1 text-sm border border-light-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-green-button"
               />
             </div>
