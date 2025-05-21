@@ -115,28 +115,28 @@ export default function ContributionGraph({ userId, days = 90 }: ContributionGra
   
   // 툴팁은 이제 CSS absolute positioning으로 처리
 
-  // Get color based on activity level
+  // Get color based on activity level - Light theme
   const getLevelColor = (level: number) => {
     switch(level) {
-      case 0: return 'bg-[#1a1a27] border border-[#2a2a3c]/30'
-      case 1: return 'bg-green-900/60 border border-green-800/30'
-      case 2: return 'bg-green-800/70 border border-green-700/30'
-      case 3: return 'bg-green-700/80 border border-green-600/30'
-      case 4: return 'bg-green-600/90 border border-green-500/30'
-      default: return 'bg-[#1a1a27] border border-[#2a2a3c]/30'
+      case 0: return 'bg-gray-100 border border-gray-200'
+      case 1: return 'bg-green-100 border border-green-200'
+      case 2: return 'bg-green-200 border border-green-300'
+      case 3: return 'bg-green-400 border border-green-500'
+      case 4: return 'bg-green-600 border border-green-700'
+      default: return 'bg-gray-100 border border-gray-200'
     }
   }
   
   if (loading) {
     return (
-      <div className="animate-pulse bg-[#1a1a27]/50 h-24 rounded-xl"></div>
+      <div className="animate-pulse bg-gray-100 h-24 rounded-xl"></div>
     )
   }
   
   return (
     <div className="mb-8" style={{ overflow: 'visible', position: 'relative', zIndex: 1 }}>
       <div className="flex flex-col gap-1" style={{ overflow: 'visible' }}>
-        <div className="bg-[#1a1a27]/40 p-5 rounded-xl border border-[#2a2a3c] relative" style={{ overflow: 'visible', zIndex: 1 }}>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 relative shadow-sm" style={{ overflow: 'visible', zIndex: 1 }}>
           <div className="flex gap-1.5 flex-wrap justify-center py-4">
             {/* 네모칸 상하 여백 추가 */}
             {weeks.map((week, weekIndex) => (
@@ -159,9 +159,9 @@ export default function ContributionGraph({ userId, days = 90 }: ContributionGra
                            display: 'flex',
                            justifyContent: 'center'
                          }}>
-                      <div className="bg-[#0a0a10] shadow-xl rounded-md px-3 py-1.5 text-sm text-white border border-[#2a2a3c] whitespace-nowrap" 
+                      <div className="bg-gray-900 shadow-xl rounded-md px-3 py-1.5 text-sm text-white border border-gray-700 whitespace-nowrap" 
                            style={{ 
-                             boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
+                             boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
                              maxWidth: 'none'
                            }}>
                         <strong>{day.count}</strong> {day.count === 1 ? 'contribution' : 'contributions'} on {format(new Date(day.date), 'MMMM do')}
@@ -172,7 +172,7 @@ export default function ContributionGraph({ userId, days = 90 }: ContributionGra
               </div>
             ))}
           </div>
-          <div className="flex justify-center items-center mt-4 mb-2 text-sm text-gray-400">
+          <div className="flex justify-center items-center mt-4 mb-2 text-sm text-gray-600">
             <span className="mr-2">Less</span>
             <div className="flex gap-1.5">
               <div className={`w-3 h-3 rounded-sm ${getLevelColor(0)}`}></div>

@@ -160,7 +160,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full bg-light-input border-light-border focus:border-light-primary focus:ring-0 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="w-full bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
           />
         </div>
       </div>
@@ -172,17 +172,17 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="bg-light-input border-light-border focus:border-light-primary focus:ring-0 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px]"
+          className="bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
         />
       </div>
       
-      <div className="w-full mb-4">
+      <div className="w-full mb-6">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-light-input border-light-border hover:bg-light-input hover:border-light-primary px-4 py-2 h-10 text-sm outline outline-1 outline-light-border outline-offset-[-1px] rounded-md",
+                "w-full justify-start text-left font-normal bg-light-input border-light-border hover:bg-light-input hover:border-light-accent focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-light-border outline-offset-[-1px] rounded-md transition-all duration-200",
                 !dueDate && "text-light-muted"
               )}
             >
@@ -209,7 +209,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="default"
-        className="mt-10 mb-2 w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
+        className="mt-2 mb-2 w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-light-green-button hover:bg-light-accent text-light-button-text rounded-md outline outline-1 outline-light-border outline-offset-[-1px]"
         disabled={loading}
       >
         {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400] font-fira-mono">ADD TASK</span></>}

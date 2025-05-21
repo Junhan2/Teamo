@@ -493,13 +493,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         {/* 필터 영역 - 상태 필터와 날짜 드롭다운 같은 줄에 배치 */}
         <div>
           <div className="flex justify-between items-center">
-            {/* 데스크탑에서는 기존 버튼 형태 유지 */}
+            {/* Desktop pill-shaped filter buttons */}
             <div className="hidden md:flex flex-wrap gap-2">
               <Button 
                 variant={statusFilter === null ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-light-secondary text-white hover:bg-light-muted' : 'bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === null ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
               >
                 All
               </Button>
@@ -507,7 +507,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "pending" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-light-secondary text-white hover:bg-light-muted' : 'bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "pending" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
               >
                 Not yet
               </Button>
@@ -515,7 +515,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "in_progress" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-light-secondary text-white hover:bg-light-muted' : 'bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
               >
                 Doing
               </Button>
@@ -523,7 +523,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant={statusFilter === "completed" ? "default" : "outline"} 
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-light-secondary text-white hover:bg-light-muted' : 'bg-transparent border-2 border-light-border text-light-muted hover:bg-light-background'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md`}
+                className={`${statusFilter === "completed" ? 'bg-light-primary text-white hover:bg-light-primary/90 border-light-primary' : 'bg-white border border-light-border text-light-primary hover:bg-gray-50'} text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-full shadow-sm`}
               >
                 Complete
               </Button>
