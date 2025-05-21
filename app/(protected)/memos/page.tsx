@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CheckSquare, Calendar, StickyNote } from "lucide-react"
 import Navbar from "@/components/Navbar"
-import CalendarPage from "@/components/Calendar/CalendarPage"
+import TeamMemoWall from "@/components/TeamMemo/TeamMemoWall"
 
 interface UserProfile {
   id: string
@@ -16,7 +16,7 @@ interface UserProfile {
   avatar_url: string | null
 }
 
-export default function CalendarPageRoute() {
+export default function MemosPage() {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -79,7 +79,7 @@ export default function CalendarPageRoute() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-light-background">
-        <div className="text-lg text-light-primary relative z-10 font-medium">Loading Calendar...</div>
+        <div className="text-lg text-light-primary relative z-10 font-medium">Loading Memos...</div>
       </div>
     )
   }
@@ -87,8 +87,8 @@ export default function CalendarPageRoute() {
   return (
     <div className="min-h-screen bg-light-background">
       <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <CalendarPage user={user} />
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <TeamMemoWall user={user} />
       </main>
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
@@ -106,25 +106,25 @@ export default function CalendarPageRoute() {
         
         <Link href="/calendar">
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>
-            {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
           </Button>
         </Link>
         
         <Link href="/memos">
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
           >
             <StickyNote className="w-4 h-4" />
             <span className="font-medium">Memos</span>
+            {/* Active indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
           </Button>
         </Link>
       </div>

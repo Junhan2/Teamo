@@ -12,7 +12,7 @@ import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
-import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList } from "lucide-react"
+import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote } from "lucide-react"
 
 interface UserProfile {
   id: string
@@ -436,6 +436,17 @@ export default function DashboardPage() {
           >
             <Calendar className="w-4 h-4" />
             <span className="font-medium">Calendar</span>
+          </Button>
+        </Link>
+        
+        <Link href="/memos">
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
+          >
+            <StickyNote className="w-4 h-4" />
+            <span className="font-medium">Memos</span>
           </Button>
         </Link>
       </div>
