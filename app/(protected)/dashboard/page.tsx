@@ -34,6 +34,10 @@ export default function DashboardPage() {
   })
   const router = useRouter()
   const supabase = createClient()
+  
+  // Tab refs for dynamic width calculation
+  const myTabRef = useRef<HTMLButtonElement>(null)
+  const teamTabRef = useRef<HTMLButtonElement>(null)
 
   // 통계 데이터 가져오기
   const fetchTodoStats = useCallback(async () => {
