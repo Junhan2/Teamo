@@ -494,7 +494,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         {/* 필터 영역 - 상태 필터와 날짜 드롭다운 같은 줄에 배치 */}
         <div>
           <div className="flex justify-between items-center">
-            <div className="flex flex-wrap gap-2">
+            {/* 데스크탑에서는 기존 버튼 형태 유지 */}
+            <div className="hidden md:flex flex-wrap gap-2">
               <Button 
                 variant={statusFilter === null ? "default" : "outline"} 
                 size="sm"
@@ -527,6 +528,51 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
               >
                 Complete
               </Button>
+            </div>
+
+            {/* 모바일에서는 드롭다운 형태 */}
+            <div className="md:hidden flex gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="bg-transparent border-2 border-[#464c58]/60 text-white hover:bg-[#3A3F4B] text-sm px-4 py-1.5 h-8 transition-all duration-200 font-medium w-auto rounded-md flex items-center gap-2"
+                  >
+                    {statusFilter === null ? <><span className="font-light">Status: </span><span>All</span></> : 
+                     statusFilter === "pending" ? <><span className="font-light">Status: </span><span>Not yet</span></> : 
+                     statusFilter === "in_progress" ? <><span className="font-light">Status: </span><span>Doing</span></> :
+                     <><span className="font-light">Status: </span><span>Complete</span></>}
+                    <ChevronDown size={14} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-[#292C33] border border-[#464c58]/40 text-white shadow-[0_0_25px_rgba(0,0,0,0.5)] min-w-[160px]">
+                  <DropdownMenuItem 
+                    onClick={() => setStatusFilter(null)}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${statusFilter === null ? 'bg-[#3F4249]/50' : ''}`}
+                  >
+                    All
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setStatusFilter("pending")}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${statusFilter === "pending" ? 'bg-[#3F4249]/50' : ''}`}
+                  >
+                    Not yet
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setStatusFilter("in_progress")}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${statusFilter === "in_progress" ? 'bg-[#3F4249]/50' : ''}`}
+                  >
+                    Doing
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setStatusFilter("completed")}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-[#3F4249] cursor-pointer ${statusFilter === "completed" ? 'bg-[#3F4249]/50' : ''}`}
+                  >
+                    Complete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             
             {/* Due Date 필터 - 오른쪽에 배치 */}

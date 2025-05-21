@@ -364,10 +364,7 @@ export default function DashboardPage() {
             {/* 통계 섹션 */}
             <div className="bg-[#292C33] rounded-xl overflow-hidden shadow-md border border-[#464c58]/20 p-6" style={{ overflow: 'visible' }}>
               <h2 className="text-sm font-medium mb-4 text-white uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter']">STATISTICS</h2>
-              <div style={{ overflow: 'visible' }}>
-                {user && <ContributionGraph userId={user.id} />}
-              </div>
-              <div className="space-y-4 mt-6">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-base text-gray-300">Complete</span>
                   <div className="flex items-center">
@@ -415,6 +412,9 @@ export default function DashboardPage() {
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   ></motion.div>
                 </div>
+              </div>
+              <div className="mt-6" style={{ overflow: 'visible' }}>
+                {user && <ContributionGraph userId={user.id} />}
               </div>
             </div>
           </div>
