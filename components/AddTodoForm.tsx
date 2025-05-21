@@ -176,7 +176,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         />
       </div>
       
-      <div className="w-full mb-2">
+      <div className="w-full mb-4">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -212,7 +212,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         className="mt-10 mb-2 w-full py-[1.28rem] md:py-[1.6rem] px-[1.5rem] gap-x-[0.5rem] gap-y-[0.5rem] md:h-auto h-auto"
         disabled={loading}
       >
-        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[600]">ADD TASK</span></>}
+        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[16px] leading-[1.6rem] font-[500]">ADD TASK</span></>}
       </Button>
       
       {message && (
