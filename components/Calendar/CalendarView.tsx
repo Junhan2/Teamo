@@ -362,7 +362,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={prevPeriod}
-              className="h-8 w-8 p-0 rounded-md bg-white text-slate-700 hover:bg-[#E6EAF1] border-2 border-slate-300 hover:border-slate-400 transition-all duration-200"
+              className="h-8 w-8 p-0 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
             >
               <ChevronLeft size={16} />
             </Button>
@@ -370,7 +370,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={goToToday}
-              className="h-8 px-3 py-1 rounded-md bg-white text-slate-700 hover:bg-[#E6EAF1] border-2 border-slate-300 hover:border-slate-400 transition-all duration-200"
+              className="h-8 px-3 py-1 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
             >
               Today
             </Button>
@@ -378,7 +378,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={nextPeriod}
-              className="h-8 w-8 p-0 rounded-md bg-white text-slate-700 hover:bg-[#E6EAF1] border-2 border-slate-300 hover:border-slate-400 transition-all duration-200"
+              className="h-8 w-8 p-0 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
             >
               <ChevronRight size={16} />
             </Button>
@@ -391,7 +391,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-[#E6EAF1] hover:border-slate-400'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === null ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             All
           </Button>
@@ -399,7 +399,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-[#E6EAF1] hover:border-slate-400'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "pending" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Not yet
           </Button>
@@ -407,7 +407,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-[#E6EAF1] hover:border-slate-400'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "in_progress" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Doing
           </Button>
@@ -415,7 +415,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300 hover:bg-[#E6EAF1] hover:border-slate-400'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "completed" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Complete
           </Button>

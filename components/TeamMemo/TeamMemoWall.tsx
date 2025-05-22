@@ -370,7 +370,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button 
             onClick={createNewMemo}
             variant="outline"
-            className="bg-slate-50 text-slate-800 border-2 border-slate-400 hover:bg-slate-100 hover:border-slate-500 transition-all duration-200 font-medium"
+            className="bg-green-50 text-green-800 border-2 border-green-300 hover:bg-green-100 hover:border-green-400 active:bg-green-200 active:border-green-500 transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
@@ -456,7 +456,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           </Tabs>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200 hover:bg-[#E6EAF1] transition-colors">
+            <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition-all duration-200">
               <Search className="w-4 h-4 text-slate-500" />
               <Input
                 placeholder="Search memos..."
@@ -577,14 +577,14 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                         <Button
                           size="sm"
                           onClick={() => saveMemo(memo.id)}
-                          className="bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-400 hover:border-slate-500 text-xs px-2 py-1 h-6 font-medium"
+                          className="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 hover:border-blue-400 active:bg-blue-200 text-xs px-2 py-1 h-6 font-medium"
                         >
                           Save
                         </Button>
                         <Button
                           size="sm"
                           onClick={cancelEditing}
-                          className="bg-white hover:bg-slate-50 text-slate-600 border border-slate-300 hover:border-slate-400 text-xs px-2 py-1 h-6"
+                          className="bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-300 hover:border-slate-400 active:bg-slate-200 text-xs px-2 py-1 h-6"
                         >
                           Cancel
                         </Button>
@@ -678,7 +678,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button
             onClick={createNewMemo}
             variant="outline"
-            className="bg-slate-50 text-slate-800 border-2 border-slate-400 hover:bg-slate-100 hover:border-slate-500 transition-all duration-200 font-medium"
+            className="bg-green-50 text-green-800 border-2 border-green-300 hover:bg-green-100 hover:border-green-400 active:bg-green-200 active:border-green-500 transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
