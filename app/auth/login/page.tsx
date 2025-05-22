@@ -9,20 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isMobileView, setIsMobileView] = useState(false)
   const supabase = createClient()
-  
-  // Check for mobile view
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobileView(window.innerWidth < 768)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   const handleGoogleSignIn = async () => {
     try {
@@ -50,97 +37,48 @@ export default function LoginPage() {
     }
   }
 
-  // State for controlling bounce animation
-  const [isBouncing, setIsBouncing] = useState(false);
-
-  // All hover effects removed
-  
-  // Click to start bouncing animation
-  const handleClick = () => {
-    if (isBouncing) return; // Already bouncing
-    
-    setIsBouncing(true);
-    
-    // Get the image wrapper and add bouncing class
-    const imageEl = document.querySelector('.hero-image-wrapper') as HTMLElement;
-    if (imageEl) {
-      imageEl.classList.add('is-bouncing');
-      
-      // Remove the bouncing class and state after animation completes
-      setTimeout(() => {
-        imageEl.classList.remove('is-bouncing');
-        setIsBouncing(false);
-      }, 120000); // Float in space for 120 seconds (2 minutes) - super slow animation
-    }
-  };
-
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-light-background">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/30">
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-light-background via-gray-50 to-light-background"></div>
-        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#e5e5e51e_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e51e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-100/20 via-transparent to-transparent"></div>
       </div>
       
       <div className="container relative z-10 max-w-md">
         <div 
-          className="text-center mb-8 animate-fadeIn relative hero-container"
-          onClick={handleClick}
-        > {/* Simplified container with only click handler */}
-          <div className="relative mb-2">
-            {/* Hero image with sparkle effects */}
-            <div className={`relative mx-auto hero-image-wrapper ${isMobileView ? 'w-[160px]' : 'w-[200px]'}`}>
-              {/* Sparkle effects */}
-              <div className="sparkle-effect">
-                <div className="sparkle sparkle-1"></div>
-                <div className="sparkle sparkle-2"></div>
-                <div className="sparkle sparkle-3"></div>
-                <div className="sparkle sparkle-4"></div>
-                <div className="sparkle sparkle-5"></div>
-              </div>
-              
-              <img
-                src="/images/hero-3d-svg.svg"
-                alt="tide"
-                className="w-full h-auto object-contain animate-gentle-float transition-all duration-500"
-                style={{ 
-                  filter: "drop-shadow(0 5px 15px rgba(63, 207, 142, 0.25))"
-                }}
-              />
+          className="text-center mb-10 animate-fadeIn"
+        >
+          <div className="relative mb-6">
+            {/* Logo mark */}
+            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl shadow-2xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
+              <span className="text-3xl font-bold text-white">T</span>
             </div>
             
-            {/* Mung. text overlapping with the image */}
+            {/* Title */}
             <h1 
-              className={`font-serif text-transparent bg-clip-text bg-gradient-to-r from-light-accent to-light-primary font-bold relative z-10 hero-text transition-all duration-500 ${isMobileView ? 'mt-[-40px]' : 'mt-[-80px]'}`}
+              className="text-5xl font-bold text-gray-cool-800 mb-3"
               style={{
-                fontSize: "clamp(48px, 10vw, 80px)", 
-                lineHeight: "1.1",
-                textWrap: "balance",
-                letterSpacing: "-0.03em",
-                display: "block",
-                padding: "0 20px",
-                fontFamily: "var(--font-fira-mono)"
+                fontFamily: "var(--font-dm-sans)",
+                letterSpacing: "-0.02em"
               }}
             >
-              tide.
+              Teamo
             </h1>
+            <p 
+              className="text-gray-cool-600 text-lg"
+              style={{
+                fontFamily: "var(--font-dm-sans)"
+              }}
+            >
+              팀과 함께하는 스마트한 할일 관리
+            </p>
           </div>
-          <p 
-            className="text-light-muted text-lg mt-2 relative z-10" /* Larger, brighter subtitle */
-            style={{
-              fontFamily: "var(--font-dm-sans)"
-            }}
-          >
-            Effortlessly Manage Your Tasks
-          </p>
         </div>
         
-        <div className="animate-fadeIn mt-4">
-          <Card className="bg-light-background border-light-border shadow-lg border"> {/* Reduced margin top */}
-            <CardHeader className="space-y-1 text-center pb-4">
-            </CardHeader>
-            <CardContent className="flex flex-col gap-5"> {/* Increased gap */}
+        <div className="animate-fadeIn">
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-cool-100 shadow-2xl rounded-2xl overflow-hidden">
+            <CardContent className="p-8">
               {error && (
-                <div className="p-3 rounded-lg bg-red-100 text-red-700 border border-red-200 text-sm">
+                <div className="p-4 rounded-xl bg-red-50 text-red-600 border border-red-200 text-sm mb-4 animate-fadeIn">
                   {error}
                 </div>
               )}
@@ -149,14 +87,14 @@ export default function LoginPage() {
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
                 variant="outline"
-                className="w-full py-6 rounded-xl bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] shadow-md text-lg font-medium transition-all duration-200" /* Primary action with Sky Blue palette */
+                className="w-full h-14 rounded-xl bg-white hover:bg-gray-cool-50 text-gray-cool-700 border-2 border-gray-cool-200 hover:border-gray-cool-300 shadow-sm hover:shadow-md text-base font-medium transition-all duration-200 flex items-center justify-center gap-3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 48 48"
-                  width="24px" /* Larger icon */
-                  height="24px"
-                  className="mr-3" /* More spacing */
+                  width="20px"
+                  height="20px"
+                  className={isLoading ? "opacity-50" : ""}
                 >
                   <path
                     fill="#FFC107"
@@ -176,24 +114,46 @@ export default function LoginPage() {
                   />
                 </svg>
                 <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  {isLoading ? "Signing in..." : "Sign in with Google"}
+                  {isLoading ? "로그인 중..." : "Google 계정으로 시작하기"}
+                </span>
+              </Button>
+              
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-cool-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-gray-cool-500" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                    또는
+                  </span>
+                </div>
+              </div>
+              
+              <Button
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+                variant="primary"
+                className="w-full h-14 rounded-xl text-base font-semibold transition-all duration-200"
+              >
+                <span style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  무료로 시작하기
                 </span>
               </Button>
             </CardContent>
-            <CardFooter className="text-center text-sm text-light-muted pt-2 pb-4"> {/* Increased text size */}
-              <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-                By signing in, you agree to our Terms of Service and Privacy Policy.
-              </span>
+            <CardFooter className="bg-gray-cool-50/50 px-8 py-4 text-center">
+              <p className="text-xs text-gray-cool-500 w-full" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                로그인 시 서비스 이용약관과 개인정보 처리방침에 동의하는 것으로 간주됩니다.
+              </p>
             </CardFooter>
           </Card>
         </div>
         
-        <div className="mt-12 text-center animate-fadeIn">
+        <div className="mt-8 text-center animate-fadeIn">
           <p 
-            className="text-sm text-light-muted" /* Increased text size */
+            className="text-xs text-gray-cool-400"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            © 2025 tide. All rights reserved.
+            © 2025 Teamo. All rights reserved.
           </p>
         </div>
       </div>

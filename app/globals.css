@@ -225,6 +225,15 @@ body {
   .animate-gentle-float {
     animation: gentle-float 6s ease-in-out infinite;
   }
+  
+  /* Login page specific styles */
+  .login-gradient {
+    background: linear-gradient(135deg, 
+      rgba(239, 241, 245, 0.3) 0%, 
+      rgba(220, 223, 234, 0.1) 50%, 
+      rgba(239, 241, 245, 0.3) 100%
+    );
+  }
 }
 
 @layer base {
