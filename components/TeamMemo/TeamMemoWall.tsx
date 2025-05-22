@@ -236,16 +236,18 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     if (!user?.id) return
 
     try {
+      console.log('Creating memo with user:', user.id) // 디버깅용
+      
       const { data, error } = await supabase
         .from('team_memos')
         .insert([
           {
             content: "Double click to edit...",
             color: getRandomColor(),
-            position_x: Math.random() * 800,
-            position_y: Math.random() * 600,
+            position_x: Math.floor(Math.random() * 800),
+            position_y: Math.floor(Math.random() * 600),
             user_id: user.id,
-            team_id: 'default',
+            team_id: null,
             reactions: {},
             tagged_todos: []
           }
@@ -254,6 +256,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
 
       if (error) {
         console.error('Error creating memo:', error)
+        console.error('Error details:', error.message, error.details)
         return
       }
 
@@ -379,7 +382,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
             className="relative"
           >
             <div className="relative">
-              <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm border border-light-border/50 h-12 p-1 relative overflow-visible rounded-xl shadow-sm">
+              <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm border border-light-border/50 h-12 p-1 relative overflow-visible rounded-xl shadow-sm w-[200px]">
                 <motion.div
                   className="absolute inset-y-1 rounded-lg bg-white shadow-sm border border-light-border/30"
                   animate={{
@@ -396,7 +399,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 
                 <TabsTrigger 
                   value="my-todos"
-                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium flex items-center justify-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current w-full"
                 >
                   <motion.div
                     animate={{
@@ -418,7 +421,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 
                 <TabsTrigger 
                   value="team-todos" 
-                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium flex items-center justify-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current w-full"
                 >
                   <motion.div
                     animate={{
