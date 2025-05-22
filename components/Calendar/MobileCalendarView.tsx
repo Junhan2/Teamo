@@ -338,7 +338,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
       </div>
 
       {/* Calendar Grid - Compact design */}
-      <div className="overflow-auto">
+      <div className="overflow-auto border-b border-light-border">
         {/* Day names header */}
         <div className="grid grid-cols-7 bg-light-background sticky top-0 z-10">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (

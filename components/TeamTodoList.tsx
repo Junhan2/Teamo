@@ -717,19 +717,17 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-light-border shadow-sm">
                           <Clock size={12} className="mr-1.5 text-light-muted" />
                           <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
-                          {calculateDaysLeft(todo.due_date) >= 0 ? (
-                            calculateDaysLeft(todo.due_date) === 0 ? (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 border border-orange-200">
-                                Today
-                              </span>
-                            ) : (
-                              <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
-                                D-{calculateDaysLeft(todo.due_date)}
-                              </span>
-                            )
+                          {calculateDaysLeft(todo.due_date) === 0 ? (
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-white text-[#171717] border border-[#171717]">
+                              Today
+                            </span>
+                          ) : calculateDaysLeft(todo.due_date) > 0 ? (
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
+                              D-{calculateDaysLeft(todo.due_date)}
+                            </span>
                           ) : (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-normal bg-red-100 text-red-700 border border-red-200">
-                              Overdue
+                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
+                              D+{Math.abs(calculateDaysLeft(todo.due_date))}
                             </span>
                           )}
                         </div>

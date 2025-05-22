@@ -452,23 +452,23 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
-                <div className="p-4 rounded-lg border border-emerald-200 bg-emerald-50">
+                <div className="p-4 rounded-lg border border-[rgba(63,207,142,0.3)] bg-[rgba(63,207,142,0.1)]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                      <span className="text-sm font-medium text-emerald-700">Complete</span>
+                      <div className="w-2 h-2 rounded-full bg-[#3fcf8e]"></div>
+                      <span className="text-sm font-medium text-black">Complete</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-emerald-600">{todoStats.completed}</span>
-                      <span className="text-xs text-emerald-500">/ {todoStats.total}</span>
+                      <span className="text-lg font-bold text-black">{todoStats.completed}</span>
+                      <span className="text-xs text-light-muted">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-emerald-100 rounded-full h-2">
+                  <div className="w-full bg-[rgba(63,207,142,0.2)] rounded-full h-2">
                     <div 
                       className="h-2 rounded-full progress-bar-complete"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#72e3ad',
+                        backgroundColor: '#3fcf8e',
                         animation: 'progressFill 1.2s ease-out'
                       }}
                     ></div>
@@ -476,23 +476,23 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Doing */}
-                <div className="p-4 rounded-lg border border-blue-200 bg-blue-50">
+                <div className="p-4 rounded-lg border border-[rgba(255,130,194,0.3)] bg-[rgba(255,130,194,0.1)]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                      <span className="text-sm font-medium text-blue-700">Doing</span>
+                      <div className="w-2 h-2 rounded-full bg-[#FF82C2]"></div>
+                      <span className="text-sm font-medium text-black">Doing</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-blue-600">{todoStats.inProgress}</span>
-                      <span className="text-xs text-blue-500">/ {todoStats.total}</span>
+                      <span className="text-lg font-bold text-black">{todoStats.inProgress}</span>
+                      <span className="text-xs text-light-muted">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-blue-100 rounded-full h-2">
+                  <div className="w-full bg-[rgba(255,130,194,0.2)] rounded-full h-2">
                     <div 
                       className="h-2 rounded-full progress-bar-doing"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#60a5fa',
+                        backgroundColor: '#FF82C2',
                         animation: 'progressFill 1.2s ease-out 0.2s backwards'
                       }}
                     ></div>
@@ -500,23 +500,23 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Not yet */}
-                <div className="p-4 rounded-lg border border-amber-200 bg-amber-50">
+                <div className="p-4 rounded-lg border border-[rgba(255,218,64,0.3)] bg-[rgba(255,218,64,0.1)]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                      <span className="text-sm font-medium text-amber-700">Not yet</span>
+                      <div className="w-2 h-2 rounded-full bg-[#FFDA40]"></div>
+                      <span className="text-sm font-medium text-black">Not yet</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-amber-600">{todoStats.pending}</span>
-                      <span className="text-xs text-amber-500">/ {todoStats.total}</span>
+                      <span className="text-lg font-bold text-black">{todoStats.pending}</span>
+                      <span className="text-xs text-light-muted">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-amber-100 rounded-full h-2">
+                  <div className="w-full bg-[rgba(255,218,64,0.2)] rounded-full h-2">
                     <div 
                       className="h-2 rounded-full progress-bar-pending"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#fbbf24',
+                        backgroundColor: '#FFDA40',
                         animation: 'progressFill 1.2s ease-out 0.4s backwards'
                       }}
                     ></div>
