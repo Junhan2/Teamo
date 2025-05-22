@@ -5,26 +5,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-base font-medium cursor-pointer border-none rounded-none transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer rounded-lg transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus:outline-none focus:ring-2 focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "bg-[#3F4249] text-[#FFFFFF] hover:bg-[#4C4F57]",
+        default: "bg-gray-cool-700 text-white hover:bg-gray-cool-800 focus:ring-gray-cool-500",
         destructive:
-          "bg-[#ff6138] text-white hover:bg-[#E85833]",
+          "bg-red-500 text-white hover:bg-red-600 focus:ring-red-400",
         outline:
-          "border border-[#464c58] bg-transparent text-white hover:bg-[#4C4F57]",
+          "border border-gray-cool-200 bg-transparent text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 focus:ring-gray-cool-400",
         secondary:
-          "bg-[#3F4249] text-white hover:bg-[#4C4F57]",
-        ghost: "bg-transparent text-white hover:bg-[#4C4F57]",
-        link: "text-[#20afff] underline-offset-4 hover:underline",
-        accent: "bg-[#ff82c2] text-white hover:bg-[#E575AF]",
+          "bg-gray-cool-100 text-gray-cool-700 hover:bg-gray-cool-200 focus:ring-gray-cool-400",
+        ghost: "text-gray-cool-700 hover:bg-gray-cool-100 focus:ring-gray-cool-400",
+        link: "text-blue-600 underline-offset-4 hover:underline focus:ring-blue-400",
+        primary: "bg-sky-100 text-sky-700 border-2 border-sky-300 hover:bg-sky-200 hover:border-sky-600 active:bg-sky-300 active:border-sky-700 focus:ring-sky-400",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 px-3 py-1.5 text-sm",
-        lg: "h-11 px-6 py-2.5",
-        icon: "h-10 w-10 p-2",
+        sm: "h-8 px-3 text-xs",
+        lg: "h-12 px-6 text-base",
+        icon: "h-10 w-10 p-0",
       },
     },
     defaultVariants: {

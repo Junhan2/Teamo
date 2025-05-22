@@ -110,8 +110,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       if (error) {
         console.error('Error details:', error)
         throw error
-      }
-      // 실시간 업데이트를 위한 이벤트 브로드캐스트
+      }      // 실시간 업데이트를 위한 이벤트 브로드캐스트
       // 이렇게 하면 Supabase 실시간 업데이트가 즉시 반영되지 않더라도 
       // 할일 추가 직후 UI가 업데이트됨
       try {
@@ -160,7 +159,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="w-full bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md px-4 py-2 h-10 text-sm text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
+          className="w-full"
         />
       </div>
       
@@ -171,8 +170,8 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-          className="bg-light-input border-light-border focus:border-light-accent focus:ring-1 focus:ring-light-accent focus:ring-opacity-50 rounded-md text-sm w-full resize-none px-4 py-2 text-light-primary outline outline-1 outline-light-border outline-offset-[-1px] transition-all duration-200"
+          rows={3}
+          className="w-full"
         />
       </div>
       
@@ -183,15 +182,15 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-[#F9F9FB] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#B9C0D4] focus:border-[#7D89AF] focus:ring-1 focus:ring-[#7D89AF] focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-[#DCDFEA] outline-offset-[-1px] rounded-md transition-all duration-200",
-                dueDate ? "text-light-primary" : "text-light-muted"
+                "w-full justify-start text-left font-normal",
+                dueDate ? "text-gray-cool-700" : "text-gray-cool-400"
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4 text-slate-500" />
+              <CalendarIcon className="mr-2 h-4 w-4 text-gray-cool-500" />
               {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-light-input border-light-border">
+          <PopoverContent className="w-auto p-0 bg-white border-gray-cool-200">
             <Calendar
               mode="single"
               selected={dueDate}
@@ -201,7 +200,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
               }}
               initialFocus
               defaultMonth={new Date()}
-              className="bg-light-input rounded-md border-light-border"
+              className="bg-white rounded-lg"
             />
           </PopoverContent>
         </Popover>
@@ -210,17 +209,20 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       {/* ADD TASK button */}
       <Button 
         type="submit" 
-        variant="outline"
-        className="w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] rounded-md transition-all duration-200 font-medium"
+        variant="primary"
+        className="w-full"
         disabled={loading}
       >
-        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400] font-fira-mono">ADD TASK</span></>}
+        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="font-medium">ADD TASK</span></>}
       </Button>
       
       {message && (
-        <div className={`p-3 text-sm rounded-md ${
-          message.type === "success" ? "bg-light-input text-light-primary border border-light-border" : "bg-light-input text-red-500 border border-light-border"
-        }`}>
+        <div className={cn(
+          "p-4 text-sm rounded-lg border transition-all duration-300",
+          message.type === "success" 
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
+            : "bg-red-50 text-red-700 border-red-200"
+        )}>
           {message.text}
         </div>
       )}
