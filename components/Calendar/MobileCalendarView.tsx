@@ -337,7 +337,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
         </div>
       </div>
 
-      {/* Calendar Grid - Full width design */}
+      {/* Calendar Grid - Compact design */}
       <div className="flex-1 overflow-auto">
         {/* Day names header */}
         <div className="grid grid-cols-7 bg-light-background border-b border-light-border sticky top-0 z-10">
@@ -365,7 +365,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <motion.div
                 key={i}
                 className={`
-                  h-10 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
+                  h-8 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
                   ${isDaySelected ? 'bg-light-accent text-white' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
@@ -408,25 +408,25 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             className="bg-light-background border-t border-light-border"
             transition={snappyTransition}
           >
-            <div className="px-4 py-2 border-b border-light-border">
+            <div className="px-3 py-2 border-b border-light-border">
               <h3 className="text-sm font-medium text-light-primary font-dm-sans">
                 {format(selectedDate, 'MMM d')} • {selectedTodos.length}개 할일
               </h3>
             </div>
             
-            <div className="max-h-[25vh] overflow-y-auto">
+            <div className="max-h-[20vh] overflow-y-auto">
               <div className="divide-y divide-light-border/50">
                 {selectedTodos.map(todo => (
                   <motion.div
                     key={todo.id}
-                    className="px-4 py-2 hover:bg-light-input/30 transition-colors"
+                    className="px-3 py-1.5 hover:bg-light-input/30 transition-colors"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={snappyTransition}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`w-1 h-6 rounded-full flex-shrink-0 ${
+                        <div className={`w-1 h-5 rounded-full flex-shrink-0 ${
                           todo.status === 'completed' ? 'bg-green-500' : 
                           todo.status === 'in_progress' ? 'bg-yellow-500' : 'bg-gray-300'
                         }`}></div>
