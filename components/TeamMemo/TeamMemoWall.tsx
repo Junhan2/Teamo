@@ -79,7 +79,7 @@ const getStatusText = (status: string) => {
   switch (status) {
     case 'completed': return 'Done'
     case 'in_progress': return 'Doing'
-    case 'pending': return 'To Do'
+    case 'pending': return 'Not yet'
     default: return status
   }
 }
@@ -93,6 +93,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'my-todos' | 'team-todos'>('my-todos')
+  const myTabRef = useRef<HTMLButtonElement>(null)
+  const teamTabRef = useRef<HTMLButtonElement>(null)
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState("")
   const [searchText, setSearchText] = useState("")
@@ -367,7 +369,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <h1 className="text-3xl font-bold text-light-primary">Memo</h1>
           <Button 
             onClick={createNewMemo}
-            className="bg-light-primary text-white hover:bg-light-accent transition-colors"
+            className="bg-slate-800 text-white hover:bg-slate-700 transition-colors"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
@@ -377,29 +379,36 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         {/* Tabs and Search */}
         <div className="flex items-center justify-between mb-6">
           <Tabs 
-            value={activeTab} 
+            value={activeTab}
             onValueChange={(value) => setActiveTab(value as 'my-todos' | 'team-todos')}
-            className="relative"
+            className="w-full text-base"
           >
-            <div className="relative">
-              <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm border border-light-border/50 h-12 p-1 relative overflow-visible rounded-xl shadow-sm w-[200px]">
+            <div className="flex justify-start mb-4">
+              <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
+                {/* Animated background slider */}
                 <motion.div
-                  className="absolute inset-y-1 rounded-lg bg-white shadow-sm border border-light-border/30"
+                  className="absolute bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
+                  initial={false}
                   animate={{
-                    x: activeTab === 'my-todos' ? '0.25rem' : 'calc(50% + 0.125rem)',
-                    width: 'calc(50% - 0.375rem)',
+                    left: activeTab === 'my-todos' ? '4px' : `${(myTabRef.current?.offsetLeft || 0) + (myTabRef.current?.offsetWidth || 0)}px`,
+                    width: activeTab === 'my-todos' 
+                      ? `${myTabRef.current?.offsetWidth || 0}px`
+                      : `${teamTabRef.current?.offsetWidth || 0}px`,
+                    top: '4px',
+                    bottom: '4px',
                   }}
-                  transition={{ 
-                    type: "spring", 
-                    stiffness: 500, 
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
                     damping: 30,
-                    mass: 0.8
+                    mass: 0.8,
                   }}
                 />
                 
                 <TabsTrigger 
-                  value="my-todos"
-                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium flex items-center justify-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current w-full"
+                  ref={myTabRef}
+                  value="my-todos" 
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                 >
                   <motion.div
                     animate={{
@@ -420,8 +429,9 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 </TabsTrigger>
                 
                 <TabsTrigger 
+                  ref={teamTabRef}
                   value="team-todos" 
-                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium flex items-center justify-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current w-full"
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                 >
                   <motion.div
                     animate={{
@@ -445,13 +455,13 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           </Tabs>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-light-border">
-              <Search className="w-4 h-4 text-light-muted" />
+            <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200 hover:bg-[#E6EAF1] transition-colors">
+              <Search className="w-4 h-4 text-slate-500" />
               <Input
                 placeholder="Search memos..."
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                className="w-64 h-8 border-none shadow-none focus:ring-0"
+                className="w-64 h-8 border-none shadow-none focus:ring-0 bg-transparent"
               />
             </div>
             
@@ -497,7 +507,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                       e.stopPropagation()
                       deleteMemo(memo.id)
                     }}
-                    className="absolute top-2 right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
+                    className="absolute top-2 right-2 w-6 h-6 p-0 bg-slate-700 hover:bg-slate-800 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
                   >
                     <X className="w-3 h-3" />
                   </Button>
@@ -566,25 +576,42 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                         <Button
                           size="sm"
                           onClick={() => saveMemo(memo.id)}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-6"
+                          className="bg-slate-800 hover:bg-slate-700 text-white text-xs px-2 py-1 h-6"
                         >
                           Save
                         </Button>
                         <Button
                           size="sm"
                           onClick={cancelEditing}
-                          className="bg-gray-500 hover:bg-gray-600 text-white text-xs px-2 py-1 h-6"
+                          className="bg-slate-500 hover:bg-slate-600 text-white text-xs px-2 py-1 h-6"
                         >
                           Cancel
                         </Button>
                       </div>
                     </div>
                   ) : (
-                    <p className={`text-gray-800 text-sm font-medium whitespace-pre-wrap leading-relaxed ${
+                    <div className={`text-gray-800 text-sm font-medium whitespace-pre-wrap leading-relaxed ${
                       memo.content === "Double click to edit..." ? "text-gray-500 italic" : ""
                     }`}>
-                      {memo.content}
-                    </p>
+                      {memo.content.split(/(#[^#\s]+)/g).map((part, index) => {
+                        if (part.startsWith('#')) {
+                          const todoTitle = part.substring(1)
+                          const linkedTodo = todos.find(todo => todo.title === todoTitle)
+                          return linkedTodo ? (
+                            <span 
+                              key={index} 
+                              className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#E6EAF1] text-slate-700 rounded-md text-xs font-medium mx-0.5 border border-slate-300"
+                            >
+                              <Hash className="w-3 h-3" />
+                              {todoTitle}
+                            </span>
+                          ) : (
+                            <span key={index} className="text-gray-500">#{todoTitle}</span>
+                          )
+                        }
+                        return part
+                      })}
+                    </div>
                   )}
                 </div>
 
@@ -649,7 +676,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           </p>
           <Button
             onClick={createNewMemo}
-            className="bg-light-primary text-white hover:bg-light-accent"
+            className="bg-slate-800 text-white hover:bg-slate-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
