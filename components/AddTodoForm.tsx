@@ -150,39 +150,39 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Title input */}
-      <div>
+      <div className="relative">
         <Input
           id="title"
           placeholder="Enter your task"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="w-full"
+          className="w-full h-12 px-4 text-base bg-white border-gray-cool-200 hover:border-gray-cool-300 focus:border-sky-500 transition-colors"
         />
       </div>
       
       {/* Description input */}
-      <div>
+      <div className="relative">
         <Textarea
           id="description"
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full"
+          className="w-full px-4 py-3 text-base bg-white border-gray-cool-200 hover:border-gray-cool-300 focus:border-sky-500 transition-colors resize-none"
         />
       </div>
       
       {/* Due date input with special styling */}
-      <div>
+      <div className="relative">
         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal",
+                "w-full h-12 justify-start text-left font-normal bg-white hover:bg-gray-cool-50 border-gray-cool-200 hover:border-gray-cool-300 transition-colors",
                 dueDate ? "text-gray-cool-700" : "text-gray-cool-400"
               )}
             >
@@ -190,7 +190,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
               {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-white border-gray-cool-200">
+          <PopoverContent className="w-auto p-0 bg-white border-gray-cool-200 shadow-xl">
             <Calendar
               mode="single"
               selected={dueDate}
@@ -210,15 +210,22 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="primary"
-        className="w-full"
+        className="w-full h-12 text-base uppercase tracking-wide"
         disabled={loading}
       >
-        {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="font-medium">ADD TASK</span></>}
+        {loading ? (
+          <span className="animate-pulse">ADDING...</span>
+        ) : (
+          <>
+            <Plus className="w-5 h-5 mr-1" />
+            <span>ADD TASK</span>
+          </>
+        )}
       </Button>
       
       {message && (
         <div className={cn(
-          "p-4 text-sm rounded-lg border transition-all duration-300",
+          "p-4 text-sm rounded-lg border transition-all duration-300 animate-fadeIn",
           message.type === "success" 
             ? "bg-emerald-50 text-emerald-700 border-emerald-200" 
             : "bg-red-50 text-red-700 border-red-200"

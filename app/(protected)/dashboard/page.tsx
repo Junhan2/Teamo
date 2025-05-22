@@ -299,20 +299,21 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[#292C33]"></div>
-          <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f1a_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f1a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-gradient-to-r from-sky-400 to-sky-600 rounded-xl mx-auto mb-4 shadow-lg"></div>
+            <div className="text-lg text-gray-cool-600 font-medium">Loading your tasks...</div>
+          </div>
         </div>
-        <div className="text-lg text-white relative z-10 font-medium">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-light-background">
+    <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
       <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-5xl">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
           <div className="w-full md:w-3/5 order-1 md:order-2 animate-fadeIn">
@@ -322,19 +323,19 @@ export default function DashboardPage() {
                 onValueChange={setActiveTab}
                 className="w-full text-base"
               >
-                <div className="flex justify-start mb-4">
-                  <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
+                <div className="flex justify-start mb-6">
+                  <TabsList className="relative bg-white/80 backdrop-blur-sm border border-gray-cool-200 rounded-2xl p-1.5 h-auto shadow-sm">
                     {/* Animated background slider */}
                     <motion.div
-                      className="absolute bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
+                      className="absolute bg-white shadow-md rounded-xl"
                       initial={false}
                       animate={{
-                        left: activeTab === 'my-todos' ? '4px' : `${(myTabRef.current?.offsetLeft || 0) + (myTabRef.current?.offsetWidth || 0)}px`,
+                        left: activeTab === 'my-todos' ? '6px' : `${(myTabRef.current?.offsetLeft || 0) + (myTabRef.current?.offsetWidth || 0)}px`,
                         width: activeTab === 'my-todos' 
                           ? `${myTabRef.current?.offsetWidth || 0}px`
                           : `${teamTabRef.current?.offsetWidth || 0}px`,
-                        top: '4px',
-                        bottom: '4px',
+                        top: '6px',
+                        bottom: '6px',
                       }}
                       transition={{
                         type: "spring",
@@ -347,7 +348,7 @@ export default function DashboardPage() {
                     <TabsTrigger 
                       ref={myTabRef}
                       value="my-todos" 
-                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                      className="relative z-10 rounded-xl transition-all duration-500 px-5 py-3 text-sm font-semibold flex items-center gap-2.5 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
                       <motion.div
                         animate={{
@@ -370,7 +371,7 @@ export default function DashboardPage() {
                     <TabsTrigger 
                       ref={teamTabRef}
                       value="team-todos" 
-                      className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                      className="relative z-10 rounded-xl transition-all duration-500 px-5 py-3 text-sm font-semibold flex items-center gap-2.5 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
                     >
                       <motion.div
                         animate={{
@@ -426,10 +427,12 @@ export default function DashboardPage() {
           {/* 할일 추가 및 통계 섹션 */}
           <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
             {/* 할일 추가 섹션 */}
-            <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border mb-6" id="addTodoForm">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-cool-100 mb-6 hover:shadow-md transition-shadow duration-300" id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
-                  <ClipboardList className="w-4 h-4" />
+                <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
+                    <ClipboardList className="w-4 h-4 text-sky-600" />
+                  </div>
                   ADD NEW TASK
                 </h2>
                 {user && (
@@ -445,79 +448,81 @@ export default function DashboardPage() {
             </div>
             
             {/* 통계 섹션 */}
-            <div className="bg-light-input rounded-xl overflow-hidden shadow-md border border-light-border p-6" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-medium mb-4 text-light-primary uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-fira-mono flex items-center gap-2">
-                <BarChart3 className="w-4 h-4" />
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-cool-100 p-6 hover:shadow-md transition-shadow duration-300" style={{ overflow: 'visible' }}>
+              <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <BarChart3 className="w-4 h-4 text-purple-600" />
+                </div>
                 STATISTICS
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
-                <div className="p-4 rounded-lg border border-emerald-300 bg-emerald-100">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-emerald-800"></div>
-                      <span className="text-sm font-medium text-emerald-800">Complete</span>
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                      </div>
+                      <span className="text-sm font-semibold text-emerald-700">Complete</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-emerald-800">{todoStats.completed}</span>
-                      <span className="text-xs text-emerald-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-emerald-700">{todoStats.completed}</span>
+                      <span className="text-sm text-emerald-600">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-emerald-200 rounded-full h-2">
+                  <div className="w-full bg-emerald-200/30 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="h-2 rounded-full progress-bar-complete"
+                      className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 ease-out"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#6ee7b7',
-                        animation: 'progressFill 1.2s ease-out'
                       }}
                     ></div>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="p-4 rounded-lg border border-blue-300 bg-blue-100">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-800"></div>
-                      <span className="text-sm font-medium text-blue-800">Doing</span>
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                      </div>
+                      <span className="text-sm font-semibold text-blue-700">Doing</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-blue-800">{todoStats.inProgress}</span>
-                      <span className="text-xs text-blue-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-blue-700">{todoStats.inProgress}</span>
+                      <span className="text-sm text-blue-600">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-blue-200 rounded-full h-2">
+                  <div className="w-full bg-blue-200/30 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="h-2 rounded-full progress-bar-doing"
+                      className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700 ease-out"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#93c5fd',
-                        animation: 'progressFill 1.2s ease-out 0.2s backwards'
                       }}
                     ></div>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="p-4 rounded-lg border border-amber-300 bg-amber-100">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-amber-800"></div>
-                      <span className="text-sm font-medium text-amber-800">Not yet</span>
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                      </div>
+                      <span className="text-sm font-semibold text-amber-700">Not yet</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-amber-800">{todoStats.pending}</span>
-                      <span className="text-xs text-amber-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-amber-700">{todoStats.pending}</span>
+                      <span className="text-sm text-amber-600">/ {todoStats.total}</span>
                     </div>
                   </div>
-                  <div className="w-full bg-amber-200 rounded-full h-2">
+                  <div className="w-full bg-amber-200/30 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="h-2 rounded-full progress-bar-pending"
+                      className="h-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700 ease-out"
                       style={{
                         width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
-                        backgroundColor: '#fcd34d',
-                        animation: 'progressFill 1.2s ease-out 0.4s backwards'
                       }}
                     ></div>
                   </div>
@@ -532,41 +537,43 @@ export default function DashboardPage() {
       </main>
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2">
-        <Link href="/dashboard">
-          <Button
-            variant="default"
-            size="sm"
-            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
-          >
-            <CheckSquare className="w-4 h-4" />
-            <span className="font-medium">Tasks</span>
-            {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
-          </Button>
-        </Link>
-        
-        <Link href="/calendar">
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
-          >
-            <Calendar className="w-4 h-4" />
-            <span className="font-medium">Calendar</span>
-          </Button>
-        </Link>
-        
-        <Link href="/memos">
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full shadow-lg bg-light-background border border-light-border text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
-          >
-            <StickyNote className="w-4 h-4" />
-            <span className="font-medium">Memos</span>
-          </Button>
-        </Link>
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-2xl border border-gray-cool-100 p-2 flex items-center gap-2">
+          <Link href="/dashboard">
+            <Button
+              variant="default"
+              size="sm"
+              className="rounded-full bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-600 hover:to-sky-700 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-semibold"
+            >
+              <CheckSquare className="w-4 h-4" />
+              <span>Tasks</span>
+              {/* Active indicator */}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></div>
+            </Button>
+          </Link>
+          
+          <Link href="/calendar">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Calendar</span>
+            </Button>
+          </Link>
+          
+          <Link href="/memos">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
+            >
+              <StickyNote className="w-4 h-4" />
+              <span>Memos</span>
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   )

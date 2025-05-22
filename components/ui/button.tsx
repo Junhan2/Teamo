@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-gray-cool-100 text-gray-cool-700 hover:bg-gray-cool-200 focus:ring-gray-cool-400",
         ghost: "text-gray-cool-700 hover:bg-gray-cool-100 focus:ring-gray-cool-400",
         link: "text-blue-600 underline-offset-4 hover:underline focus:ring-blue-400",
-        primary: "bg-sky-100 text-sky-700 border-2 border-sky-300 hover:bg-sky-200 hover:border-sky-600 active:bg-sky-300 active:border-sky-700 focus:ring-sky-400",
+        primary: "bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg hover:shadow-xl hover:from-sky-600 hover:to-sky-700 border-0 transform hover:-translate-y-0.5 active:translate-y-0 font-semibold focus:ring-4 focus:ring-sky-300",
       },
       size: {
         default: "h-10 px-4 py-2",
