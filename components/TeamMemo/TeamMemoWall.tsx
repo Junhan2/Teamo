@@ -369,7 +369,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <h1 className="text-3xl font-bold text-light-primary">Memo</h1>
           <Button 
             onClick={createNewMemo}
-            className="bg-slate-800 text-white hover:bg-slate-700 transition-colors"
+            variant="outline"
+            className="bg-white text-indigo-700 border-2 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
@@ -676,7 +677,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           </p>
           <Button
             onClick={createNewMemo}
-            className="bg-slate-800 text-white hover:bg-slate-700"
+            variant="outline"
+            className="bg-white text-indigo-700 border-2 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
