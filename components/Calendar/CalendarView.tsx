@@ -316,7 +316,7 @@ const CalendarView = ({
   return (
     <div className="space-y-6">
       {/* Calendar Header */}
-      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
+      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-4 sm:mx-0">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-semibold text-[#171717]">
@@ -423,10 +423,10 @@ const CalendarView = ({
       </div>
 
       {/* Calendar grid */}
-      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4' : ''}`}>
+      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)]' : ''}`}>
         {/* Day names header - only for month view */}
         {viewMode === 'month' && (
-          <div className="grid grid-cols-7 mb-2">
+          <div className="grid grid-cols-7 mb-2 px-4">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
               <div 
                 key={day} 
@@ -440,7 +440,7 @@ const CalendarView = ({
 
         {/* Calendar days */}
         {viewMode === 'month' ? (
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-1 px-4 pb-4">
             {calendarDays.map((day, i) => {
               const dayTodos = getTodosForDay(day)
               const isCurrentMonth = isSameMonth(day, currentDate)
