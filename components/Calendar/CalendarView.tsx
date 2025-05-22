@@ -332,7 +332,7 @@ const CalendarView = ({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-light-primary hover:bg-[#E6EAF1] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
                   <span className="font-light">View: </span>
                   <span>{viewMode === 'month' ? 'Month' : 'Week'}</span>

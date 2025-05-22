@@ -183,11 +183,11 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-blue-50/50 border-blue-200 hover:bg-blue-50 hover:border-blue-300 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-blue-200 outline-offset-[-1px] rounded-md transition-all duration-200",
+                "w-full justify-start text-left font-normal bg-slate-50/50 border-slate-200 hover:bg-[#E6EAF1] hover:border-slate-300 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-slate-200 outline-offset-[-1px] rounded-md transition-all duration-200",
                 dueDate ? "text-light-primary" : "text-light-muted"
               )}
             >
-              <CalendarIcon className="mr-2 h-4 w-4 text-blue-500" />
+              <CalendarIcon className="mr-2 h-4 w-4 text-slate-500" />
               {dueDate ? format(dueDate, "yyyy-MM-dd") : "Select due date (required)"}
             </Button>
           </PopoverTrigger>
