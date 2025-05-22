@@ -254,7 +254,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
   return (
     <div className="w-full h-screen flex flex-col bg-light-background animate-fadeIn">
       {/* Top Header - matching existing design */}
-      <div className="bg-light-background border-b border-light-border px-4 py-3 flex items-center justify-between shadow-sm">
+      <div className="bg-light-background border-b border-light-border px-3 py-3 flex items-center justify-between shadow-sm">
         <h1 className="text-lg font-semibold text-light-primary font-dm-sans">
           {format(currentDate, 'MMMM yyyy')}
         </h1>
@@ -340,7 +340,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
       {/* Calendar Grid - Compact design */}
       <div className="overflow-auto">
         {/* Day names header */}
-        <div className="grid grid-cols-7 bg-light-background border-b border-light-border sticky top-0 z-10">
+        <div className="grid grid-cols-7 bg-light-background sticky top-0 z-10">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
             <div 
               key={day} 
@@ -365,7 +365,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <motion.div
                 key={i}
                 className={`
-                  h-8 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
+                  h-8 flex items-center justify-center cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
                   ${isDaySelected ? 'bg-light-accent text-light-background' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
@@ -379,7 +379,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <span 
                   className={`
                     text-sm font-medium font-dm-sans
-                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-light-background font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-white font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
                     ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
                   `}
                 >
@@ -389,7 +389,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 {/* Small dot indicator for tasks */}
                 {dayTodos.length > 0 && (
                   <div className={`absolute bottom-1 right-1 w-2 h-2 rounded-full ${
-                    isDaySelected ? 'bg-light-background' : 'bg-light-accent'
+                    isDaySelected ? 'bg-white' : 'bg-light-accent'
                   }`}></div>
                 )}
               </motion.div>
@@ -425,8 +425,19 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                     transition={snappyTransition}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`px-2 py-1 text-xs rounded-md flex-shrink-0 font-medium flex items-center gap-1 ${
+                      <div className="flex-1 min-w-0 pr-3">
+                        <h4 className={`text-sm font-medium font-dm-sans truncate ${
+                          todo.status === 'completed' ? 'text-light-muted line-through' : 'text-light-primary'
+                        }`}>
+                          {todo.title}
+                        </h4>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {todo.user_id !== user.id && (
+                          <div className={`w-3 h-3 rounded-full ${getUserColor(todo.user_id)}`}></div>
+                        )}
+                        <div className={`px-2 py-1 text-xs rounded-md font-medium flex items-center gap-1 ${
                           todo.status === 'completed' ? 'bg-[#3fcf8e] text-black' : 
                           todo.status === 'in_progress' ? 'bg-[#FF82C2] text-black' : 
                           'bg-[#FFDA40] text-black'
@@ -437,19 +448,6 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                           {todo.status === 'completed' ? 'Complete' : 
                            todo.status === 'in_progress' ? 'Doing' : 'Not yet'}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className={`text-sm font-medium font-dm-sans truncate ${
-                            todo.status === 'completed' ? 'text-light-muted line-through' : 'text-light-primary'
-                          }`}>
-                            {todo.title}
-                          </h4>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {todo.user_id !== user.id && (
-                          <div className={`w-3 h-3 rounded-full ${getUserColor(todo.user_id)}`}></div>
-                        )}
                       </div>
                     </div>
                   </motion.div>
