@@ -314,12 +314,12 @@ const CalendarView = ({
   }
 
   return (
-    <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] text-[#171717]">
+    <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)]' : 'bg-transparent'} text-[#171717]`}>
       {/* Calendar Header */}
-      <div className="p-4 border-b border-[rgba(0,0,0,0.20)]">
+      <div className={`${viewMode === 'month' ? 'p-4 border-b border-[rgba(0,0,0,0.20)]' : 'p-2 mb-4'}`}>
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">
+            <h2 className={`${viewMode === 'month' ? 'text-xl' : 'text-lg'} font-semibold`}>
               {viewMode === 'month' 
                 ? format(currentDate, 'MMMM yyyy')
                 : `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`
@@ -423,7 +423,7 @@ const CalendarView = ({
       </div>
 
       {/* Calendar grid */}
-      <div className="p-4">
+      <div className={`${viewMode === 'month' ? 'p-4' : 'p-0'}`}>
         {/* Day names header - only for month view */}
         {viewMode === 'month' && (
           <div className="grid grid-cols-7 mb-2">
@@ -511,8 +511,8 @@ const CalendarView = ({
             })}
           </div>
         ) : (
-          // Week view - horizontal layout
-          <div className="grid grid-cols-7 gap-2">
+          // Week view - mobile optimized full width
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-1">
             {calendarDays.map((day, i) => {
               const dayTodos = getTodosForDay(day)
               const isDaySelected = selectedDate && isSameDay(day, selectedDate)
@@ -523,38 +523,38 @@ const CalendarView = ({
                 <motion.div
                   key={i}
                   className={`
-                    min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white
-                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : 'border-[rgba(0,0,0,0.20)]'}
+                    min-h-[180px] sm:min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white shadow-sm
+                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : 'border-[rgba(0,0,0,0.15)]'}
                     ${isCurrentDay ? 'border-[#3fcf8e] border-2' : ''}
-                    hover:border-[rgba(0,0,0,0.30)] transition-colors
+                    hover:border-[rgba(0,0,0,0.30)] hover:shadow-md transition-all duration-200
                   `}
                   onClick={() => setSelectedDate(day)}
                   whileHover={{ scale: 1.02 }}
                   transition={snappyTransition}
                 >
-                  <div className="flex flex-col items-center mb-2">
+                  <div className="flex flex-col items-center mb-3">
                     <span 
                       className={`
-                        text-sm font-semibold rounded-full w-8 h-8 flex items-center justify-center mb-1
+                        text-lg sm:text-xl font-bold rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-1
                         ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                        ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f5f5f5]'}
+                        ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f8f9fa]'}
                       `}
                     >
                       {format(day, 'd')}
                     </span>
-                    <h3 className={`text-sm font-medium ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
+                    <h3 className={`text-sm font-semibold ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
                       {dayName}
                     </h3>
                     {dayTodos.length > 0 && (
-                      <div className="w-5 h-5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      <div className="w-6 h-6 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium mt-1">
                         {dayTodos.length}
                       </div>
                     )}
                   </div>
                   
                   {/* Task items for the day */}
-                  <div className="space-y-1 max-h-[150px] overflow-y-auto scrollbar-thin">
-                    {dayTodos.slice(0, 4).map(todo => (
+                  <div className="space-y-2 max-h-[100px] sm:max-h-[120px] overflow-y-auto scrollbar-thin">
+                    {dayTodos.slice(0, 3).map(todo => (
                       <div
                         key={todo.id}
                         className={`
@@ -565,8 +565,8 @@ const CalendarView = ({
                         {/* User color indicator */}
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
                         
-                        <div className="pl-1.5">
-                          <h4 className={`font-medium text-xs truncate ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
+                        <div className="pl-2">
+                          <h4 className={`font-medium text-xs truncate leading-4 ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
                             {todo.title}
                           </h4>
                           <div className="flex items-center justify-between mt-1">
@@ -584,14 +584,14 @@ const CalendarView = ({
                     ))}
                     
                     {/* If there are more tasks than can be shown, show a "more" indicator */}
-                    {dayTodos.length > 4 && (
-                      <div className="text-xs text-[#707070] text-center py-1">
-                        +{dayTodos.length - 4} more
+                    {dayTodos.length > 3 && (
+                      <div className="text-xs text-[#707070] text-center py-1 font-medium">
+                        +{dayTodos.length - 3} more
                       </div>
                     )}
                     
                     {dayTodos.length === 0 && (
-                      <div className="text-center py-4 text-[#707070] text-xs">
+                      <div className="text-center py-3 text-[#999] text-xs">
                         No tasks
                       </div>
                     )}

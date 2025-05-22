@@ -95,8 +95,8 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
       </div>
       
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Main calendar view */}
-        <div className="xl:col-span-2">
+        {/* Main calendar view - full width on mobile */}
+        <div className="xl:col-span-2 order-2 xl:order-1">
           <CalendarView
             userId={user.id}
             onTaskUpdate={handleTaskUpdate}
@@ -107,7 +107,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         </div>
         
         {/* Sidebar with controls and selected date tasks */}
-        <div className="xl:col-span-1 space-y-6">
+        <div className="xl:col-span-1 space-y-6 order-1 xl:order-2">
           {/* Control panel */}
           <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] p-4">
             <div className="space-y-4">
