@@ -30,7 +30,16 @@ const config: Config = {
   				900: '#111322',
   				950: '#0C0E19'
   			},
-  			// Light mode color scheme
+  			// Light mode color scheme - individual keys for Tailwind classes
+  			'light-background': '#FCFCFD',
+  			'light-primary': '#404968',
+  			'light-secondary': '#5D6A97', 
+  			'light-muted': '#7D89AF',
+  			'light-accent': '#3fcf8e',
+  			'light-hover': '#00bb68',
+  			'light-border': '#DCDFEA',
+  			'light-input': '#F9F9FB',
+  			// Light mode color scheme (legacy object)
   			light: {
   				background: '#fcfcfc',
   				primary: '#171717',
