@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import CalendarView from "./CalendarView"
+import MobileCalendarView from "./MobileCalendarView"
 import TeamMemberSubscription from "./TeamMemberSubscription"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -10,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Eye, Users, ListTodo, Activity, CheckCircle } from "lucide-react"
 import { format } from "date-fns"
 import { motion, AnimatePresence } from "framer-motion"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface UserProfile {
   id: string
@@ -28,6 +30,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTodos, setSelectedTodos] = useState<any[]>([])
+  const isMobile = useIsMobile()
   const supabase = createClient()
 
   // Handle subscription changes
@@ -83,6 +86,11 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         </div>
       </div>
     )
+  }
+
+  // Use mobile view for mobile devices
+  if (isMobile) {
+    return <MobileCalendarView user={user} />
   }
 
   return (
