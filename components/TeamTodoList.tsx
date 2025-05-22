@@ -452,13 +452,13 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-amber-100 text-amber-700 border border-amber-200'
+        return 'bg-[#FFDA40] text-black'
       case 'in_progress':
-        return 'bg-blue-100 text-blue-700 border border-blue-200'
+        return 'bg-[#FF82C2] text-black'
       case 'completed':
-        return 'bg-green-100 text-green-700 border border-green-200'
+        return 'bg-[#3fcf8e] text-black'
       default:
-        return 'bg-amber-100 text-amber-700 border border-amber-200'
+        return 'bg-[#FFDA40] text-black'
     }
   }
 
@@ -472,6 +472,19 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         return 'Complete'
       default:
         return status
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <ListTodo size={12} />
+      case 'in_progress':
+        return <Activity size={12} />
+      case 'completed':
+        return <CheckCircle size={12} />
+      default:
+        return <ListTodo size={12} />
     }
   }
 
@@ -734,11 +747,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       {(filter === "my" || todo.user_id === userId) ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 ${
-                              todo.status === 'pending' ? 'hover:bg-amber-500 hover:text-white' :
-                              todo.status === 'in_progress' ? 'hover:bg-pink-500 hover:text-white' :
-                              'hover:bg-emerald-600 hover:text-white'
-                            }`}>
+                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 hover:opacity-80`}>
+                              {getStatusIcon(todo.status)}
                               <span>{getStatusText(todo.status)}</span>
                               <ChevronDown size={10} />
                             </Badge>
@@ -782,7 +792,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           </DropdownMenuContent>
                         </DropdownMenu>
                       ) : (
-                        <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-md shadow-sm`}>
+                        <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-md shadow-sm flex items-center gap-1`}>
+                          {getStatusIcon(todo.status)}
                           {getStatusText(todo.status)}
                         </Badge>
                       )}
