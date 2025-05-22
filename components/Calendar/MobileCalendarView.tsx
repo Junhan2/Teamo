@@ -353,7 +353,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
           ))}
         </div>
 
-        {/* Calendar days - Full width grid */}
+        {/* Calendar days - DatePicker style grid */}
         <div className="grid grid-cols-7">
           {calendarDays.map((day, i) => {
             const dayTodos = getTodosForDay(day)
@@ -365,143 +365,88 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <motion.div
                 key={i}
                 className={`
-                  min-h-[90px] p-2 border-r border-b border-light-border cursor-pointer bg-light-background
+                  h-12 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
-                  ${isDaySelected ? 'bg-light-accent/10 border-light-accent' : ''}
-                  ${isCurrentDay ? 'bg-blue-50/50' : ''}
-                  hover:bg-light-accent/5 transition-colors
+                  ${isDaySelected ? 'bg-light-accent text-white' : ''}
+                  ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
+                  hover:bg-light-accent/10 transition-colors
                 `}
-                onClick={() => setSelectedDate(day)}
-                whileHover={{ scale: 1.01 }}
+                onClick={() => setSelectedDate(isDaySelected ? null : day)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 transition={snappyTransition}
               >
-                <div className="flex justify-between items-start mb-2">
-                  <span 
-                    className={`
-                      text-sm font-semibold rounded-full w-7 h-7 flex items-center justify-center font-dm-sans
-                      ${!isCurrentMonth ? 'text-light-muted' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-light-primary'}
-                      ${isCurrentDay ? 'bg-light-secondary text-white' : ''}
-                    `}
-                  >
-                    {format(day, 'd')}
-                  </span>
-                  
-                  {dayTodos.length > 0 && (
-                    <div className="w-5 h-5 bg-light-accent text-white rounded-full flex items-center justify-center text-xs font-medium font-dm-sans">
-                      {dayTodos.length}
-                    </div>
-                  )}
-                </div>
+                <span 
+                  className={`
+                    text-sm font-medium font-dm-sans
+                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-white' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
+                  `}
+                >
+                  {format(day, 'd')}
+                </span>
                 
-                {/* Task indicators */}
-                <div className="space-y-1">
-                  {dayTodos.slice(0, 2).map(todo => (
-                    <div
-                      key={todo.id}
-                      className={`text-xs p-1.5 rounded-md flex items-center gap-2 ${
-                        todo.status === 'completed' 
-                          ? 'bg-light-accent/10 border border-light-accent/20' 
-                          : 'bg-light-input border border-light-border'
-                      }`}
-                    >
-                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${getUserColor(todo.user_id)}`}></div>
-                      <span className="truncate flex-1 text-light-primary font-dm-sans">{todo.title}</span>
-                    </div>
-                  ))}
-                  
-                  {dayTodos.length > 2 && (
-                    <div className="text-xs text-light-muted text-center font-dm-sans">
-                      +{dayTodos.length - 2}
-                    </div>
-                  )}
-                </div>
+                {/* Small dot indicator for tasks */}
+                {dayTodos.length > 0 && (
+                  <div className={`absolute bottom-1 right-1 w-2 h-2 rounded-full ${
+                    isDaySelected ? 'bg-white' : 'bg-light-accent'
+                  }`}></div>
+                )}
               </motion.div>
             )
           })}
         </div>
       </div>
 
-      {/* Selected Date Tasks (Bottom Sheet) - matching existing design */}
+      {/* Selected Date Tasks - Minimal List Style */}
       <AnimatePresence>
         {selectedDate && selectedTodos.length > 0 && (
           <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            className="bg-light-background border-t border-light-border max-h-[45vh] overflow-hidden shadow-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="bg-light-background border-t border-light-border"
             transition={snappyTransition}
           >
-            <div className="p-4 border-b border-light-border flex items-center justify-between">
-              <h3 className="text-lg font-medium text-light-primary font-dm-sans">
-                {format(selectedDate, 'MMMM d, yyyy')}
+            <div className="px-4 py-3 border-b border-light-border">
+              <h3 className="text-sm font-medium text-light-primary font-dm-sans">
+                {format(selectedDate, 'MMM d')} • {selectedTodos.length}개 할일
               </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedDate(null)}
-                className="h-8 w-8 p-0 text-light-muted hover:text-light-primary hover:bg-light-input"
-              >
-                <X size={16} />
-              </Button>
             </div>
             
-            <div className="overflow-y-auto max-h-[calc(45vh-60px)]">
-              <div className="p-4 space-y-3">
+            <div className="max-h-[30vh] overflow-y-auto">
+              <div className="divide-y divide-light-border/50">
                 {selectedTodos.map(todo => (
                   <motion.div
                     key={todo.id}
-                    className="bg-light-background rounded-xl border border-light-border overflow-hidden shadow-sm"
-                    initial={{ y: 10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    className="px-4 py-3 hover:bg-light-input/30 transition-colors"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={snappyTransition}
                   >
-                    <div 
-                      className="p-4 cursor-pointer hover:bg-gray-50/50 transition-colors"
-                      onClick={() => setExpandedTodo(expandedTodo === todo.id ? null : todo.id)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className={`w-3 h-3 rounded-full ${getUserColor(todo.user_id)}`}></div>
-                            <h4 className={`font-medium text-sm font-dm-sans ${
-                              todo.status === 'completed' ? 'line-through text-light-muted' : 'text-light-primary'
-                            }`}>
-                              {todo.title}
-                            </h4>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            {todo.user_id !== user?.id && (
-                              <span className="px-2 py-1 text-xs rounded-sm bg-light-input text-light-primary border border-light-border font-dm-sans">
-                                {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
-                              </span>
-                            )}
-                            
-                            <Badge className={`${getStatusColor(todo.status)} px-2 py-1 text-xs flex items-center gap-1 font-dm-sans`}>
-                              {getStatusIcon(todo.status)}
-                              <span>
-                                {todo.status === 'pending' ? 'Not yet' : 
-                                 todo.status === 'in_progress' ? 'Doing' : 'Complete'}
-                              </span>
-                            </Badge>
-                          </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className={`w-1 h-6 rounded-full flex-shrink-0 ${
+                          todo.status === 'completed' ? 'bg-green-500' : 
+                          todo.status === 'in_progress' ? 'bg-yellow-500' : 'bg-gray-300'
+                        }`}></div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className={`text-sm font-medium font-dm-sans truncate ${
+                            todo.status === 'completed' ? 'text-light-muted line-through' : 'text-light-primary'
+                          }`}>
+                            {todo.title}
+                          </h4>
                         </div>
                       </div>
                       
-                      {/* Expanded content */}
-                      <AnimatePresence>
-                        {expandedTodo === todo.id && todo.description && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="mt-3 pt-3 border-t border-light-border"
-                            transition={snappyTransition}
-                          >
-                            <p className="text-sm text-light-muted font-dm-sans">{todo.description}</p>
-                          </motion.div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {todo.user_id !== user.id && (
+                          <div className={`w-3 h-3 rounded-full ${getUserColor(todo.user_id)}`}></div>
                         )}
-                      </AnimatePresence>
+                        {todo.status === 'completed' && (
+                          <CheckCircle size={14} className="text-green-500" />
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 ))}
