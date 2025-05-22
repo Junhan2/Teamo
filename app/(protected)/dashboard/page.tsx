@@ -264,10 +264,14 @@ export default function DashboardPage() {
       })
       .subscribe((status) => {
         console.log('대시보드 구독 상태:', status);
-        if (status !== 'SUBSCRIBED') {
+        if (status === 'SUBSCRIBED') {
+          console.log('실시간 구독 설정 완료');
+        } else if (status === 'CLOSED') {
+          console.log('구독이 정상적으로 종료됨');
+        } else {
           console.error('대시보드 구독 실패:', status);
-          // 에러 발생 시 통계 수동 업데이트
-          fetchTodoStats();
+          // 에러 발생 시에만 통계 수동 업데이트
+          setTimeout(() => fetchTodoStats(), 1000);
         }
       });
     

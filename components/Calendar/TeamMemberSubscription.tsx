@@ -115,18 +115,23 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       setSaving(true)
       
       // Check if calendar_subscriptions table exists, create if not
-      const { error: tableCheckError } = await supabase.rpc('check_table_exists', {
-        table_name: 'calendar_subscriptions'
-      }).single()
-      
-      if (tableCheckError && tableCheckError.message.includes('does not exist')) {
-        // Create the table
-        const { error: createTableError } = await supabase.rpc('create_calendar_subscriptions_table')
+      try {
+        const { error: tableCheckError } = await supabase.rpc('check_table_exists', {
+          table_name: 'calendar_subscriptions'
+        }).single()
         
-        if (createTableError) {
-          console.error('Error creating calendar_subscriptions table:', createTableError)
-          throw createTableError
+        if (tableCheckError && tableCheckError.message.includes('does not exist')) {
+          // Create the table
+          const { error: createTableError } = await supabase.rpc('create_calendar_subscriptions_table')
+          
+          if (createTableError) {
+            console.error('Error creating calendar_subscriptions table:', createTableError)
+            throw createTableError
+          }
         }
+      } catch (error) {
+        console.error('Table check failed:', error)
+        // Continue without table check if RPC fails
       }
       
       // Delete existing subscriptions

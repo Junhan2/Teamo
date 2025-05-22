@@ -320,10 +320,16 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 
                 {/* Team Member Subscription */}
                 <div>
-                  <TeamMemberSubscription
-                    userId={user.id}
-                    onSubscriptionChange={handleSubscriptionChange}
-                  />
+                  <React.Suspense fallback={
+                    <div className="flex items-center justify-center p-4">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-light-accent"></div>
+                    </div>
+                  }>
+                    <TeamMemberSubscription
+                      userId={user.id}
+                      onSubscriptionChange={handleSubscriptionChange}
+                    />
+                  </React.Suspense>
                 </div>
               </div>
             </SheetContent>
