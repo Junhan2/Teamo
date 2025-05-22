@@ -221,7 +221,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                         className="data-[state=checked]:bg-light-accent data-[state=checked]:border-light-accent"
                       />
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="w-8 h-8 rounded-full bg-light-input flex items-center justify-center overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-light-input flex items-center justify-center overflow-hidden ring-2 ring-light-border ring-offset-1 shadow-sm">
                           {member.avatar_url ? (
                             <img 
                               src={member.avatar_url} 
