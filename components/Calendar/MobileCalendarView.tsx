@@ -367,7 +367,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 className={`
                   h-8 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
-                  ${isDaySelected ? 'bg-light-accent text-white' : ''}
+                  ${isDaySelected ? 'bg-light-accent text-light-background' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
                   hover:bg-light-accent/10 transition-colors
                 `}
@@ -379,7 +379,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <span 
                   className={`
                     text-sm font-medium font-dm-sans
-                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-white' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-light-background font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
                     ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
                   `}
                 >
@@ -389,7 +389,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 {/* Small dot indicator for tasks */}
                 {dayTodos.length > 0 && (
                   <div className={`absolute bottom-1 right-1 w-2 h-2 rounded-full ${
-                    isDaySelected ? 'bg-white' : 'bg-light-accent'
+                    isDaySelected ? 'bg-light-background' : 'bg-light-accent'
                   }`}></div>
                 )}
               </motion.div>
@@ -426,10 +426,14 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`w-1 h-5 rounded-full flex-shrink-0 ${
-                          todo.status === 'completed' ? 'bg-green-500' : 
-                          todo.status === 'in_progress' ? 'bg-yellow-500' : 'bg-gray-300'
-                        }`}></div>
+                        <div className={`px-2 py-1 text-xs rounded-md flex-shrink-0 font-medium ${
+                          todo.status === 'completed' ? 'bg-green-100 text-green-700 border border-green-200' : 
+                          todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 
+                          'bg-amber-100 text-amber-700 border border-amber-200'
+                        }`}>
+                          {todo.status === 'completed' ? 'Done' : 
+                           todo.status === 'in_progress' ? 'Doing' : 'Todo'}
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h4 className={`text-sm font-medium font-dm-sans truncate ${
                             todo.status === 'completed' ? 'text-light-muted line-through' : 'text-light-primary'
@@ -442,9 +446,6 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {todo.user_id !== user.id && (
                           <div className={`w-3 h-3 rounded-full ${getUserColor(todo.user_id)}`}></div>
-                        )}
-                        {todo.status === 'completed' && (
-                          <CheckCircle size={14} className="text-green-500" />
                         )}
                       </div>
                     </div>
