@@ -190,8 +190,8 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
           className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent"
         >
           <div className="flex items-center gap-2">
-            <Users size={18} className="text-light-accent" />
-            <span className="font-medium text-light-primary font-dm-sans">Team Member Calendars</span>
+            <Users size={18} className="text-light-primary" />
+            <span className="font-medium text-light-primary font-dm-sans">Subscription</span>
           </div>
           <ChevronDown 
             size={18} 
@@ -220,14 +220,29 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                         onCheckedChange={() => toggleSubscription(member.id)}
                         className="data-[state=checked]:bg-light-accent data-[state=checked]:border-light-accent"
                       />
-                      <label htmlFor={member.id} className="flex-1 cursor-pointer">
-                        <div className="text-sm font-medium text-light-primary font-dm-sans">
-                          {member.full_name || member.email}
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="w-8 h-8 rounded-full bg-light-input flex items-center justify-center overflow-hidden">
+                          {member.avatar_url ? (
+                            <img 
+                              src={member.avatar_url} 
+                              alt={member.full_name || member.email}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-xs font-medium text-light-primary">
+                              {(member.full_name || member.email).charAt(0).toUpperCase()}
+                            </span>
+                          )}
                         </div>
-                        {member.full_name && (
-                          <div className="text-xs text-light-muted font-dm-sans">{member.email}</div>
-                        )}
-                      </label>
+                        <label htmlFor={member.id} className="flex-1 cursor-pointer">
+                          <div className="text-sm font-medium text-light-primary font-dm-sans">
+                            {member.full_name || member.email}
+                          </div>
+                          {member.full_name && (
+                            <div className="text-xs text-light-muted font-dm-sans">{member.email}</div>
+                          )}
+                        </label>
+                      </div>
                     </div>
                   ))
                 )}

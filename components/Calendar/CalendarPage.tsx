@@ -117,7 +117,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         {/* Sidebar with controls and selected date tasks */}
         <div className="xl:col-span-1 space-y-4 order-1 xl:order-2">
           {/* Team Member Subscription */}
-          <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-2">
+          <div className="mx-2">
             <TeamMemberSubscription
               userId={user.id}
               onSubscriptionChange={handleSubscriptionChange}

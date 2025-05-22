@@ -338,7 +338,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
       </div>
 
       {/* Calendar Grid - Compact design */}
-      <div className="flex-1 overflow-auto">
+      <div className="overflow-auto">
         {/* Day names header */}
         <div className="grid grid-cols-7 bg-light-background border-b border-light-border sticky top-0 z-10">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
@@ -426,13 +426,16 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`px-2 py-1 text-xs rounded-md flex-shrink-0 font-medium ${
-                          todo.status === 'completed' ? 'bg-green-100 text-green-700 border border-green-200' : 
-                          todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 
-                          'bg-amber-100 text-amber-700 border border-amber-200'
+                        <div className={`px-2 py-1 text-xs rounded-md flex-shrink-0 font-medium flex items-center gap-1 ${
+                          todo.status === 'completed' ? 'bg-[#3fcf8e] text-black' : 
+                          todo.status === 'in_progress' ? 'bg-[#FF82C2] text-black' : 
+                          'bg-[#FFDA40] text-black'
                         }`}>
-                          {todo.status === 'completed' ? 'Done' : 
-                           todo.status === 'in_progress' ? 'Doing' : 'Todo'}
+                          {todo.status === 'completed' ? <CheckCircle size={12} /> : 
+                           todo.status === 'in_progress' ? <Activity size={12} /> : 
+                           <ListTodo size={12} />}
+                          {todo.status === 'completed' ? 'Complete' : 
+                           todo.status === 'in_progress' ? 'Doing' : 'Not yet'}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className={`text-sm font-medium font-dm-sans truncate ${
