@@ -512,7 +512,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+                className={`${statusFilter === null ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-[#E6EAF1]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 All
               </Button>
@@ -520,7 +520,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+                className={`${statusFilter === "pending" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-[#E6EAF1]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Not yet
               </Button>
@@ -528,7 +528,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+                className={`${statusFilter === "in_progress" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-[#E6EAF1]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Doing
               </Button>
@@ -536,7 +536,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-light-hover/10'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
+                className={`${statusFilter === "completed" ? 'bg-light-primary text-white' : 'bg-transparent text-light-primary hover:bg-[#E6EAF1]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded outline outline-1 outline-light-border outline-offset-[-1px]`}
               >
                 Complete
               </Button>
@@ -593,7 +593,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-light-hover/10 text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-light-primary hover:bg-[#E6EAF1] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
                   {dateFilter === null ? <><span className="font-light">Due: </span><span>All</span></> : 
                    dateFilter === "today" ? <><span className="font-light">Due: </span><span>Today</span></> : 
@@ -606,31 +606,31 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
               <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setDateFilter(null)}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === null ? 'bg-light-secondary/20' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === null ? 'bg-[#E6EAF1]' : ''}`}
                 >
                   All
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("today")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "today" ? 'bg-light-secondary/20' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "today" ? 'bg-[#E6EAF1]' : ''}`}
                 >
                   Today
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("week")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "week" ? 'bg-light-secondary/20' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "week" ? 'bg-[#E6EAF1]' : ''}`}
                 >
                   This week
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("month")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "month" ? 'bg-light-secondary/20' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "month" ? 'bg-[#E6EAF1]' : ''}`}
                 >
                   This month
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("year")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 ${dateFilter === "year" ? 'bg-light-secondary/20' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 ${dateFilter === "year" ? 'bg-[#E6EAF1]' : ''}`}
                 >
                   This year
                 </DropdownMenuItem>

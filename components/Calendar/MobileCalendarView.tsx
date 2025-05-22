@@ -369,7 +369,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
                   ${isDaySelected ? 'bg-light-accent text-light-background' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
-                  hover:bg-light-accent/10 transition-colors
+                  hover:bg-[#E6EAF1] active:bg-[#E6EAF1] transition-colors
                 `}
                 onClick={() => setSelectedDate(isDaySelected ? null : day)}
                 whileHover={{ scale: 1.05 }}
@@ -379,7 +379,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <span 
                   className={`
                     text-sm font-medium font-dm-sans
-                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-white font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-black font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
                     ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
                   `}
                 >
@@ -389,7 +389,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 {/* Small dot indicator for tasks */}
                 {dayTodos.length > 0 && (
                   <div className={`absolute bottom-1 right-1 w-2 h-2 rounded-full ${
-                    isDaySelected ? 'bg-white' : 'bg-light-accent'
+                    isDaySelected ? 'bg-black' : 'bg-light-accent'
                   }`}></div>
                 )}
               </motion.div>
