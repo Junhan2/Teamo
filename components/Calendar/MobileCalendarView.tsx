@@ -264,7 +264,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={prevMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-light-accent hover:text-white border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
           >
             <ChevronLeft size={16} />
           </Button>
@@ -272,7 +272,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={goToToday}
-            className="h-8 px-3 text-xs bg-light-input text-light-primary hover:bg-light-accent hover:text-white border border-light-border rounded-md"
+            className="h-8 px-3 text-xs bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
           >
             Today
           </Button>
@@ -280,7 +280,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={nextMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-light-accent hover:text-white border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
           >
             <ChevronRight size={16} />
           </Button>
@@ -291,7 +291,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-light-accent hover:text-white border border-light-border rounded-md"
+                className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
               >
                 <Menu size={16} />
               </Button>
@@ -366,8 +366,8 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 key={i}
                 className={`
                   h-8 flex items-center justify-center cursor-pointer bg-light-background relative
-                  ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
-                  ${isDaySelected ? 'bg-light-accent text-light-background' : ''}
+                  ${!isCurrentMonth ? 'bg-gray-50/80' : ''} 
+                  ${isDaySelected ? 'bg-[#E6EAF1] text-black' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
                   hover:bg-[#E6EAF1] active:bg-[#E6EAF1] transition-colors
                 `}
@@ -379,7 +379,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <span 
                   className={`
                     text-sm font-medium font-dm-sans
-                    ${!isCurrentMonth ? 'text-light-muted' : isDaySelected ? 'text-black font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${!isCurrentMonth ? 'text-gray-300' : isDaySelected ? 'text-black font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
                     ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
                   `}
                 >
