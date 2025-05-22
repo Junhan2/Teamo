@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, X, Edit3, Search, User, Users, Hash } from "lucide-react"
+import { Plus, X, Search, User, Users, Hash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { format } from "date-fns"
 
 interface TeamMemo {
@@ -84,15 +84,15 @@ const getStatusText = (status: string) => {
   }
 }
 
+const getRandomColor = () => {
+  return MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)].name
+}
+
 export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [memos, setMemos] = useState<TeamMemo[]>([])
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'my' | 'team'>('my')
-  const [showAddMemo, setShowAddMemo] = useState(false)
-  const [newMemoContent, setNewMemoContent] = useState("")
-  const [newMemoColor, setNewMemoColor] = useState("yellow")
-  const [newMemoTaggedTodos, setNewMemoTaggedTodos] = useState<string[]>([])
+  const [activeTab, setActiveTab] = useState<'my-todos' | 'team-todos'>('my-todos')
   const [editingMemoId, setEditingMemoId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState("")
   const [searchText, setSearchText] = useState("")
@@ -102,6 +102,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const [todoSearchQuery, setTodoSearchQuery] = useState("")
   const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
   const [cursorPosition, setCursorPosition] = useState(0)
+  const [editTaggedTodos, setEditTaggedTodos] = useState<string[]>([])
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   
   const supabase = createClient()
@@ -162,12 +163,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   }, [user?.id])
 
   // Handle content changes and detect # for todo search
-  const handleContentChange = (value: string, isEditing = false) => {
-    if (isEditing) {
-      setEditContent(value)
-    } else {
-      setNewMemoContent(value)
-    }
+  const handleContentChange = (value: string) => {
+    setEditContent(value)
 
     // Check for # to trigger todo search
     const textarea = textareaRef.current
@@ -196,13 +193,12 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   }
 
   // Select a todo from search results
-  const selectTodo = (todo: Todo, isEditing = false) => {
-    const currentContent = isEditing ? editContent : newMemoContent
+  const selectTodo = (todo: Todo) => {
     const textarea = textareaRef.current
     
     if (textarea) {
-      const beforeCursor = currentContent.substring(0, cursorPosition)
-      const afterCursor = currentContent.substring(cursorPosition)
+      const beforeCursor = editContent.substring(0, cursorPosition)
+      const afterCursor = editContent.substring(cursorPosition)
       const hashIndex = beforeCursor.lastIndexOf('#')
       
       if (hashIndex !== -1) {
@@ -210,12 +206,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                           `#${todo.title}` + 
                           afterCursor
         
-        if (isEditing) {
-          setEditContent(newContent)
-        } else {
-          setNewMemoContent(newContent)
-          setNewMemoTaggedTodos(prev => [...new Set([...prev, todo.id])])
-        }
+        setEditContent(newContent)
+        setEditTaggedTodos(prev => [...new Set([...prev, todo.id])])
       }
     }
     
@@ -226,7 +218,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   // Get filtered memos based on active tab
   const getFilteredMemos = () => {
     const filtered = memos.filter(memo => {
-      const matchesTab = activeTab === 'my' 
+      const matchesTab = activeTab === 'my-todos' 
         ? memo.user_id === user?.id 
         : memo.user_id !== user?.id
         
@@ -239,23 +231,23 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
     return filtered
   }
 
-  // Create memo
-  const createMemo = async () => {
-    if (!user?.id || !newMemoContent.trim()) return
+  // Create new empty memo
+  const createNewMemo = async () => {
+    if (!user?.id) return
 
     try {
       const { data, error } = await supabase
         .from('team_memos')
         .insert([
           {
-            content: newMemoContent.trim(),
-            color: newMemoColor,
+            content: "Double click to edit...",
+            color: getRandomColor(),
             position_x: Math.random() * 800,
             position_y: Math.random() * 600,
             user_id: user.id,
             team_id: 'default',
             reactions: {},
-            tagged_todos: newMemoTaggedTodos
+            tagged_todos: []
           }
         ])
         .select()
@@ -265,32 +257,66 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         return
       }
 
-      setNewMemoContent("")
-      setNewMemoTaggedTodos([])
-      setShowAddMemo(false)
-      fetchMemos()
-    } catch (error) {
-      console.error('Error in createMemo:', error)
-    }
-  }
-
-  // Update memo
-  const updateMemo = async (memoId: string, updates: Partial<TeamMemo>) => {
-    try {
-      const { error } = await supabase
-        .from('team_memos')
-        .update(updates)
-        .eq('id', memoId)
-
-      if (error) {
-        console.error('Error updating memo:', error)
-        return
+      if (data && data[0]) {
+        setEditingMemoId(data[0].id)
+        setEditContent("")
+        setEditTaggedTodos([])
       }
 
       fetchMemos()
     } catch (error) {
-      console.error('Error in updateMemo:', error)
+      console.error('Error in createNewMemo:', error)
     }
+  }
+
+  // Start editing memo
+  const startEditing = (memo: TeamMemo) => {
+    setEditingMemoId(memo.id)
+    setEditContent(memo.content === "Double click to edit..." ? "" : memo.content)
+    setEditTaggedTodos(memo.tagged_todos || [])
+  }
+
+  // Save memo changes
+  const saveMemo = async (memoId: string) => {
+    if (!editContent.trim()) {
+      // Delete empty memo
+      await deleteMemo(memoId)
+      return
+    }
+
+    try {
+      const { error } = await supabase
+        .from('team_memos')
+        .update({ 
+          content: editContent.trim(),
+          tagged_todos: editTaggedTodos
+        })
+        .eq('id', memoId)
+
+      if (error) {
+        console.error('Error saving memo:', error)
+        return
+      }
+
+      setEditingMemoId(null)
+      setEditContent("")
+      setEditTaggedTodos([])
+      fetchMemos()
+    } catch (error) {
+      console.error('Error in saveMemo:', error)
+    }
+  }
+
+  // Cancel editing
+  const cancelEditing = () => {
+    const memo = memos.find(m => m.id === editingMemoId)
+    if (memo && memo.content === "Double click to edit...") {
+      // Delete the placeholder memo
+      deleteMemo(editingMemoId!)
+    }
+    setEditingMemoId(null)
+    setEditContent("")
+    setEditTaggedTodos([])
   }
 
   // Delete memo
@@ -337,7 +363,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-light-primary">Memo</h1>
           <Button 
-            onClick={() => setShowAddMemo(true)}
+            onClick={createNewMemo}
             className="bg-light-primary text-white hover:bg-light-accent transition-colors"
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -346,34 +372,76 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         </div>
         
         {/* Tabs and Search */}
-        <div className="flex flex-col gap-4">
-          {/* Tab Navigation */}
-          <div className="flex items-center gap-4">
-            <div className="flex bg-white rounded-lg p-1 border border-light-border">
-              <Button
-                onClick={() => setActiveTab('my')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  activeTab === 'my'
-                    ? 'bg-light-primary text-white shadow-sm'
-                    : 'text-light-muted hover:bg-[#E6EAF1] hover:text-light-primary'
-                }`}
-              >
-                <User className="w-4 h-4 mr-2" />
-                MY
-              </Button>
-              <Button
-                onClick={() => setActiveTab('team')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  activeTab === 'team'
-                    ? 'bg-light-primary text-white shadow-sm'
-                    : 'text-light-muted hover:bg-[#E6EAF1] hover:text-light-primary'
-                }`}
-              >
-                <Users className="w-4 h-4 mr-2" />
-                TEAM
-              </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Tabs 
+            value={activeTab} 
+            onValueChange={(value) => setActiveTab(value as 'my-todos' | 'team-todos')}
+            className="relative"
+          >
+            <div className="relative">
+              <TabsList className="grid w-full grid-cols-2 bg-white/70 backdrop-blur-sm border border-light-border/50 h-12 p-1 relative overflow-visible rounded-xl shadow-sm">
+                <motion.div
+                  className="absolute inset-y-1 rounded-lg bg-white shadow-sm border border-light-border/30"
+                  animate={{
+                    x: activeTab === 'my-todos' ? '0.25rem' : 'calc(50% + 0.125rem)',
+                    width: 'calc(50% - 0.375rem)',
+                  }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 500, 
+                    damping: 30,
+                    mass: 0.8
+                  }}
+                />
+                
+                <TabsTrigger 
+                  value="my-todos"
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                >
+                  <motion.div
+                    animate={{
+                      color: activeTab === 'my-todos' ? '#475569' : '#94a3b8',
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <User size={16} />
+                  </motion.div>
+                  <motion.span
+                    animate={{
+                      color: activeTab === 'my-todos' ? '#374151' : '#94a3b8',
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    MY
+                  </motion.span>
+                </TabsTrigger>
+                
+                <TabsTrigger 
+                  value="team-todos" 
+                  className="relative z-10 rounded-lg transition-all duration-500 px-4 py-2.5 text-sm font-medium font-dm-sans flex items-center gap-2 bg-transparent border-transparent hover:bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-current"
+                >
+                  <motion.div
+                    animate={{
+                      color: activeTab === 'team-todos' ? '#475569' : '#94a3b8',
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Users size={16} />
+                  </motion.div>
+                  <motion.span
+                    animate={{
+                      color: activeTab === 'team-todos' ? '#374151' : '#94a3b8',
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    TEAM
+                  </motion.span>
+                </TabsTrigger>
+              </TabsList>
             </div>
-            
+          </Tabs>
+          
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-light-border">
               <Search className="w-4 h-4 text-light-muted" />
               <Input
@@ -384,7 +452,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
               />
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-light-muted ml-auto">
+            <div className="flex items-center gap-2 text-sm text-light-muted">
               {filteredMemos.length} memo{filteredMemos.length !== 1 ? 's' : ''}
             </div>
           </div>
@@ -397,7 +465,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           {filteredMemos.map((memo, index) => {
             const colorClasses = getColorClasses(memo.color)
             const isEditing = editingMemoId === memo.id
-            const taggedTodos = getTaggedTodos(memo.tagged_todos || [])
+            const taggedTodos = getTaggedTodos(isEditing ? editTaggedTodos : (memo.tagged_todos || []))
             
             return (
               <motion.div
@@ -417,55 +485,91 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                   transform: `rotate(${Math.random() * 6 - 3}deg)`,
                   boxShadow: '0 4px 15px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1)'
                 }}
+                onDoubleClick={() => !isEditing && startEditing(memo)}
               >
                 {/* Delete button */}
-                {memo.user_id === user?.id && (
+                {memo.user_id === user?.id && !isEditing && (
                   <Button
-                    onClick={() => deleteMemo(memo.id)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteMemo(memo.id)
+                    }}
                     className="absolute top-2 right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
                   >
                     <X className="w-3 h-3" />
                   </Button>
                 )}
 
-                {/* Edit button */}
-                {memo.user_id === user?.id && (
-                  <Button
-                    onClick={() => {
-                      setEditingMemoId(memo.id)
-                      setEditContent(memo.content)
-                    }}
-                    className="absolute top-2 right-10 w-6 h-6 p-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </Button>
-                )}
-
                 {/* Content */}
                 <div className="mb-4">
                   {isEditing ? (
-                    <div className="space-y-2">
+                    <div className="space-y-2 relative">
                       <Textarea
                         ref={textareaRef}
                         value={editContent}
-                        onChange={(e) => handleContentChange(e.target.value, true)}
-                        className="bg-white/80 border-none resize-none text-sm"
+                        onChange={(e) => handleContentChange(e.target.value)}
+                        className="bg-white/80 border-none resize-none text-sm min-h-[100px]"
                         rows={4}
+                        placeholder="Type # to link tasks..."
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') {
+                            cancelEditing()
+                          } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                            saveMemo(memo.id)
+                          }
+                        }}
                       />
+                      
+                      {/* Todo Search Dropdown */}
+                      {showTodoSearch && (
+                        <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
+                          {filteredTodos.length > 0 ? (
+                            filteredTodos.map(todo => (
+                              <div
+                                key={todo.id}
+                                onClick={() => selectTodo(todo)}
+                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium truncate flex-1 mr-2 text-sm">
+                                    {todo.title}
+                                  </span>
+                                  <div className="flex items-center gap-2 text-xs">
+                                    {todo.due_date && (
+                                      <span className="text-gray-500">
+                                        {format(new Date(todo.due_date), 'MM/dd')}
+                                      </span>
+                                    )}
+                                    <span className={`px-1.5 py-0.5 rounded text-white ${getStatusColor(todo.status)}`}>
+                                      {getStatusText(todo.status)}
+                                    </span>
+                                    <span className="text-gray-500">
+                                      {todo.user?.full_name?.split(' ')[0] || 'N/A'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="p-3 text-gray-500 text-sm">
+                              No tasks found for "{todoSearchQuery}"
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          onClick={() => {
-                            updateMemo(memo.id, { content: editContent })
-                            setEditingMemoId(null)
-                          }}
+                          onClick={() => saveMemo(memo.id)}
                           className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 h-6"
                         >
                           Save
                         </Button>
                         <Button
                           size="sm"
-                          onClick={() => setEditingMemoId(null)}
+                          onClick={cancelEditing}
                           className="bg-gray-500 hover:bg-gray-600 text-white text-xs px-2 py-1 h-6"
                         >
                           Cancel
@@ -473,14 +577,16 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-800 text-sm font-medium whitespace-pre-wrap leading-relaxed">
+                    <p className={`text-gray-800 text-sm font-medium whitespace-pre-wrap leading-relaxed ${
+                      memo.content === "Double click to edit..." ? "text-gray-500 italic" : ""
+                    }`}>
                       {memo.content}
                     </p>
                   )}
                 </div>
 
                 {/* Tagged Todos */}
-                {taggedTodos.length > 0 && (
+                {taggedTodos.length > 0 && !isEditing && (
                   <div className="space-y-2 mb-3">
                     <div className="flex items-center gap-1 text-xs text-gray-600">
                       <Hash className="w-3 h-3" />
@@ -512,124 +618,41 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 )}
 
                 {/* Author and date */}
-                <div className="text-xs text-gray-600 mt-auto">
-                  <div className="font-medium">
-                    {memo.user?.full_name || memo.user?.email || 'Unknown User'}
+                {!isEditing && (
+                  <div className="text-xs text-gray-600 mt-auto">
+                    <div className="font-medium">
+                      {memo.user?.full_name || memo.user?.email || 'Unknown User'}
+                    </div>
+                    <div className="opacity-70">
+                      {new Date(memo.created_at).toLocaleDateString()}
+                    </div>
                   </div>
-                  <div className="opacity-70">
-                    {new Date(memo.created_at).toLocaleDateString()}
-                  </div>
-                </div>
+                )}
               </motion.div>
             )
           })}
         </AnimatePresence>
       </div>
 
-      {/* Add Memo Modal */}
-      <AnimatePresence>
-        {showAddMemo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-            onClick={() => setShowAddMemo(false)}
+      {/* Empty State */}
+      {filteredMemos.length === 0 && (
+        <div className="flex flex-col items-center justify-center h-64 text-center">
+          <div className="w-20 h-20 mb-4 rounded-full bg-yellow-100 flex items-center justify-center">
+            <Plus size={32} className="text-yellow-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-light-primary mb-2">No memos yet</h3>
+          <p className="text-light-muted max-w-xs mb-4">
+            Click "Add Memo" to create your first {activeTab === 'my-todos' ? 'personal' : 'team'} memo!
+          </p>
+          <Button
+            onClick={createNewMemo}
+            className="bg-light-primary text-white hover:bg-light-accent"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4 relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 className="text-xl font-bold mb-4 text-light-primary">Add New Memo</h2>
-              
-              <div className="space-y-4">
-                <div className="relative">
-                  <Textarea
-                    ref={textareaRef}
-                    placeholder="Write your memo... (Type # to link tasks)"
-                    value={newMemoContent}
-                    onChange={(e) => handleContentChange(e.target.value)}
-                    className="resize-none"
-                    rows={4}
-                  />
-                  
-                  {/* Todo Search Dropdown */}
-                  {showTodoSearch && (
-                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
-                      {filteredTodos.length > 0 ? (
-                        filteredTodos.map(todo => (
-                          <div
-                            key={todo.id}
-                            onClick={() => selectTodo(todo)}
-                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium truncate flex-1 mr-2 text-sm">
-                                {todo.title}
-                              </span>
-                              <div className="flex items-center gap-2 text-xs">
-                                {todo.due_date && (
-                                  <span className="text-gray-500">
-                                    {format(new Date(todo.due_date), 'MM/dd')}
-                                  </span>
-                                )}
-                                <span className={`px-1.5 py-0.5 rounded text-white ${getStatusColor(todo.status)}`}>
-                                  {getStatusText(todo.status)}
-                                </span>
-                                <span className="text-gray-500">
-                                  {todo.user?.full_name?.split(' ')[0] || 'N/A'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-3 text-gray-500 text-sm">
-                          No tasks found for "{todoSearchQuery}"
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">Color</label>
-                  <div className="flex gap-2">
-                    {MEMO_COLORS.map(color => (
-                      <button
-                        key={color.name}
-                        onClick={() => setNewMemoColor(color.name)}
-                        className={`w-8 h-8 rounded ${color.bg} ${color.border} border-2 ${
-                          newMemoColor === color.name ? 'ring-2 ring-light-accent' : ''
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-2 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAddMemo(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={createMemo}
-                  className="bg-light-primary text-white hover:bg-light-accent"
-                  disabled={!newMemoContent.trim()}
-                >
-                  Create Memo
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Memo
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
