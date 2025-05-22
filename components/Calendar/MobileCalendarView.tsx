@@ -365,7 +365,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <motion.div
                 key={i}
                 className={`
-                  h-12 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
+                  h-10 flex items-center justify-center border-r border-b border-light-border cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/50' : ''} 
                   ${isDaySelected ? 'bg-light-accent text-white' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
@@ -408,18 +408,18 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             className="bg-light-background border-t border-light-border"
             transition={snappyTransition}
           >
-            <div className="px-4 py-3 border-b border-light-border">
+            <div className="px-4 py-2 border-b border-light-border">
               <h3 className="text-sm font-medium text-light-primary font-dm-sans">
                 {format(selectedDate, 'MMM d')} • {selectedTodos.length}개 할일
               </h3>
             </div>
             
-            <div className="max-h-[30vh] overflow-y-auto">
+            <div className="max-h-[25vh] overflow-y-auto">
               <div className="divide-y divide-light-border/50">
                 {selectedTodos.map(todo => (
                   <motion.div
                     key={todo.id}
-                    className="px-4 py-3 hover:bg-light-input/30 transition-colors"
+                    className="px-4 py-2 hover:bg-light-input/30 transition-colors"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={snappyTransition}

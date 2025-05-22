@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -56,17 +56,40 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       
       if (membersError) {
         console.error('Error fetching team members:', membersError)
-        throw membersError
+        setTeamMembers([])
+        setSubscribedUserIds([])
+        return
       }
       
-      // Get current user's subscriptions
-      const { data: subscriptionsData, error: subscriptionsError } = await supabase
-        .from('calendar_subscriptions')
-        .select('*')
-        .eq('user_id', userId)
+      setTeamMembers(members || [])
       
-      if (subscriptionsError) {
-        // If table doesn't exist yet, handle gracefully
+      // Get current user's subscriptions
+      try {
+        const { data: subscriptionsData, error: subscriptionsError } = await supabase
+          .from('calendar_subscriptions')
+          .select('*')
+          .eq('user_id', userId)
+        
+        if (subscriptionsError) {
+          console.error('Error fetching subscriptions:', subscriptionsError)
+          setSubscribedUserIds([])
+        } else {
+          setSubscribedUserIds(subscriptionsData?.map(sub => sub.subscribed_to_user_id) || [])
+        }
+      } catch (subError) {
+        console.error('Subscription fetch failed:', subError)
+        setSubscribedUserIds([])
+      }
+    } catch (error) {
+      console.error('Error in fetchData:', error)
+      setTeamMembers([])
+      setSubscribedUserIds([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchDataSafe = async () => {
         if (subscriptionsError.code === '42P01') {
           console.warn('Calendar subscriptions table does not exist yet')
           setSubscriptions([])
@@ -95,7 +118,9 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
 
   // Load initial data
   useEffect(() => {
-    fetchData()
+    if (userId) {
+      fetchData()
+    }
   }, [userId])
 
   // Toggle subscription for a team member
