@@ -183,7 +183,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal bg-slate-50/50 border-slate-200 hover:bg-[#E6EAF1] hover:border-slate-300 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-slate-200 outline-offset-[-1px] rounded-md transition-all duration-200",
+                "w-full justify-start text-left font-normal bg-[#F9F9FB] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#B9C0D4] focus:border-[#7D89AF] focus:ring-1 focus:ring-[#7D89AF] focus:ring-opacity-50 px-4 py-2 h-10 text-sm outline outline-1 outline-[#DCDFEA] outline-offset-[-1px] rounded-md transition-all duration-200",
                 dueDate ? "text-light-primary" : "text-light-muted"
               )}
             >
@@ -211,7 +211,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       <Button 
         type="submit" 
         variant="outline"
-        className="w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-blue-50 hover:bg-blue-100 text-blue-800 border-2 border-blue-300 hover:border-blue-400 active:bg-blue-200 active:border-blue-500 rounded-md transition-all duration-200 font-medium"
+        className="w-full py-2 px-4 gap-x-[0.5rem] gap-y-[0.5rem] h-auto bg-[#EFF1F5] hover:bg-[#DCDFEA] text-[#5D6A97] border-2 border-[#B9C0D4] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] rounded-md transition-all duration-200 font-medium"
         disabled={loading}
       >
         {loading ? "ADDING..." : <><Plus className="w-5 h-5" /> <span className="text-[13.5px] leading-[20px] font-[400] font-fira-mono">ADD TASK</span></>}

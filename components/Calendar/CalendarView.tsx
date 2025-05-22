@@ -332,7 +332,7 @@ const CalendarView = ({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-[#E6EAF1] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-light-primary hover:bg-[#EFF1F5] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
                 >
                   <span className="font-light">View: </span>
                   <span>{viewMode === 'month' ? 'Month' : 'Week'}</span>
@@ -342,14 +342,14 @@ const CalendarView = ({
               <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setViewMode('month')}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#EFF1F5] cursor-pointer rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-[#EFF1F5]' : ''}`}
                 >
                   <span>Month</span>
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem 
                   onClick={() => setViewMode('week')}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#EFF1F5] cursor-pointer rounded-md transition-all duration-200 ${viewMode === 'week' ? 'bg-[#EFF1F5]' : ''}`}
                 >
                   <span>Week</span>
                 </DropdownMenuItem>
@@ -362,7 +362,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={prevPeriod}
-              className="h-8 w-8 p-0 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
+              className="h-8 w-8 p-0 rounded-md bg-[#F9F9FB] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA] transition-all duration-200"
             >
               <ChevronLeft size={16} />
             </Button>
@@ -370,7 +370,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={goToToday}
-              className="h-8 px-3 py-1 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
+              className="h-8 px-3 py-1 rounded-md bg-[#F9F9FB] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA] transition-all duration-200"
             >
               Today
             </Button>
@@ -378,7 +378,7 @@ const CalendarView = ({
               variant="outline"
               size="sm"
               onClick={nextPeriod}
-              className="h-8 w-8 p-0 rounded-md bg-slate-50 text-slate-700 border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200 transition-all duration-200"
+              className="h-8 w-8 p-0 rounded-md bg-[#F9F9FB] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA] transition-all duration-200"
             >
               <ChevronRight size={16} />
             </Button>
@@ -391,7 +391,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === null ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             All
           </Button>
@@ -399,7 +399,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "pending" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Not yet
           </Button>
@@ -407,7 +407,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "in_progress" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Doing
           </Button>
@@ -415,7 +415,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-slate-800 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 hover:border-slate-400 active:bg-slate-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "completed" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
           >
             Complete
           </Button>
@@ -473,7 +473,7 @@ const CalendarView = ({
                     </span>
                     
                     {dayTodos.length > 0 && (
-                      <div className="w-5 h-5 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium">
+                      <div className="w-5 h-5 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-xs font-medium">
                         {dayTodos.length}
                       </div>
                     )}
@@ -546,7 +546,7 @@ const CalendarView = ({
                       {dayName}
                     </h3>
                     {dayTodos.length > 0 && (
-                      <div className="w-6 h-6 bg-slate-100 text-slate-600 border border-slate-200 rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      <div className="w-6 h-6 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-xs font-medium mt-1">
                         {dayTodos.length}
                       </div>
                     )}

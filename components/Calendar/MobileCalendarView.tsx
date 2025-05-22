@@ -264,7 +264,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={prevMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
           >
             <ChevronLeft size={16} />
           </Button>
@@ -272,7 +272,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={goToToday}
-            className="h-8 px-3 text-xs bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
+            className="h-8 px-3 text-xs bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
           >
             Today
           </Button>
@@ -280,7 +280,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={nextMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
           >
             <ChevronRight size={16} />
           </Button>
@@ -291,7 +291,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#E6EAF1] border border-light-border rounded-md"
+                className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
               >
                 <Menu size={16} />
               </Button>
@@ -367,9 +367,9 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 className={`
                   h-8 flex items-center justify-center cursor-pointer bg-light-background relative
                   ${!isCurrentMonth ? 'bg-gray-50/80' : ''} 
-                  ${isDaySelected ? 'bg-[#E6EAF1] text-black' : ''}
+                  ${isDaySelected ? 'bg-[#EFF1F5] text-black' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
-                  hover:bg-[#E6EAF1] active:bg-[#E6EAF1] transition-colors
+                  hover:bg-[#EFF1F5] active:bg-[#EFF1F5] transition-colors
                 `}
                 onClick={() => setSelectedDate(isDaySelected ? null : day)}
                 whileHover={{ scale: 1.05 }}

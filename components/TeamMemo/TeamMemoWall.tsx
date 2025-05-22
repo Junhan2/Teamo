@@ -370,7 +370,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button 
             onClick={createNewMemo}
             variant="outline"
-            className="bg-green-50 text-green-800 border-2 border-green-300 hover:bg-green-100 hover:border-green-400 active:bg-green-200 active:border-green-500 transition-all duration-200 font-medium"
+            className="bg-[#EFF1F5] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#DCDFEA] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
@@ -388,7 +388,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
               <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
                 {/* Animated background slider */}
                 <motion.div
-                  className="absolute bg-slate-50 border border-slate-200 shadow-sm rounded-lg"
+                  className="absolute bg-[#F9F9FB] border border-[#DCDFEA] shadow-sm rounded-lg"
                   initial={false}
                   animate={{
                     left: activeTab === 'my-todos' ? '4px' : `${(myTabRef.current?.offsetLeft || 0) + (myTabRef.current?.offsetWidth || 0)}px`,
@@ -456,7 +456,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           </Tabs>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border-2 border-slate-300 hover:bg-slate-100 hover:border-slate-400 transition-all duration-200">
+            <div className="flex items-center gap-2 bg-[#F9F9FB] p-2 rounded-lg border-2 border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] transition-all duration-200">
               <Search className="w-4 h-4 text-slate-500" />
               <Input
                 placeholder="Search memos..."
@@ -508,7 +508,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                       e.stopPropagation()
                       deleteMemo(memo.id)
                     }}
-                    className="absolute top-2 right-2 w-6 h-6 p-0 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 border border-slate-300 hover:border-red-300 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
+                    className="absolute top-2 right-2 w-6 h-6 p-0 bg-[#EFF1F5] hover:bg-red-50 text-[#5D6A97] hover:text-red-600 border border-[#B9C0D4] hover:border-red-300 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-20"
                   >
                     <X className="w-3 h-3" />
                   </Button>
@@ -584,7 +584,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                         <Button
                           size="sm"
                           onClick={cancelEditing}
-                          className="bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-300 hover:border-slate-400 active:bg-slate-200 text-xs px-2 py-1 h-6"
+                          className="bg-[#F9F9FB] hover:bg-[#EFF1F5] text-[#7D89AF] border border-[#B9C0D4] hover:border-[#7D89AF] active:bg-[#DCDFEA] text-xs px-2 py-1 h-6"
                         >
                           Cancel
                         </Button>
@@ -601,7 +601,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                           return linkedTodo ? (
                             <span 
                               key={index} 
-                              className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#E6EAF1] text-slate-700 rounded-md text-xs font-medium mx-0.5 border border-slate-300"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EFF1F5] text-[#5D6A97] rounded-md text-xs font-medium mx-0.5 border border-[#B9C0D4]"
                             >
                               <Hash className="w-3 h-3" />
                               {todoTitle}
@@ -678,7 +678,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button
             onClick={createNewMemo}
             variant="outline"
-            className="bg-green-50 text-green-800 border-2 border-green-300 hover:bg-green-100 hover:border-green-400 active:bg-green-200 active:border-green-500 transition-all duration-200 font-medium"
+            className="bg-[#EFF1F5] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#DCDFEA] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
