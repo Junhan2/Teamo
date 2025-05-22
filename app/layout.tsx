@@ -62,7 +62,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${firaMono.variable}`}>
-      <body className={`${dmSans.className} bg-light-background text-light-primary min-h-screen`}>
+      <body className={`${dmSans.className} bg-gray-cool-25 text-gray-cool-700 min-h-screen`}>
         {children}
         <Analytics />
         <SpeedInsights />
