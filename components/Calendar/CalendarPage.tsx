@@ -108,28 +108,27 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         
         {/* Sidebar with controls and selected date tasks */}
         <div className="xl:col-span-1 space-y-6 order-1 xl:order-2">
-          {/* Control panel */}
-          <div className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] p-4">
-            <div className="space-y-4">
-              <TeamMemberSubscription
-                userId={user.id}
-                onSubscriptionChange={handleSubscriptionChange}
+          {/* Team Member Subscription */}
+          <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
+            <TeamMemberSubscription
+              userId={user.id}
+              onSubscriptionChange={handleSubscriptionChange}
+            />
+          </div>
+          
+          {/* Settings */}
+          <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="show-completed"
+                checked={showCompletedTasks}
+                onCheckedChange={setShowCompletedTasks}
+                className="data-[state=checked]:bg-[#3fcf8e]"
               />
-              
-              <div className="border-t border-[rgba(0,0,0,0.20)] pt-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="show-completed"
-                    checked={showCompletedTasks}
-                    onCheckedChange={setShowCompletedTasks}
-                    className="data-[state=checked]:bg-[#3fcf8e]"
-                  />
-                  <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
-                    <Eye size={14} className="mr-1" />
-                    Show completed tasks
-                  </Label>
-                </div>
-              </div>
+              <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
+                <Eye size={14} className="mr-1" />
+                Show completed tasks
+              </Label>
             </div>
           </div>
           

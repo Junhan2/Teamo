@@ -314,12 +314,12 @@ const CalendarView = ({
   }
 
   return (
-    <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)]' : 'bg-transparent'} text-[#171717]`}>
+    <div className="space-y-6">
       {/* Calendar Header */}
-      <div className={`${viewMode === 'month' ? 'p-4 border-b border-[rgba(0,0,0,0.20)]' : 'p-2 mb-4'}`}>
+      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
-            <h2 className={`${viewMode === 'month' ? 'text-xl' : 'text-lg'} font-semibold`}>
+            <h2 className="text-xl font-semibold text-[#171717]">
               {viewMode === 'month' 
                 ? format(currentDate, 'MMMM yyyy')
                 : `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`
@@ -423,7 +423,7 @@ const CalendarView = ({
       </div>
 
       {/* Calendar grid */}
-      <div className={`${viewMode === 'month' ? 'p-4' : 'p-0'}`}>
+      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4' : ''}`}>
         {/* Day names header - only for month view */}
         {viewMode === 'month' && (
           <div className="grid grid-cols-7 mb-2">
