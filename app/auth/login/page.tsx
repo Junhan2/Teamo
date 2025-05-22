@@ -148,7 +148,8 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full py-6 rounded-xl bg-light-accent hover:bg-light-hover text-white shadow-md text-lg font-medium outline outline-1 outline-light-border outline-offset-[-1px]" /* Increased size and font */
+                variant="outline"
+                className="w-full py-6 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border-2 border-slate-400 hover:border-slate-500 shadow-md text-lg font-medium transition-all duration-200" /* Updated to match new style */
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
