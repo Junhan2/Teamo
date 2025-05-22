@@ -68,10 +68,10 @@ const MEMO_COLORS = [
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'completed': return 'bg-[#3fcf8e]'
-    case 'in_progress': return 'bg-[#FF82C2]'
-    case 'pending': return 'bg-[#FFDA40]'
-    default: return 'bg-gray-400'
+    case 'completed': return 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+    case 'in_progress': return 'bg-blue-100 text-blue-800 border border-blue-300'
+    case 'pending': return 'bg-amber-100 text-amber-800 border border-amber-300'
+    default: return 'bg-gray-100 text-gray-800 border border-gray-300'
   }
 }
 
@@ -370,7 +370,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button 
             onClick={createNewMemo}
             variant="outline"
-            className="bg-[#EFF1F5] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#DCDFEA] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] transition-all duration-200 font-medium"
+            className="bg-[#e0f2fe] text-[#0369a1] border-2 border-[#7dd3fc] hover:bg-[#bae6fd] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo
@@ -678,7 +678,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <Button
             onClick={createNewMemo}
             variant="outline"
-            className="bg-[#EFF1F5] text-[#5D6A97] border-2 border-[#B9C0D4] hover:bg-[#DCDFEA] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] transition-all duration-200 font-medium"
+            className="bg-[#e0f2fe] text-[#0369a1] border-2 border-[#7dd3fc] hover:bg-[#bae6fd] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] transition-all duration-200 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Memo

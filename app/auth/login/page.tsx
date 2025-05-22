@@ -149,7 +149,7 @@ export default function LoginPage() {
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
                 variant="outline"
-                className="w-full py-6 rounded-xl bg-[#EFF1F5] hover:bg-[#DCDFEA] text-[#5D6A97] border-2 border-[#B9C0D4] hover:border-[#7D89AF] active:bg-[#B9C0D4] active:border-[#5D6A97] shadow-md text-lg font-medium transition-all duration-200" /* Primary action with Gray Cool palette */
+                className="w-full py-6 rounded-xl bg-[#e0f2fe] hover:bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] shadow-md text-lg font-medium transition-all duration-200" /* Primary action with Sky Blue palette */
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
