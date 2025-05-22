@@ -314,9 +314,9 @@ const CalendarView = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Calendar Header */}
-      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-4 sm:mx-0">
+      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-2">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-semibold text-[#171717]">
@@ -423,10 +423,10 @@ const CalendarView = ({
       </div>
 
       {/* Calendar grid */}
-      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)]' : ''}`}>
+      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] overflow-hidden' : ''}`}>
         {/* Day names header - only for month view */}
         {viewMode === 'month' && (
-          <div className="grid grid-cols-7 mb-2 px-4">
+          <div className="grid grid-cols-7 mb-2 px-2">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
               <div 
                 key={day} 
@@ -440,7 +440,7 @@ const CalendarView = ({
 
         {/* Calendar days */}
         {viewMode === 'month' ? (
-          <div className="grid grid-cols-7 gap-1 px-4 pb-4">
+          <div className="grid grid-cols-7 gap-0.5 px-2 pb-2">
             {calendarDays.map((day, i) => {
               const dayTodos = getTodosForDay(day)
               const isCurrentMonth = isSameMonth(day, currentDate)
@@ -512,7 +512,7 @@ const CalendarView = ({
           </div>
         ) : (
           // Week view - mobile optimized full width
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-1 px-2">
             {calendarDays.map((day, i) => {
               const dayTodos = getTodosForDay(day)
               const isDaySelected = selectedDate && isSameDay(day, selectedDate)
