@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -16,15 +16,11 @@ interface Memo {
   position_y: number
   width: number
   height: number
-  is_expanded: boolean
 }
-
-type ViewState = 'expanded' | 'collapsed' | 'mixed'
 
 const GRID_SIZE = 20
 const DEFAULT_WIDTH = 240
 const DEFAULT_HEIGHT = 200
-
 const MEMO_COLORS = [
   '#F8BBD9', '#E8D5B7', '#B2F2BB', '#A5B4FC', '#FED7AA',
   '#FEF08A', '#BFDBFE', '#F3E8FF', '#FCE7F3', '#D1FAE5'
@@ -32,53 +28,27 @@ const MEMO_COLORS = [
 
 export default function TestMemoGrid() {
   const [memos, setMemos] = useState<Memo[]>([])
-  const [viewState, setViewState] = useState<ViewState>('collapsed')
-  const [zoom, setZoom] = useState(1)
   const [showForm, setShowForm] = useState(false)
   const [newMemo, setNewMemo] = useState({ title: '', content: '' })
+  const [zoom, setZoom] = useState(1)
   const [hoveredMemo, setHoveredMemo] = useState<string | null>(null)
-  const [contextMenu, setContextMenu] = useState<{
-    memoId: string
-    x: number
-    y: number
-  } | null>(null)
-  
-  // 드래그 상태
+  const [contextMenu, setContextMenu] = useState<{memoId: string, x: number, y: number} | null>(null)
   const [dragState, setDragState] = useState<{
     isDragging: boolean
     memoId: string | null
-    startX: number
-    startY: number
     offsetX: number
     offsetY: number
-  }>({
-    isDragging: false,
-    memoId: null,
-    startX: 0,
-    startY: 0,
-    offsetX: 0,
-    offsetY: 0
-  })
+  }>({ isDragging: false, memoId: null, offsetX: 0, offsetY: 0 })
   
   const gridRef = useRef<HTMLDivElement>(null)
   const snapToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE
-  // 새 메모 추가
-  const addMemo = () => {
-    if (!newMemo.title || !newMemo.content) return
 
-    const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
-    let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
-    let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
-    
-    while (existingPositions.some(pos => pos.x === newX && pos.y === newY)) {
-      newX += DEFAULT_WIDTH + GRID_SIZE
-      if (newX > 1000) {
-        newX = 0
-        newY += DEFAULT_HEIGHT + GRID_SIZE
-      }
-      newX = snapToGrid(newX)
-      newY = snapToGrid(newY)
-    }
+  // 메모 추가
+  const addMemo = () => {
+    if (!newMemo.title.trim() || !newMemo.content.trim()) return
+
+    const newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
+    const newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
 
     const memo: Memo = {
       id: Date.now().toString(),
@@ -90,134 +60,79 @@ export default function TestMemoGrid() {
       position_y: newY,
       width: DEFAULT_WIDTH,
       height: DEFAULT_HEIGHT,
-      is_expanded: false
     }
 
     setMemos(prev => [...prev, memo])
     setNewMemo({ title: '', content: '' })
     setShowForm(false)
   }
-
   // 드래그 시작
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return
     
     const memo = memos.find(m => m.id === memoId)
-    if (!memo) return
+    if (!memo || !gridRef.current) return
 
-    const rect = gridRef.current?.getBoundingClientRect()
-    if (!rect) return
-
+    const rect = gridRef.current.getBoundingClientRect()
     const startX = (e.clientX - rect.left) / zoom
     const startY = (e.clientY - rect.top) / zoom
 
     setDragState({
       isDragging: true,
       memoId,
-      startX,
-      startY,
       offsetX: startX - memo.position_x,
       offsetY: startY - memo.position_y
     })
-
     e.preventDefault()
   }, [memos, zoom])
 
   // 드래그 중
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragState.isDragging || !dragState.memoId) return
+    if (!dragState.isDragging || !dragState.memoId || !gridRef.current) return
 
-    const rect = gridRef.current?.getBoundingClientRect()
-    if (!rect) return
-
+    const rect = gridRef.current.getBoundingClientRect()
     const currentX = (e.clientX - rect.left) / zoom
     const currentY = (e.clientY - rect.top) / zoom
 
-    const newX = Math.max(0, currentX - dragState.offsetX)
-    const newY = Math.max(0, currentY - dragState.offsetY)
-
-    const snappedX = snapToGrid(newX)
-    const snappedY = snapToGrid(newY)
+    const newX = snapToGrid(Math.max(0, currentX - dragState.offsetX))
+    const newY = snapToGrid(Math.max(0, currentY - dragState.offsetY))
 
     setMemos(prev => prev.map(memo => 
       memo.id === dragState.memoId 
-        ? { ...memo, position_x: snappedX, position_y: snappedY }
+        ? { ...memo, position_x: newX, position_y: newY }
         : memo
     ))
   }, [dragState, zoom, snapToGrid])
 
   // 드래그 종료
   const handleMouseUp = useCallback(() => {
-    setDragState({
-      isDragging: false,
-      memoId: null,
-      startX: 0,
-      startY: 0,
-      offsetX: 0,
-      offsetY: 0
-    })
+    setDragState({ isDragging: false, memoId: null, offsetX: 0, offsetY: 0 })
   }, [])
 
-  // 마우스 이벤트 리스너
+  // 이벤트 리스너
   useEffect(() => {
     if (dragState.isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
-      
       return () => {
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
   }, [dragState.isDragging, handleMouseMove, handleMouseUp])
+
   // 줌 컨트롤
   const handleZoom = useCallback((delta: number) => {
     setZoom(prev => Math.max(0.5, Math.min(2, prev + delta)))
   }, [])
 
-  // 키보드 이벤트
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        if (e.key === '=' || e.key === '+') {
-          e.preventDefault()
-          handleZoom(0.1)
-        } else if (e.key === '-') {
-          e.preventDefault()
-          handleZoom(-0.1)
-        }
-      }
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        e.preventDefault()
-        handleZoom(e.deltaY > 0 ? -0.1 : 0.1)
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('wheel', handleWheel, { passive: false })
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('wheel', handleWheel)
-    }
-  }, [handleZoom])
-
   // 호버 효과
-  const handleMemoHover = (memoId: string, isEntering: boolean) => {
+  const handleHover = (memoId: string, isEntering: boolean) => {
     if (dragState.isDragging) return
     
     if (isEntering) {
-      const timer = setTimeout(() => {
-        setHoveredMemo(memoId)
-      }, 1000)
-      ;(window as any).hoverTimer = timer
+      setTimeout(() => setHoveredMemo(memoId), 1000)
     } else {
-      if ((window as any).hoverTimer) {
-        clearTimeout((window as any).hoverTimer)
-      }
       setHoveredMemo(null)
     }
   }
@@ -225,11 +140,7 @@ export default function TestMemoGrid() {
   // 컨텍스트 메뉴
   const handleContextMenu = (e: React.MouseEvent, memoId: string) => {
     e.preventDefault()
-    setContextMenu({
-      memoId,
-      x: e.clientX,
-      y: e.clientY
-    })
+    setContextMenu({ memoId, x: e.clientX, y: e.clientY })
   }
 
   // 색상 변경
@@ -239,32 +150,15 @@ export default function TestMemoGrid() {
     ))
     setContextMenu(null)
   }
-
-  // 뷰 상태 토글
-  const toggleViewState = () => {
-    const newState = viewState === 'collapsed' ? 'expanded' : 'collapsed'
-    setViewState(newState)
-  }
-
-  // 뷰 상태 계산
-  useEffect(() => {
-    const expandedCount = memos.filter(m => m.is_expanded || hoveredMemo === m.id).length
-    const totalCount = memos.length
-    
-    if (expandedCount === 0) {
-      setViewState('collapsed')
-    } else if (expandedCount === totalCount) {
-      setViewState('expanded')
-    } else {
-      setViewState('mixed')
-    }
-  }, [memos, hoveredMemo])
   return (
     <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
         <Button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            console.log('ADD MEMO 버튼 클릭됨, 현재 showForm:', showForm)
+            setShowForm(!showForm)
+          }}
           className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
         >
           <PlusCircle className="h-4 w-4" />
@@ -272,45 +166,13 @@ export default function TestMemoGrid() {
         </Button>
         
         <div className="flex items-center gap-2">
-          <Button
-            variant={viewState === 'expanded' ? 'default' : 'outline'}
-            size="sm"
-            onClick={toggleViewState}
-          >
-            <Maximize2 className="h-3 w-3 mr-1" />
-            펼침
-          </Button>
-          <Button
-            variant={viewState === 'collapsed' ? 'default' : 'outline'}
-            size="sm"
-            onClick={toggleViewState}
-          >
-            <Minimize2 className="h-3 w-3 mr-1" />
-            닫힘
-          </Button>
-          {viewState === 'mixed' && (
-            <span className="text-sm text-gray-500 px-2">Mixed</span>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleZoom(-0.1)}
-            disabled={zoom <= 0.5}
-          >
-            <ZoomOut className="h-3 w-3" />
-          </Button>
           <span className="text-sm text-gray-600 w-12 text-center">
             {Math.round(zoom * 100)}%
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleZoom(0.1)}
-            disabled={zoom >= 2}
-          >
+          <Button variant="outline" size="sm" onClick={() => handleZoom(-0.1)} disabled={zoom <= 0.5}>
+            <ZoomOut className="h-3 w-3" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => handleZoom(0.1)} disabled={zoom >= 2}>
             <ZoomIn className="h-3 w-3" />
           </Button>
         </div>
@@ -318,7 +180,7 @@ export default function TestMemoGrid() {
 
       {/* 메모 추가 폼 */}
       {showForm && (
-        <div className="absolute top-20 left-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-4 w-80">
+        <div className="absolute top-20 left-4 z-30 bg-white rounded-lg shadow-xl border p-4 w-80">
           <div className="space-y-3">
             <Input
               placeholder="메모 제목"
@@ -335,17 +197,14 @@ export default function TestMemoGrid() {
               <Button onClick={addMemo} size="sm" className="bg-blue-500 hover:bg-blue-600">
                 추가
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowForm(false)}
-                size="sm"
-              >
+              <Button variant="outline" onClick={() => setShowForm(false)} size="sm">
                 취소
               </Button>
             </div>
           </div>
         </div>
       )}
+
       {/* 그리드 캔버스 */}
       <div 
         ref={gridRef}
@@ -365,41 +224,36 @@ export default function TestMemoGrid() {
       >
         {/* 메모들 */}
         {memos.map((memo) => {
-          const isHovered = hoveredMemo === memo.id && !dragState.isDragging
+          const isHovered = hoveredMemo === memo.id
           const isDragging = dragState.memoId === memo.id
-          const isExpanded = memo.is_expanded || isHovered || viewState === 'expanded'
           
           return (
             <div
               key={memo.id}
-              className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
-                isDragging ? 'cursor-grabbing z-50' : 'cursor-grab'
+              className={`absolute select-none rounded-lg shadow-lg transition-all duration-200 ${
+                isDragging ? 'z-50 cursor-grabbing' : 'cursor-grab'
               }`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
                 width: memo.width,
-                height: isExpanded ? 'auto' : memo.height,
-                minHeight: memo.height,
+                height: memo.height,
                 backgroundColor: memo.color,
-                transform: isHovered && !isDragging ? 'translateY(-4px) scale(1.02)' : 
-                          isDragging ? 'rotate(3deg) scale(1.05)' : 'none',
-                zIndex: isDragging ? 50 : (isHovered ? 30 : 10),
+                transform: isDragging ? 'rotate(3deg) scale(1.05)' : 
+                          isHovered ? 'translateY(-2px)' : 'none',
                 boxShadow: isDragging ? '0 20px 40px rgba(0,0,0,0.3)' : 
-                          isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)'
+                          isHovered ? '0 8px 20px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)'
               }}
               onMouseDown={(e) => handleMouseDown(e, memo.id)}
-              onMouseEnter={() => handleMemoHover(memo.id, true)}
-              onMouseLeave={() => handleMemoHover(memo.id, false)}
+              onMouseEnter={() => handleHover(memo.id, true)}
+              onMouseLeave={() => handleHover(memo.id, false)}
               onContextMenu={(e) => handleContextMenu(e, memo.id)}
             >
               <div className="p-3 h-full flex flex-col">
                 <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
                   {memo.title}
                 </h3>
-                <p className={`text-xs text-gray-700 flex-1 leading-relaxed ${
-                  isExpanded ? '' : 'line-clamp-3'
-                }`}>
+                <p className="text-xs text-gray-700 flex-1 leading-relaxed line-clamp-3">
                   {memo.content}
                 </p>
                 <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-black/10">
@@ -419,7 +273,7 @@ export default function TestMemoGrid() {
       {/* 컨텍스트 메뉴 */}
       {contextMenu && (
         <div
-          className="absolute z-30 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-3"
+          className="absolute z-40 bg-white rounded-lg shadow-xl border p-3"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
           <div className="text-xs text-gray-600 mb-2 font-medium">색상 선택</div>
@@ -427,7 +281,7 @@ export default function TestMemoGrid() {
             {MEMO_COLORS.map((color, index) => (
               <button
                 key={index}
-                className="w-8 h-8 rounded-full border-2 border-white shadow-md hover:scale-110 transition-transform duration-200"
+                className="w-8 h-8 rounded-full border-2 border-gray-300 hover:scale-110 transition-transform"
                 style={{ backgroundColor: color }}
                 onClick={() => changeColor(contextMenu.memoId, color)}
               />
@@ -436,12 +290,9 @@ export default function TestMemoGrid() {
         </div>
       )}
 
-      {/* 배경 클릭시 컨텍스트 메뉴 닫기 */}
+      {/* 배경 클릭으로 컨텍스트 메뉴 닫기 */}
       {contextMenu && (
-        <div
-          className="fixed inset-0 z-25"
-          onClick={() => setContextMenu(null)}
-        />
+        <div className="fixed inset-0 z-35" onClick={() => setContextMenu(null)} />
       )}
     </div>
   )
