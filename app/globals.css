@@ -51,3 +51,60 @@ body {
     }
   }
 }
+
+/* Gray Cool 클래스 직접 정의 */
+.bg-gray-cool-25 { background-color: #FCFCFD; }
+.bg-gray-cool-50 { background-color: #F9F9FB; }
+.bg-gray-cool-100 { background-color: #EFF1F5; }
+.bg-gray-cool-200 { background-color: #DCDFEA; }
+.bg-gray-cool-300 { background-color: #B9C0D4; }
+.bg-gray-cool-400 { background-color: #7D89AF; }
+.bg-gray-cool-500 { background-color: #5D6A97; }
+.bg-gray-cool-600 { background-color: #4A5578; }
+.bg-gray-cool-700 { background-color: #404968; }
+.bg-gray-cool-800 { background-color: #30374E; }
+.bg-gray-cool-900 { background-color: #111322; }
+
+.text-gray-cool-25 { color: #FCFCFD; }
+.text-gray-cool-50 { color: #F9F9FB; }
+.text-gray-cool-100 { color: #EFF1F5; }
+.text-gray-cool-200 { color: #DCDFEA; }
+.text-gray-cool-300 { color: #B9C0D4; }
+.text-gray-cool-400 { color: #7D89AF; }
+.text-gray-cool-500 { color: #5D6A97; }
+.text-gray-cool-600 { color: #4A5578; }
+.text-gray-cool-700 { color: #404968; }
+.text-gray-cool-800 { color: #30374E; }
+.text-gray-cool-900 { color: #111322; }
+
+.border-gray-cool-25 { border-color: #FCFCFD; }
+.border-gray-cool-50 { border-color: #F9F9FB; }
+.border-gray-cool-100 { border-color: #EFF1F5; }
+.border-gray-cool-200 { border-color: #DCDFEA; }
+.border-gray-cool-300 { border-color: #B9C0D4; }
+.border-gray-cool-400 { border-color: #7D89AF; }
+.border-gray-cool-500 { border-color: #5D6A97; }
+.border-gray-cool-600 { border-color: #4A5578; }
+.border-gray-cool-700 { border-color: #404968; }
+.border-gray-cool-800 { border-color: #30374E; }
+.border-gray-cool-900 { border-color: #111322; }
+
+.hover\:bg-gray-cool-50:hover { background-color: #F9F9FB; }
+.hover\:bg-gray-cool-100:hover { background-color: #EFF1F5; }
+.hover\:bg-gray-cool-200:hover { background-color: #DCDFEA; }
+.hover\:bg-gray-cool-300:hover { background-color: #B9C0D4; }
+.hover\:bg-gray-cool-600:hover { background-color: #4A5578; }
+
+.hover\:border-gray-cool-300:hover { border-color: #B9C0D4; }
+.hover\:border-gray-cool-400:hover { border-color: #7D89AF; }
+
+.outline-gray-cool-200 { outline-color: #DCDFEA; }
+
+.bg-gray-cool-600\/20 { background-color: rgba(74, 85, 120, 0.2); }
+.border-gray-cool-200\/60 { border-color: rgba(220, 223, 234, 0.6); }
+.hover\:border-gray-cool-600\/40:hover { border-color: rgba(74, 85, 120, 0.4); }
+.decoration-gray-cool-400 { text-decoration-color: #7D89AF; }
+
+.from-gray-cool-25 { --tw-gradient-from: #FCFCFD; }
+.via-gray-cool-50 { --tw-gradient-via: #F9F9FB; }
+.to-gray-cool-100\/50 { --tw-gradient-to: rgba(239, 241, 245, 0.5); }
