@@ -28,6 +28,8 @@ interface Memo {
   height: number
   is_expanded: boolean
   page_id?: string
+  tags?: string[]
+  tagged_todos?: string[]
 }
 
 interface MemoPage {
@@ -69,6 +71,10 @@ export default function AdvancedMemoGrid() {
     x: number
     y: number
   } | null>(null)
+  const [editingTags, setEditingTags] = useState<string | null>(null)
+  const [tagInput, setTagInput] = useState('')
+  const [todos, setTodos] = useState<any[]>([])
+  const [showTodoSearch, setShowTodoSearch] = useState<string | null>(null)
   
   // 드래그 상태 관리
   const [dragState, setDragState] = useState<{
@@ -164,6 +170,25 @@ export default function AdvancedMemoGrid() {
     }
   }
 
+  // 할일 목록 가져오기
+  const fetchTodos = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) return
+
+      const { data, error } = await supabase
+        .from('todos')
+        .select('id, title, status')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setTodos(data || [])
+    } catch (error) {
+      console.error('Error fetching todos:', error)
+    }
+  }
+
   // 새 페이지 생성
   const createPage = async () => {
     try {
@@ -236,6 +261,7 @@ export default function AdvancedMemoGrid() {
   // 초기 로드
   useEffect(() => {
     fetchPages()
+    fetchTodos()
   }, [])
 
   // 페이지 변경 시 메모 다시 로드
@@ -668,6 +694,78 @@ export default function AdvancedMemoGrid() {
     }
   }
 
+  // 태그 추가
+  const addTag = async (memoId: string, tag: string) => {
+    try {
+      const memo = memos.find(m => m.id === memoId)
+      if (!memo) return
+
+      const newTags = [...(memo.tags || []), tag]
+      
+      const { error } = await supabase
+        .from('advanced_memos')
+        .update({ tags: newTags })
+        .eq('id', memoId)
+
+      if (error) throw error
+
+      setMemos(prev => prev.map(m => 
+        m.id === memoId ? { ...m, tags: newTags } : m
+      ))
+    } catch (error) {
+      console.error('Error adding tag:', error)
+    }
+  }
+
+  // 태그 제거
+  const removeTag = async (memoId: string, tagToRemove: string) => {
+    try {
+      const memo = memos.find(m => m.id === memoId)
+      if (!memo) return
+
+      const newTags = (memo.tags || []).filter(tag => tag !== tagToRemove)
+      
+      const { error } = await supabase
+        .from('advanced_memos')
+        .update({ tags: newTags })
+        .eq('id', memoId)
+
+      if (error) throw error
+
+      setMemos(prev => prev.map(m => 
+        m.id === memoId ? { ...m, tags: newTags } : m
+      ))
+    } catch (error) {
+      console.error('Error removing tag:', error)
+    }
+  }
+
+  // 할일 태그 토글
+  const toggleTodoTag = async (memoId: string, todoId: string) => {
+    try {
+      const memo = memos.find(m => m.id === memoId)
+      if (!memo) return
+
+      const currentTodos = memo.tagged_todos || []
+      const newTodos = currentTodos.includes(todoId)
+        ? currentTodos.filter(id => id !== todoId)
+        : [...currentTodos, todoId]
+      
+      const { error } = await supabase
+        .from('advanced_memos')
+        .update({ tagged_todos: newTodos })
+        .eq('id', memoId)
+
+      if (error) throw error
+
+      setMemos(prev => prev.map(m => 
+        m.id === memoId ? { ...m, tagged_todos: newTodos } : m
+      ))
+    } catch (error) {
+      console.error('Error toggling todo tag:', error)
+    }
+  }
+
   // 전체 뷰 상태 변경
   const toggleViewState = () => {
     const newState = viewState === 'collapsed' ? 'expanded' : 'collapsed'
@@ -954,6 +1052,111 @@ export default function AdvancedMemoGrid() {
                 }`}>
                   {memo.content}
                 </p>
+                
+                {/* 태그 영역 */}
+                <div className="mt-2 space-y-2">
+                  {/* 일반 태그 */}
+                  {memo.tags && memo.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {memo.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-700"
+                        >
+                          #{tag}
+                          {isExpanded && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                removeTag(memo.id, tag)
+                              }}
+                              className="hover:text-red-600"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* 할일 태그 */}
+                  {memo.tagged_todos && memo.tagged_todos.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {memo.tagged_todos.map((todoId) => {
+                        const todo = todos.find(t => t.id === todoId)
+                        if (!todo) return null
+                        return (
+                          <span
+                            key={todoId}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700"
+                          >
+                            📌 {todo.title}
+                            {isExpanded && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleTodoTag(memo.id, todoId)
+                                }}
+                                className="hover:text-red-600"
+                              >
+                                ×
+                              </button>
+                            )}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  )}
+                  
+                  {/* 태그 추가 버튼 */}
+                  {isExpanded && (
+                    <div className="flex gap-1">
+                      {editingTags === memo.id ? (
+                        <Input
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter' && tagInput.trim()) {
+                              addTag(memo.id, tagInput.trim())
+                              setTagInput('')
+                              setEditingTags(null)
+                            }
+                          }}
+                          onBlur={() => {
+                            setEditingTags(null)
+                            setTagInput('')
+                          }}
+                          placeholder="태그 입력..."
+                          className="h-6 text-xs"
+                          autoFocus
+                        />
+                      ) : (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditingTags(memo.id)
+                            }}
+                            className="px-2 py-0.5 rounded text-xs bg-gray-100 hover:bg-gray-200"
+                          >
+                            + 태그
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowTodoSearch(memo.id)
+                            }}
+                            className="px-2 py-0.5 rounded text-xs bg-blue-100 hover:bg-blue-200"
+                          >
+                            + 할일
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
                 <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-black/10">
                   {new Date(memo.created_at).toLocaleDateString()}
                 </div>
@@ -1035,14 +1238,66 @@ export default function AdvancedMemoGrid() {
       )}
 
       {/* 배경 클릭시 컨텍스트 메뉴와 페이지 메뉴 닫기 */}
-      {(contextMenu || showPageMenu) && (
+      {(contextMenu || showPageMenu || showTodoSearch) && (
         <div
           className="fixed inset-0 z-25"
           onClick={() => {
             setContextMenu(null)
             setShowPageMenu(false)
+            setShowTodoSearch(null)
           }}
         />
+      )}
+      
+      {/* 할일 검색 모달 */}
+      {showTodoSearch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col">
+            <h3 className="font-semibold mb-3">할일 태그하기</h3>
+            <Input
+              placeholder="할일 검색..."
+              className="mb-3"
+              autoFocus
+            />
+            <div className="flex-1 overflow-y-auto space-y-2">
+              {todos.map((todo) => {
+                const memo = memos.find(m => m.id === showTodoSearch)
+                const isTagged = memo?.tagged_todos?.includes(todo.id)
+                
+                return (
+                  <div
+                    key={todo.id}
+                    onClick={() => toggleTodoTag(showTodoSearch, todo.id)}
+                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                      isTagged 
+                        ? 'bg-blue-100 border-2 border-blue-300' 
+                        : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{todo.title}</span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        todo.status === 'completed' ? 'bg-green-100 text-green-700' :
+                        todo.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                        'bg-amber-100 text-amber-700'
+                      }`}>
+                        {todo.status === 'completed' ? '완료' :
+                         todo.status === 'in_progress' ? '진행중' : '대기'}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <Button
+              onClick={() => setShowTodoSearch(null)}
+              className="mt-3"
+              variant="outline"
+            >
+              닫기
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   )
