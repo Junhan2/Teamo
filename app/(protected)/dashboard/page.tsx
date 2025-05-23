@@ -543,7 +543,7 @@ export default function DashboardPage() {
             <Button
               variant="default"
               size="sm"
-              className="rounded-full bg-gray-cool-700 text-white hover:bg-gray-cool-800 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-semibold"
+              className="rounded-full bg-gray-cool-700 text-white hover:bg-gray-cool-800 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-bold text-sm"
             >
               <CheckSquare className="w-4 h-4" />
               <span>Tasks</span>
@@ -556,7 +556,7 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium transition-colors duration-200"
+              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-normal transition-colors duration-200 text-sm"
               style={{borderColor: '#DCDFEA', color: '#404968'}}
             >
               <Calendar className="w-4 h-4" />
@@ -568,7 +568,7 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium transition-colors duration-200"
+              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-normal transition-colors duration-200 text-sm"
               style={{borderColor: '#DCDFEA', color: '#404968'}}
             >
               <StickyNote className="w-4 h-4" />

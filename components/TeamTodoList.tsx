@@ -4,6 +4,10 @@ import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { 
   CheckCircle, 
   Clock, 
@@ -21,7 +25,10 @@ import {
   ArrowRight,
   ArrowDown,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Edit2,
+  CalendarIcon,
+  History
 } from "lucide-react"
 import { format, differenceInCalendarDays } from "date-fns"
 import { Badge } from "@/components/ui/badge"
@@ -123,6 +130,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
     width: 0, 
     height: 0 
   })
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null)
+  const [editingField, setEditingField] = useState<'title' | 'description' | 'due_date' | null>(null)
+  const [editValue, setEditValue] = useState("")
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [updateHistory, setUpdateHistory] = useState<Record<string, Array<{date: string, field: string, oldValue: string, newValue: string}>>>({})
   const containerRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
   
@@ -131,6 +143,62 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
       ...prev,
       [todoId]: !prev[todoId]
     }))
+  }
+  
+  // 인라인 편집 시작
+  const startEditing = (todoId: string, field: 'title' | 'description' | 'due_date', currentValue: string) => {
+    setEditingTodoId(todoId)
+    setEditingField(field)
+    setEditValue(currentValue || '')
+    if (field === 'due_date') {
+      setShowDatePicker(true)
+    }
+  }
+  
+  // 인라인 편집 저장
+  const saveEdit = async (todoId: string) => {
+    if (!editingField) return
+    
+    try {
+      const updates: any = {}
+      updates[editingField] = editValue
+      
+      const { error } = await supabase
+        .from('todos')
+        .update(updates)
+        .eq('id', todoId)
+      
+      if (error) throw error
+      
+      // 업데이트 히스토리 추가
+      const todo = todos.find(t => t.id === todoId)
+      if (todo) {
+        const history = updateHistory[todoId] || []
+        history.push({
+          date: new Date().toISOString(),
+          field: editingField,
+          oldValue: todo[editingField] || '',
+          newValue: editValue
+        })
+        setUpdateHistory(prev => ({ ...prev, [todoId]: history }))
+      }
+      
+      fetchTodos()
+      setEditingTodoId(null)
+      setEditingField(null)
+      setEditValue('')
+      setShowDatePicker(false)
+    } catch (error) {
+      console.error('Error updating todo:', error)
+    }
+  }
+  
+  // 인라인 편집 취소
+  const cancelEdit = () => {
+    setEditingTodoId(null)
+    setEditingField(null)
+    setEditValue('')
+    setShowDatePicker(false)
   }
   
   // 브라우저 환경 감지 (클라이언트 사이드 렌더링 확인)
@@ -674,10 +742,40 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-medium text-base text-gray-cool-700 flex items-center">
-                        {todo.status === 'completed' ? (
-                          <span className="text-gray-cool-400 line-through decoration-gray-cool-400">{todo.title}</span>
+                        {editingTodoId === todo.id && editingField === 'title' ? (
+                          <div className="flex-1 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            <Input
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') saveEdit(todo.id)
+                                if (e.key === 'Escape') cancelEdit()
+                              }}
+                              className="text-base font-medium"
+                              autoFocus
+                            />
+                            <Button size="sm" onClick={() => saveEdit(todo.id)}>Save</Button>
+                            <Button size="sm" variant="outline" onClick={cancelEdit}>Cancel</Button>
+                          </div>
                         ) : (
-                          <span>{todo.title}</span>
+                          <div 
+                            className="flex-1 group cursor-pointer hover:bg-gray-cool-50 rounded px-2 py-1 -mx-2 -my-1"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (todo.user_id === userId) {
+                                startEditing(todo.id, 'title', todo.title)
+                              }
+                            }}
+                          >
+                            {todo.status === 'completed' ? (
+                              <span className="text-gray-cool-400 line-through decoration-gray-cool-400">{todo.title}</span>
+                            ) : (
+                              <span>{todo.title}</span>
+                            )}
+                            {todo.user_id === userId && (
+                              <Edit2 size={14} className="inline-block ml-2 text-gray-cool-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            )}
+                          </div>
                         )}
                       </h3>
                     </div>
@@ -700,8 +798,31 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   </div>
                   
                   {todo.description && expandedDescriptions[todo.id] && (
-                    <div className="mt-3 py-2 px-3 text-sm text-gray-cool-400 bg-[#F1F1F1] rounded-md border border-gray-cool-200 transition-all duration-200 shadow-sm">
-                      {todo.description}
+                    <div className="mt-3 relative">
+                      {editingTodoId === todo.id && editingField === 'description' ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-full p-2 text-sm border border-gray-cool-300 rounded-md"
+                            rows={3}
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={() => saveEdit(todo.id)}>Save</Button>
+                            <Button size="sm" variant="outline" onClick={cancelEdit}>Cancel</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div 
+                          className="py-2 px-3 text-sm text-gray-cool-600 bg-white rounded-md border border-gray-cool-200 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group"
+                          onClick={() => startEditing(todo.id, 'description', todo.description || '')}
+                        >
+                          <div className="flex justify-between items-start">
+                            <p className="flex-1">{todo.description}</p>
+                            <Edit2 size={14} className="text-gray-cool-400 opacity-0 group-hover:opacity-100 transition-opacity ml-2 flex-shrink-0" />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   
@@ -714,19 +835,89 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       )}
                       
                       {todo.due_date && todo.status !== 'completed' && (
-                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm">
-                          <Clock size={12} className="mr-1.5 text-gray-cool-400" />
-                          <span className="text-gray-cool-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
-                          {calculateDaysLeft(todo.due_date) === 0 ? (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-white text-[#171717] border border-[#171717]">
-                              Today
-                            </span>
-                          ) : calculateDaysLeft(todo.due_date) > 0 ? (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
-                              D-{calculateDaysLeft(todo.due_date)}
-                            </span>
+                        <div className="flex items-center gap-2">
+                          {editingTodoId === todo.id && editingField === 'due_date' ? (
+                            <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  className="justify-start text-left font-normal h-8"
+                                >
+                                  <CalendarIcon className="mr-2 h-4 w-4" />
+                                  {editValue ? format(new Date(editValue), 'yyyy-MM-dd') : 'Pick a date'}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="flex w-auto p-0" align="start">
+                                <div className="flex">
+                                  <Calendar
+                                    mode="single"
+                                    selected={editValue ? new Date(editValue) : undefined}
+                                    onSelect={(date) => {
+                                      if (date) {
+                                        setEditValue(date.toISOString())
+                                        saveEdit(todo.id)
+                                      }
+                                    }}
+                                    initialFocus
+                                  />
+                                  {/* Update History */}
+                                  <div className="p-4 border-l w-64">
+                                    <h4 className="font-medium text-sm mb-2 flex items-center">
+                                      <History size={14} className="mr-1" />
+                                      Update History
+                                    </h4>
+                                    <div className="space-y-2 text-xs text-gray-600 max-h-64 overflow-y-auto">
+                                      {(updateHistory[todo.id] || []).map((history, i) => (
+                                        <div key={i} className="border-b pb-1">
+                                          <div className="font-medium">{history.field}</div>
+                                          <div className="text-gray-500">
+                                            {format(new Date(history.date), 'MM/dd HH:mm')}
+                                          </div>
+                                          <div className="text-gray-400">
+                                            {history.oldValue} → {history.newValue}
+                                          </div>
+                                        </div>
+                                      ))}
+                                      {!updateHistory[todo.id] && (
+                                        <div className="text-gray-400">No updates yet</div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
                           ) : (
-                            <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
+                            <div 
+                              className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm hover:bg-gray-100 cursor-pointer group"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (todo.user_id === userId) {
+                                  startEditing(todo.id, 'due_date', todo.due_date || '')
+                                }
+                              }}
+                            >
+                              <Clock size={12} className="mr-1.5 text-gray-cool-400" />
+                              <span className="text-gray-cool-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
+                              {todo.user_id === userId && (
+                                <Edit2 size={12} className="ml-2 text-gray-cool-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              )}
+                              {calculateDaysLeft(todo.due_date) === 0 ? (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-white text-[#171717] border border-[#171717]">
+                                  Today
+                                </span>
+                              ) : calculateDaysLeft(todo.due_date) > 0 ? (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
+                                  D-{calculateDaysLeft(todo.due_date)}
+                                </span>
+                              ) : (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-[#525252] text-white">
+                                  D+{Math.abs(calculateDaysLeft(todo.due_date))}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                               D+{Math.abs(calculateDaysLeft(todo.due_date))}
                             </span>
                           )}
