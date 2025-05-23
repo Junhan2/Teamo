@@ -50,25 +50,53 @@ export async function middleware(request: NextRequest) {
       }
     )
 
-    // 더 안정적인 세션 검증
-    const { data: { user }, error } = await supabase.auth.getUser()
-    const hasValidUser = !!(user && !error)
+    // 더 안정적인 세션 검증 - 먼저 getSession으로 체크
+    let { data: { session }, error: sessionError } = await supabase.auth.getSession()
     
-    console.log('🔍 User check:', { 
-      hasValidUser, 
-      email: user?.email, 
+    // getSession이 실패하면 getUser로 fallback
+    if (!session || sessionError) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      const hasValidUser = !!(user && !userError)
+      
+      console.log('🔍 Fallback user check:', { 
+        hasValidUser, 
+        email: user?.email, 
+        pathname,
+        sessionError: sessionError?.message,
+        userError: userError?.message 
+      })
+      
+      // 사용자 정보가 있으면 세션도 있다고 간주
+      if (hasValidUser) {
+        console.log('✅ Valid user found via getUser')
+      } else {
+        // 인증되지 않은 유저가 보호된 경로에 접근하면 로그인 페이지로 리다이렉트
+        if (isProtectedRoute) {
+          console.log('🚀 Redirecting to login (no valid user)')
+          return NextResponse.redirect(new URL('/auth/login', request.url))
+        }
+      }
+      
+      return response
+    }
+    
+    const hasValidSession = !!(session && !sessionError)
+    
+    console.log('🔍 Session check:', { 
+      hasValidSession, 
+      email: session?.user?.email, 
       pathname,
-      error: error?.message 
+      error: sessionError?.message 
     })
 
     // 인증된 유저가 인증 페이지에 접근하면 대시보드로 리다이렉트
-    if (hasValidUser && isAuthRoute) {
+    if (hasValidSession && isAuthRoute) {
       console.log('🚀 Redirecting to dashboard (authenticated)')
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
     // 인증되지 않은 유저가 보호된 경로에 접근하면 로그인 페이지로 리다이렉트
-    if (!hasValidUser && isProtectedRoute) {
+    if (!hasValidSession && isProtectedRoute) {
       console.log('🚀 Redirecting to login (unauthenticated)')
       return NextResponse.redirect(new URL('/auth/login', request.url))
     }

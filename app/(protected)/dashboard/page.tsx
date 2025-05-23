@@ -111,6 +111,7 @@ export default function DashboardPage() {
   useEffect(() => {
     let isSubscribed = true // cleanup을 위한 플래그
     let authSubscription: any = null
+    let sessionCheckTimeout: NodeJS.Timeout | null = null
     
     const checkSession = async () => {
       try {
@@ -128,8 +129,8 @@ export default function DashboardPage() {
               // 로그인 완료시 프로필 처리
               await handleUserProfile(session)
               if (isSubscribed) setLoading(false)
-            } else if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
-              console.log('❌ Session expired or signed out')
+            } else if (event === 'SIGNED_OUT') {
+              console.log('❌ User signed out')
               if (isSubscribed) {
                 setUser(null)
                 setLoading(false)
@@ -140,23 +141,44 @@ export default function DashboardPage() {
               if (session) {
                 console.log('✅ Initial session found:', session.user.email)
                 await handleUserProfile(session)
+                if (isSubscribed) setLoading(false)
               } else {
-                console.log('⚠️ No initial session')
-                // 잠시 대기 후 한 번 더 체크
-                setTimeout(async () => {
-                  if (!isSubscribed) return
-                  const { data: { session: retrySession } } = await supabase.auth.getSession()
-                  if (retrySession) {
-                    await handleUserProfile(retrySession)
-                  } else {
-                    console.log('❌ No session after retry, redirecting to login')
-                    router.push('/auth/login')
+                console.log('⚠️ No initial session - will retry...')
+                // 여러 번 재시도 로직 (OAuth 콜백 후 세션 동기화 대기)
+                let retryCount = 0
+                const maxRetries = 5
+                
+                const retrySessionCheck = async () => {
+                  if (!isSubscribed || retryCount >= maxRetries) {
+                    if (retryCount >= maxRetries) {
+                      console.log('❌ Max retries reached, redirecting to login')
+                      if (isSubscribed) {
+                        setLoading(false)
+                        router.push('/auth/login')
+                      }
+                    }
+                    return
                   }
-                  if (isSubscribed) setLoading(false)
-                }, 1000)
-                return // 대기 중이므로 loading은 유지
+                  
+                  retryCount++
+                  console.log(`🔄 Session retry ${retryCount}/${maxRetries}...`)
+                  
+                  const { data: { session: retrySession }, error } = await supabase.auth.getSession()
+                  
+                  if (retrySession && !error) {
+                    console.log('✅ Session found on retry:', retrySession.user.email)
+                    await handleUserProfile(retrySession)
+                    if (isSubscribed) setLoading(false)
+                  } else {
+                    // 1초 후 다시 시도
+                    sessionCheckTimeout = setTimeout(retrySessionCheck, 1000)
+                  }
+                }
+                
+                // 즉시 첫 번째 재시도 시작
+                sessionCheckTimeout = setTimeout(retrySessionCheck, 500)
+                return // 재시도 중이므로 loading 상태 유지
               }
-              if (isSubscribed) setLoading(false)
             }
           }
         )
@@ -170,19 +192,20 @@ export default function DashboardPage() {
           error: error?.message 
         })
         
-        // 만약 onAuthStateChange가 INITIAL_SESSION을 트리거하지 않았다면
+        // 세션이 있으면 즉시 처리 (onAuthStateChange보다 빠를 수 있음)
         if (session && !error) {
           await handleUserProfile(session)
           if (isSubscribed) setLoading(false)
         } else if (!session && !error) {
-          // 세션이 없으면 로그인으로 리다이렉트 (단, 초기 로딩 시간 고려)
-          setTimeout(() => {
+          // 세션이 없지만 onAuthStateChange에서 처리할 수 있으므로 잠시 대기
+          console.log('⏳ Waiting for auth state change...')
+          sessionCheckTimeout = setTimeout(() => {
             if (isSubscribed && !user) {
-              console.log('❌ No valid session, redirecting to login')
-              router.push('/auth/login')
+              console.log('❌ Timeout waiting for session, redirecting to login')
               setLoading(false)
+              router.push('/auth/login')
             }
-          }, 2000)
+          }, 3000) // 3초 대기
         }
         
       } catch (error) {
@@ -235,6 +258,9 @@ export default function DashboardPage() {
     // Cleanup function
     return () => {
       isSubscribed = false
+      if (sessionCheckTimeout) {
+        clearTimeout(sessionCheckTimeout)
+      }
       if (authSubscription?.data?.subscription) {
         authSubscription.data.subscription.unsubscribe()
       }

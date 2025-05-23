@@ -89,27 +89,26 @@ export async function GET(request: Request) {
       }])
     }
     
-    // 명시적 응답 생성 및 쿠키 설정
-    const redirectUrl = `${origin}${next}`
-    console.log('🚀 Redirecting to:', redirectUrl)
+    // 세션 쿠키를 클라이언트에서 읽을 수 있도록 명시적으로 설정
+    const response = NextResponse.redirect(`${origin}${next}`)
     
-    const response = NextResponse.redirect(redirectUrl)
+    // Supabase 세션 쿠키들을 브라우저에 설정
+    if (data.session.access_token) {
+      response.cookies.set(`sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.split('://')[1]?.split('.')[0]}-auth-token`, JSON.stringify({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+        user: data.session.user
+      }), {
+        path: '/',
+        httpOnly: false, // 클라이언트에서 읽을 수 있도록
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        expires: new Date(data.session.expires_at! * 1000)
+      })
+    }
     
-    // 세션 쿠키를 수동으로 설정 (클라이언트에서 읽을 수 있도록)
-    const sessionCookies = await cookieStore.getAll()
-    sessionCookies.forEach(cookie => {
-      if (cookie.name.includes('supabase') || cookie.name.startsWith('sb-')) {
-        response.cookies.set({
-          name: cookie.name,
-          value: cookie.value,
-          path: '/',
-          httpOnly: false,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax'
-        })
-      }
-    })
-    
+    console.log('🚀 Redirecting to:', `${origin}${next}`)
     return response
     
   } catch (err: any) {
