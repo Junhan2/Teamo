@@ -462,7 +462,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
             className="w-full text-base"
           >
             <div className="flex justify-start mb-4">
-              <TabsList className="relative bg-transparent border border-slate-200 rounded-xl p-1 h-auto">
+              <TabsList className="relative bg-transparent border border-[#DCDFEA] rounded-xl p-1 h-auto">
                 {/* Animated background slider */}
                 <motion.div
                   className="absolute bg-[#F9F9FB] border border-[#DCDFEA] shadow-sm rounded-lg"

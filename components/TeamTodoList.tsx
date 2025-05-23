@@ -580,7 +580,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+                className={`${statusFilter === null ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 All
               </Button>
@@ -588,7 +588,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+                className={`${statusFilter === "pending" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Not yet
               </Button>
@@ -596,7 +596,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+                className={`${statusFilter === "in_progress" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Doing
               </Button>
@@ -604,7 +604,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#B9C0D4] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+                className={`${statusFilter === "completed" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Complete
               </Button>
@@ -741,7 +741,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-medium text-base text-gray-cool-700 flex items-center">
+                      <h3 className="font-medium text-base text-gray-cool-700 flex items-center pr-4">
                         {editingTodoId === todo.id && editingField === 'title' ? (
                           <div className="flex-1 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <Input
@@ -760,7 +760,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                         ) : (
                           <div 
                             className="flex-1 group cursor-pointer hover:bg-gray-cool-50 rounded px-2 py-1 -mx-2 -my-1"
-                            onClick={(e) => {
+                            onDoubleClick={(e) => {
                               e.stopPropagation()
                               if (todo.user_id === userId) {
                                 startEditing(todo.id, 'title', todo.title)
@@ -815,7 +815,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       ) : (
                         <div 
                           className="py-2 px-3 text-sm text-gray-cool-600 bg-white rounded-md border border-gray-cool-200 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group"
-                          onClick={() => startEditing(todo.id, 'description', todo.description || '')}
+                          onDoubleClick={() => startEditing(todo.id, 'description', todo.description || '')}
                         >
                           <div className="flex justify-between items-start">
                             <p className="flex-1">{todo.description}</p>
@@ -889,7 +889,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           ) : (
                             <div 
                               className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm hover:bg-gray-100 cursor-pointer group"
-                              onClick={(e) => {
+                              onDoubleClick={(e) => {
                                 e.stopPropagation()
                                 if (todo.user_id === userId) {
                                   startEditing(todo.id, 'due_date', todo.due_date || '')

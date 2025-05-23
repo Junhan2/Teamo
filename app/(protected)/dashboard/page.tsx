@@ -324,7 +324,7 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start mb-6">
-                  <TabsList className="relative bg-[#F9F9FB] border border-[#B9C0D4] rounded-2xl p-1.5 h-auto shadow-sm">
+                  <TabsList className="relative bg-[#F9F9FB] border border-[#DCDFEA] rounded-2xl p-1.5 h-auto shadow-sm">
                     {/* Animated background slider */}
                     <motion.div
                       className="absolute bg-white shadow-md rounded-xl"
