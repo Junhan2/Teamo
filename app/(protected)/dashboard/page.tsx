@@ -299,11 +299,11 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
+      <div className="flex min-h-screen items-center justify-center" style={{background: 'linear-gradient(135deg, #FCFCFD 0%, #F9F9FB 50%, rgba(239, 241, 245, 0.5) 100%)'}}>
         <div className="text-center">
           <div className="animate-pulse">
             <div className="w-16 h-16 bg-gradient-to-r from-sky-400 to-sky-600 rounded-xl mx-auto mb-4 shadow-lg"></div>
-            <div className="text-lg text-gray-cool-600 font-medium">Loading your tasks...</div>
+            <div className="text-lg font-medium" style={{color: '#4A5578'}}>Loading your tasks...</div>
           </div>
         </div>
       </div>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
+    <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #FCFCFD 0%, #F9F9FB 50%, rgba(239, 241, 245, 0.5) 100%)'}}>
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
@@ -427,9 +427,9 @@ export default function DashboardPage() {
           {/* 할일 추가 및 통계 섹션 */}
           <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
             {/* 할일 추가 섹션 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#DCDFEA] mb-6 hover:shadow-md transition-shadow duration-300" id="addTodoForm">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border mb-6 hover:shadow-md transition-shadow duration-300" style={{borderColor: '#DCDFEA'}} id="addTodoForm">
               <div className="p-6">
-                <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-sm font-semibold mb-5 uppercase tracking-wider flex items-center gap-2" style={{color: '#404968'}}>
                   <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
                     <ClipboardList className="w-4 h-4 text-sky-600" />
                   </div>
@@ -448,8 +448,8 @@ export default function DashboardPage() {
             </div>
             
             {/* 통계 섹션 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#DCDFEA] p-6 hover:shadow-md transition-shadow duration-300" style={{ overflow: 'visible' }}>
-              <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border p-6 hover:shadow-md transition-shadow duration-300" style={{borderColor: '#DCDFEA', overflow: 'visible'}}>
+              <h2 className="text-sm font-semibold mb-5 uppercase tracking-wider flex items-center gap-2" style={{color: '#404968'}}>
                 <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
                   <BarChart3 className="w-4 h-4 text-purple-600" />
                 </div>
@@ -538,7 +538,7 @@ export default function DashboardPage() {
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-2xl border border-gray-cool-100 p-2 flex items-center gap-2">
+        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-2xl border p-2 flex items-center gap-2" style={{borderColor: '#EFF1F5'}}>
           <Link href="/dashboard">
             <Button
               variant="default"
@@ -556,7 +556,8 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
+              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium transition-colors duration-200"
+              style={{borderColor: '#DCDFEA', color: '#404968'}}
             >
               <Calendar className="w-4 h-4" />
               <span>Calendar</span>
@@ -567,7 +568,8 @@ export default function DashboardPage() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
+              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium transition-colors duration-200"
+              style={{borderColor: '#DCDFEA', color: '#404968'}}
             >
               <StickyNote className="w-4 h-4" />
               <span>Memos</span>
