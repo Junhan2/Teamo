@@ -1,4 +1,4 @@
-import "./globals.css"
+import "../styles/globals.css"
 import type { Metadata } from "next"
 import { DM_Sans, Fira_Mono } from "next/font/google"
 import { Analytics } from '@vercel/analytics/react'

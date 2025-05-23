@@ -490,7 +490,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-8 text-light-primary">
+      <div className="flex justify-center items-center p-8 text-gray-cool-700">
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 border-t-2 border-b-2 border-light-accent rounded-full animate-spin mb-2"></div>
           <p className="text-lg font-medium">Loading Tasks...</p>
@@ -501,7 +501,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
 
 
   return (
-    <div className="text-light-primary" ref={containerRef}>
+    <div className="text-gray-cool-700" ref={containerRef}>
       <div className="flex flex-col space-y-6 mb-6">
         {/* 필터 영역 - 상태 필터와 날짜 드롭다운 같은 줄에 배치 */}
         <div>
@@ -549,7 +549,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="bg-transparent text-light-primary hover:bg-gray-50 text-sm px-4 py-1.5 h-8 transition-all duration-200 font-normal rounded-md flex items-center gap-2 outline outline-1 outline-light-border outline-offset-[-1px]"
+                    className="bg-transparent text-gray-cool-700 hover:bg-gray-50 text-sm px-4 py-1.5 h-8 transition-all duration-200 font-normal rounded-md flex items-center gap-2 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
                   >
                     {statusFilter === null ? <><span className="font-light">Status: </span><span>All</span></> : 
                      statusFilter === "pending" ? <><span className="font-light">Status: </span><span>Not yet</span></> : 
@@ -558,28 +558,28 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     <ChevronDown size={14} />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[160px] p-1">
+                <DropdownMenuContent className="bg-gray-cool-25 border border-gray-cool-200 text-gray-cool-700 shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[160px] p-1">
                   <DropdownMenuItem 
                     onClick={() => setStatusFilter(null)}
-                    className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === null ? 'bg-light-secondary/20' : ''}`}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-600 hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === null ? 'bg-gray-cool-600/20' : ''}`}
                   >
                     All
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => setStatusFilter("pending")}
-                    className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === "pending" ? 'bg-light-secondary/20' : ''}`}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-600 hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === "pending" ? 'bg-gray-cool-600/20' : ''}`}
                   >
                     Not yet
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => setStatusFilter("in_progress")}
-                    className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === "in_progress" ? 'bg-light-secondary/20' : ''}`}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-600 hover:text-white cursor-pointer rounded-md transition-all duration-200 mb-1 ${statusFilter === "in_progress" ? 'bg-gray-cool-600/20' : ''}`}
                   >
                     Doing
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => setStatusFilter("completed")}
-                    className={`flex items-center px-3 py-2 text-sm hover:bg-light-secondary hover:text-white cursor-pointer rounded-md transition-all duration-200 ${statusFilter === "completed" ? 'bg-light-secondary/20' : ''}`}
+                    className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-600 hover:text-white cursor-pointer rounded-md transition-all duration-200 ${statusFilter === "completed" ? 'bg-gray-cool-600/20' : ''}`}
                   >
                     Complete
                   </DropdownMenuItem>
@@ -593,7 +593,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-[#E6EAF1] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-gray-cool-700 hover:bg-gray-cool-100 text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
                 >
                   {dateFilter === null ? <><span className="font-light">Due: </span><span>All</span></> : 
                    dateFilter === "today" ? <><span className="font-light">Due: </span><span>Today</span></> : 
@@ -603,34 +603,34 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                   <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
+              <DropdownMenuContent className="bg-gray-cool-25 border border-gray-cool-200 text-gray-cool-700 shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setDateFilter(null)}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === null ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-100 cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === null ? 'bg-gray-cool-100' : ''}`}
                 >
                   All
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("today")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "today" ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-100 cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "today" ? 'bg-gray-cool-100' : ''}`}
                 >
                   Today
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("week")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "week" ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-100 cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "week" ? 'bg-gray-cool-100' : ''}`}
                 >
                   This week
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("month")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "month" ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-100 cursor-pointer rounded-md transition-all duration-200 mb-1 ${dateFilter === "month" ? 'bg-gray-cool-100' : ''}`}
                 >
                   This month
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setDateFilter("year")}
-                  className={`flex items-center px-3 py-2 text-sm hover:bg-[#E6EAF1] cursor-pointer rounded-md transition-all duration-200 ${dateFilter === "year" ? 'bg-[#E6EAF1]' : ''}`}
+                  className={`flex items-center px-3 py-2 text-sm hover:bg-gray-cool-100 cursor-pointer rounded-md transition-all duration-200 ${dateFilter === "year" ? 'bg-gray-cool-100' : ''}`}
                 >
                   This year
                 </DropdownMenuItem>
@@ -641,12 +641,12 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
       </div>
 
       {todos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center text-light-muted">
-          <div className="w-20 h-20 mb-5 rounded-full bg-gray-100 flex items-center justify-center shadow-lg shadow-light-border/20">
-            <CheckSquare size={32} className="text-light-secondary" />
+        <div className="flex flex-col items-center justify-center py-16 text-center text-gray-cool-400">
+          <div className="w-20 h-20 mb-5 rounded-full bg-gray-100 flex items-center justify-center shadow-lg shadow-gray-cool-200/20">
+            <CheckSquare size={32} className="text-gray-cool-600" />
           </div>
-          <p className="text-lg font-semibold text-light-primary">No Tasks Available</p>
-          <p className="text-sm text-light-muted mt-2 max-w-xs">Click the New Task button above to get started with your first task</p>
+          <p className="text-lg font-semibold text-gray-cool-700">No Tasks Available</p>
+          <p className="text-sm text-gray-cool-400 mt-2 max-w-xs">Click the New Task button above to get started with your first task</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -656,7 +656,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
               .map((todo, index) => (
               <motion.div 
                 key={`${todo.id}-${currentPage}`}
-                className={`bg-light-background rounded-xl overflow-hidden border border-light-border hover:border-light-secondary/40 transition-all duration-200 hover:bg-gray-50`}
+                className={`bg-gray-cool-25 rounded-xl overflow-hidden border border-gray-cool-200 hover:border-gray-cool-600/40 transition-all duration-200 hover:bg-gray-50`}
                 initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 0 }}
@@ -673,9 +673,9 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-medium text-base text-light-primary flex items-center">
+                      <h3 className="font-medium text-base text-gray-cool-700 flex items-center">
                         {todo.status === 'completed' ? (
-                          <span className="text-light-muted line-through decoration-light-muted">{todo.title}</span>
+                          <span className="text-gray-cool-400 line-through decoration-gray-cool-400">{todo.title}</span>
                         ) : (
                           <span>{todo.title}</span>
                         )}
@@ -693,30 +693,30 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       >
                         <ChevronDown 
                           size={16} 
-                          className={`text-light-muted transition-transform duration-200 ${expandedDescriptions[todo.id] ? 'rotate-180' : ''}`} 
+                          className={`text-gray-cool-400 transition-transform duration-200 ${expandedDescriptions[todo.id] ? 'rotate-180' : ''}`} 
                         />
                       </Button>
                     )}
                   </div>
                   
                   {todo.description && expandedDescriptions[todo.id] && (
-                    <div className="mt-3 py-2 px-3 text-sm text-light-muted bg-[#F1F1F1] rounded-md border border-light-border transition-all duration-200 shadow-sm">
+                    <div className="mt-3 py-2 px-3 text-sm text-gray-cool-400 bg-[#F1F1F1] rounded-md border border-gray-cool-200 transition-all duration-200 shadow-sm">
                       {todo.description}
                     </div>
                   )}
                   
-                  <div className="flex flex-wrap items-center justify-between text-sm text-light-muted mt-4 pt-3 border-t border-light-border/60">
+                  <div className="flex flex-wrap items-center justify-between text-sm text-gray-cool-400 mt-4 pt-3 border-t border-gray-cool-200/60">
                     <div className="flex items-center gap-2">
                       {filter === "team" && (
-                        <span className={`px-2 py-0.5 text-xs rounded-sm bg-gray-100 text-light-primary border border-light-border mr-1`}>
+                        <span className={`px-2 py-0.5 text-xs rounded-sm bg-gray-100 text-gray-cool-700 border border-gray-cool-200 mr-1`}>
                           {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
                         </span>
                       )}
                       
                       {todo.due_date && todo.status !== 'completed' && (
-                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-light-border shadow-sm">
-                          <Clock size={12} className="mr-1.5 text-light-muted" />
-                          <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
+                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm">
+                          <Clock size={12} className="mr-1.5 text-gray-cool-400" />
+                          <span className="text-gray-cool-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                           {calculateDaysLeft(todo.due_date) === 0 ? (
                             <span className="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-white text-[#171717] border border-[#171717]">
                               Today
@@ -734,9 +734,9 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       )}
                       
                       {todo.due_date && todo.status === 'completed' && (
-                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-light-border shadow-sm">
-                          <Clock size={12} className="mr-1.5 text-light-muted" />
-                          <span className="text-light-muted">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
+                        <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm">
+                          <Clock size={12} className="mr-1.5 text-gray-cool-400" />
+                          <span className="text-gray-cool-400">{format(new Date(todo.due_date), 'yyyy-MM-dd')}</span>
                         </div>
                       )}
                     </div>
@@ -753,7 +753,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           </DropdownMenuTrigger>
                           <DropdownMenuContent 
                             sideOffset={5} 
-                            className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] p-1"
+                            className="bg-gray-cool-25 border border-gray-cool-200 text-gray-cool-700 shadow-[0_0_25px_rgba(0,0,0,0.1)] p-1"
                           >
                             <DropdownMenuItem 
                               onClick={(e) => {
@@ -810,7 +810,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                             whileTap={{ scale: 0.8 }}
                             whileHover={{ rotate: -10 }}
                           >
-                            <Trash2 size={14} className="text-light-muted hover:text-red-600" />
+                            <Trash2 size={14} className="text-gray-cool-400 hover:text-red-600" />
                           </motion.div>
                         </Button>
                       )}
@@ -829,7 +829,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 size="icon"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                className="h-8 w-8 p-0 rounded-md bg-transparent text-light-primary hover:bg-gray-50 outline outline-1 outline-light-border outline-offset-[-1px]"
+                className="h-8 w-8 p-0 rounded-md bg-transparent text-gray-cool-700 hover:bg-gray-50 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
               >
                 <ChevronLeft size={16} />
               </Button>
@@ -850,7 +850,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       pageNum = i + 1;
                     } else if (i === 3) {
                       return (
-                        <span key="ellipsis-1" className="text-light-muted mx-1">...</span>
+                        <span key="ellipsis-1" className="text-gray-cool-400 mx-1">...</span>
                       );
                     } else {
                       pageNum = totalPages;
@@ -861,7 +861,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       pageNum = 1;
                     } else if (i === 1) {
                       return (
-                        <span key="ellipsis-2" className="text-light-muted mx-1">...</span>
+                        <span key="ellipsis-2" className="text-gray-cool-400 mx-1">...</span>
                       );
                     } else {
                       pageNum = totalPages - (4 - i);
@@ -872,11 +872,11 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       pageNum = 1;
                     } else if (i === 1) {
                       return (
-                        <span key="ellipsis-3" className="text-light-muted mx-1">...</span>
+                        <span key="ellipsis-3" className="text-gray-cool-400 mx-1">...</span>
                       );
                     } else if (i === 4) {
                       return (
-                        <span key="ellipsis-4" className="text-light-muted mx-1">...</span>
+                        <span key="ellipsis-4" className="text-gray-cool-400 mx-1">...</span>
                       );
                     } else if (i === 3) {
                       pageNum = totalPages;
@@ -898,8 +898,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                     className={`h-8 w-8 p-0 rounded-md ${
                       currentPage === pageNum 
                         ? 'bg-[#525252] text-white' 
-                        : 'bg-transparent text-light-primary hover:bg-gray-50'
-                    } outline outline-1 outline-light-border outline-offset-[-1px]`}
+                        : 'bg-transparent text-gray-cool-700 hover:bg-gray-50'
+                    } outline outline-1 outline-gray-cool-200 outline-offset-[-1px]`}
                   >
                     {pageNum}
                   </Button>
@@ -911,7 +911,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 size="icon"
                 disabled={currentPage >= Math.ceil(todos.length / itemsPerPage)}
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
-                className="h-8 w-8 p-0 rounded-md bg-transparent text-light-primary hover:bg-gray-50 outline outline-1 outline-light-border outline-offset-[-1px]"
+                className="h-8 w-8 p-0 rounded-md bg-transparent text-gray-cool-700 hover:bg-gray-50 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
               >
                 <ChevronRight size={16} />
               </Button>
