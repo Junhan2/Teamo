@@ -8,6 +8,29 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}"
   ],
+  safelist: [
+    // Gray Cool palette classes
+    'bg-gray-cool-25', 'bg-gray-cool-50', 'bg-gray-cool-100', 'bg-gray-cool-200',
+    'bg-gray-cool-300', 'bg-gray-cool-400', 'bg-gray-cool-500', 'bg-gray-cool-600',
+    'bg-gray-cool-700', 'bg-gray-cool-800', 'bg-gray-cool-900',
+    'text-gray-cool-25', 'text-gray-cool-50', 'text-gray-cool-100', 'text-gray-cool-200',
+    'text-gray-cool-300', 'text-gray-cool-400', 'text-gray-cool-500', 'text-gray-cool-600',
+    'text-gray-cool-700', 'text-gray-cool-800', 'text-gray-cool-900',
+    'border-gray-cool-25', 'border-gray-cool-50', 'border-gray-cool-100', 'border-gray-cool-200',
+    'border-gray-cool-300', 'border-gray-cool-400', 'border-gray-cool-500', 'border-gray-cool-600',
+    'border-gray-cool-700', 'border-gray-cool-800', 'border-gray-cool-900',
+    'hover:bg-gray-cool-50', 'hover:bg-gray-cool-100', 'hover:bg-gray-cool-200', 
+    'hover:bg-gray-cool-300', 'hover:bg-gray-cool-400', 'hover:bg-gray-cool-500',
+    'hover:bg-gray-cool-600', 'hover:bg-gray-cool-700', 'hover:bg-gray-cool-800',
+    'hover:border-gray-cool-300', 'hover:border-gray-cool-400', 'hover:border-gray-cool-500',
+    'hover:border-gray-cool-600', 'hover:border-gray-cool-700', 'hover:border-gray-cool-800',
+    'focus:ring-gray-cool-400', 'focus:ring-gray-cool-500',
+    'from-gray-cool-25', 'via-gray-cool-50', 'to-gray-cool-100',
+    // Sky colors for buttons
+    'from-sky-500', 'to-sky-600', 'from-sky-600', 'to-sky-700',
+    'focus:ring-sky-300', 'bg-sky-100', 'bg-sky-200', 'text-sky-700',
+    'border-sky-600', 'border-sky-700', 'bg-blue-300', 'border-sky-900'
+  ],
   theme: {
   	extend: {
   		fontFamily: {
