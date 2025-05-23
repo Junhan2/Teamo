@@ -94,17 +94,17 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   }
 
   return (
-    <div className="w-full animate-fadeIn">
-      <div className="flex justify-between items-center mb-4 mx-2">
+    <div className="w-full animate-fadeIn max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-sm font-medium text-[#171717] uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] flex items-center">
           <Calendar className="mr-2" size={16} />
           CALENDAR
         </h1>
       </div>
       
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         {/* Main calendar view - wider on desktop */}
-        <div className="xl:col-span-3 order-2 xl:order-1">
+        <div className="xl:col-span-4 order-2 xl:order-1">
           <CalendarView
             userId={user.id}
             onTaskUpdate={handleTaskUpdate}
@@ -117,7 +117,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         {/* Sidebar with controls and selected date tasks */}
         <div className="xl:col-span-1 space-y-4 order-1 xl:order-2">
           {/* Team Member Subscription */}
-          <div className="mx-2">
+          <div>
             <TeamMemberSubscription
               userId={user.id}
               onSubscriptionChange={handleSubscriptionChange}
@@ -125,7 +125,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
           </div>
           
           {/* Settings */}
-          <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-2">
+          <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
             <div className="flex items-center space-x-2">
               <Switch
                 id="show-completed"
@@ -147,7 +147,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)] mx-2"
+                className="bg-[#fcfcfc] rounded-xl overflow-hidden shadow-md border border-[rgba(0,0,0,0.20)]"
               >
                 <div className="p-4">
                   <h3 className="text-lg font-medium mb-3 text-[#171717]">
