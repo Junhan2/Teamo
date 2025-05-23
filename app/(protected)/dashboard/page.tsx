@@ -505,7 +505,7 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-3">
                 {/* Complete */}
-                <div className="relative rounded-xl overflow-hidden bg-emerald-50 border border-emerald-200 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-emerald-50 border border-emerald-200 h-9">
                   <div 
                     className="absolute inset-0 bg-[#d1fae5] transition-all duration-700 ease-out"
                     style={{
@@ -524,7 +524,7 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Doing */}
-                <div className="relative rounded-xl overflow-hidden bg-blue-50 border border-blue-200 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-blue-50 border border-blue-200 h-9">
                   <div 
                     className="absolute inset-0 bg-[#dbeafe] transition-all duration-700 ease-out"
                     style={{
@@ -543,7 +543,7 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Not yet */}
-                <div className="relative rounded-xl overflow-hidden bg-amber-50 border border-amber-200 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-amber-50 border border-amber-200 h-9">
                   <div 
                     className="absolute inset-0 bg-[#fef3c7] transition-all duration-700 ease-out"
                     style={{
