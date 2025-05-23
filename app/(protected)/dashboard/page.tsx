@@ -505,64 +505,58 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-3">
                 {/* Complete */}
-                <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-200">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <span className="text-sm font-medium text-emerald-700">Complete</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-20 bg-emerald-100 rounded-full h-1.5 overflow-hidden">
-                      <div 
-                        className="h-1.5 rounded-full bg-emerald-500 transition-all duration-700 ease-out"
-                        style={{
-                          width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
-                        }}
-                      ></div>
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 ease-out"
+                    style={{
+                      width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
+                    }}
+                  ></div>
+                  <div className="relative z-10 h-full flex items-center justify-between px-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
+                      <span className="text-sm font-medium text-gray-700">Complete</span>
                     </div>
-                    <span className="text-sm font-semibold text-emerald-700 min-w-[3rem] text-right">
-                      {todoStats.completed}/{todoStats.total}
+                    <span className="text-sm font-semibold text-gray-700">
+                      {todoStats.completed}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-200">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span className="text-sm font-medium text-blue-700">Doing</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-20 bg-blue-100 rounded-full h-1.5 overflow-hidden">
-                      <div 
-                        className="h-1.5 rounded-full bg-blue-500 transition-all duration-700 ease-out"
-                        style={{
-                          width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
-                        }}
-                      ></div>
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700 ease-out"
+                    style={{
+                      width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
+                    }}
+                  ></div>
+                  <div className="relative z-10 h-full flex items-center justify-between px-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
+                      <span className="text-sm font-medium text-gray-700">Doing</span>
                     </div>
-                    <span className="text-sm font-semibold text-blue-700 min-w-[3rem] text-right">
-                      {todoStats.inProgress}/{todoStats.total}
+                    <span className="text-sm font-semibold text-gray-700">
+                      {todoStats.inProgress}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.inProgress / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="flex items-center justify-between p-3 rounded-lg bg-amber-50 border border-amber-200">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                    <span className="text-sm font-medium text-amber-700">Not yet</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-20 bg-amber-100 rounded-full h-1.5 overflow-hidden">
-                      <div 
-                        className="h-1.5 rounded-full bg-amber-500 transition-all duration-700 ease-out"
-                        style={{
-                          width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
-                        }}
-                      ></div>
+                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700 ease-out"
+                    style={{
+                      width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
+                    }}
+                  ></div>
+                  <div className="relative z-10 h-full flex items-center justify-between px-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
+                      <span className="text-sm font-medium text-gray-700">Not yet</span>
                     </div>
-                    <span className="text-sm font-semibold text-amber-700 min-w-[3rem] text-right">
-                      {todoStats.pending}/{todoStats.total}
+                    <span className="text-sm font-semibold text-gray-700">
+                      {todoStats.pending}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.pending / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
                 </div>
