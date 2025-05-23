@@ -137,37 +137,79 @@ export default function AdvancedMemoGrid() {
         return
       }
 
-      // 겹치지 않는 위치 계산
-      const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
-      let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
-      let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
-      
-      // 위치 충돌 방지
-      while (existingPositions.some(pos => pos.x === newX && pos.y === newY)) {
-        newX += DEFAULT_WIDTH + GRID_SIZE
-        if (newX > 1000) {
-          newX = 0
-          newY += DEFAULT_HEIGHT + GRID_SIZE
+      // 뷰포트 중앙 계산
+      const gridElement = gridRef.current
+      if (!gridElement) {
+        // fallback to random position if grid ref not available
+        let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
+        let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
+        
+        const { error } = await supabase
+          .from('advanced_memos')
+          .insert({
+            title: newMemo.title,
+            content: newMemo.content,
+            user_id: userData.user.id,
+            color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
+            position_x: newX,
+            position_y: newY,
+            width: DEFAULT_WIDTH,
+            height: DEFAULT_HEIGHT,
+            is_expanded: false
+          })
+
+        if (error) throw error
+      } else {
+        const rect = gridElement.getBoundingClientRect()
+        const scrollLeft = gridElement.scrollLeft
+        const scrollTop = gridElement.scrollTop
+        
+        // 뷰포트 중앙 좌표 계산 (스크롤 위치 고려)
+        const centerX = scrollLeft + rect.width / 2 - DEFAULT_WIDTH / 2
+        const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
+        
+        // 그리드에 맞춰 정렬
+        let newX = snapToGrid(centerX / zoom)
+        let newY = snapToGrid(centerY / zoom)
+        
+        // 최소값 보장
+        newX = Math.max(0, newX)
+        newY = Math.max(0, newY)
+        
+        // 기존 메모와 겹치지 않도록 조정
+        const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
+        const offset = GRID_SIZE * 2
+        let attempts = 0
+        
+        while (existingPositions.some(pos => 
+          Math.abs(pos.x - newX) < DEFAULT_WIDTH && 
+          Math.abs(pos.y - newY) < DEFAULT_HEIGHT
+        ) && attempts < 10) {
+          // 나선형으로 위치 조정
+          const angle = attempts * Math.PI / 4
+          newX = snapToGrid(centerX / zoom + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newX = Math.max(0, newX)
+          newY = Math.max(0, newY)
+          attempts++
         }
-        newX = snapToGrid(newX)
-        newY = snapToGrid(newY)
+
+        const { error } = await supabase
+          .from('advanced_memos')
+          .insert({
+            title: newMemo.title,
+            content: newMemo.content,
+            user_id: userData.user.id,
+            color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
+            position_x: newX,
+            position_y: newY,
+            width: DEFAULT_WIDTH,
+            height: DEFAULT_HEIGHT,
+            is_expanded: false
+          })
+
+        if (error) throw error
       }
-
-      const { error } = await supabase
-        .from('advanced_memos')
-        .insert({
-          title: newMemo.title,
-          content: newMemo.content,
-          user_id: userData.user.id,
-          color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
-          position_x: newX,
-          position_y: newY,
-          width: DEFAULT_WIDTH,
-          height: DEFAULT_HEIGHT,
-          is_expanded: false
-        })
-
-      if (error) throw error
 
       setNewMemo({ title: '', content: '' })
       setShowForm(false)
