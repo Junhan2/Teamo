@@ -369,11 +369,10 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <h1 className="text-3xl font-bold text-light-primary">Memo</h1>
           <Button 
             onClick={createNewMemo}
-            variant="outline"
-            className="bg-[#e0f2fe] text-[#0369a1] border-2 border-[#7dd3fc] hover:bg-[#bae6fd] hover:border-[#0284c7] active:bg-[#7dd3fc] active:border-[#0369a1] transition-all duration-200 font-medium"
+            className="bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 px-4 py-2"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Memo
+            ADD MEMO
           </Button>
         </div>
         

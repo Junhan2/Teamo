@@ -86,8 +86,7 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                variant="outline"
-                className="w-full h-14 rounded-xl bg-white hover:bg-gray-cool-50 text-gray-cool-700 border-2 border-gray-cool-200 hover:border-gray-cool-300 shadow-sm hover:shadow-md text-base font-medium transition-all duration-200 flex items-center justify-center gap-3"
+                className="w-full h-14 bg-white text-neutral-900 hover:bg-gray-cool-50 text-sm font-normal outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -132,11 +131,10 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                variant="primary"
-                className="w-full h-14 rounded-xl text-base font-semibold transition-all duration-200"
+                className="w-full h-14 bg-[#404968] text-white hover:bg-[#30374E] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200"
               >
                 <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  무료로 시작하기
+                  START YOUR PROJECT
                 </span>
               </Button>
             </CardContent>
