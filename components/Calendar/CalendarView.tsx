@@ -302,6 +302,20 @@ const CalendarView = ({
     return colors[colorIndex]
   }
 
+  // Get status indicator color
+  const getStatusIndicatorColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-emerald-500'
+      case 'in_progress':
+        return 'bg-blue-500'
+      case 'pending':
+        return 'bg-amber-500'
+      default:
+        return 'bg-gray-400'
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8 text-gray-cool-800">
@@ -453,7 +467,7 @@ const CalendarView = ({
                   className={`
                     min-h-[100px] p-1 border relative rounded-md cursor-pointer
                     ${isCurrentMonth ? 'border-gray-cool-200' : 'border-gray-cool-100 bg-gray-cool-50'} 
-                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : ''}
+                    ${isDaySelected ? 'ring-2 ring-emerald-500 border-emerald-500' : ''}
                     ${isCurrentDay ? 'border-sky-500' : ''}
                     hover:border-gray-cool-300 transition-colors
                   `}
@@ -489,8 +503,8 @@ const CalendarView = ({
                           ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10' : 'bg-[#FDFDFD] border border-[rgba(0,0,0,0.10)]'}
                         `}
                       >
-                        {/* User color indicator */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
+                        {/* Status indicator */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusIndicatorColor(todo.status)}`}></div>
                         
                         <span className="pl-1.5 truncate text-gray-cool-800 text-sm">{todo.title}</span>
                         <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
@@ -524,7 +538,7 @@ const CalendarView = ({
                   key={i}
                   className={`
                     min-h-[180px] sm:min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white shadow-sm
-                    ${isDaySelected ? 'border-sky-500 bg-sky-50' : 'border-gray-cool-200'}
+                    ${isDaySelected ? 'ring-2 ring-emerald-500 border-emerald-500' : 'border-gray-cool-200'}
                     ${isCurrentDay ? 'border-sky-500 border-2' : ''}
                     hover:border-gray-cool-300 hover:shadow-md transition-all duration-200
                   `}
@@ -562,8 +576,8 @@ const CalendarView = ({
                           ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 border-[#3fcf8e]/20' : 'bg-[#FDFDFD] border-[rgba(0,0,0,0.10)]'}
                         `}
                       >
-                        {/* User color indicator */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
+                        {/* Status indicator */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusIndicatorColor(todo.status)}`}></div>
                         
                         <div className="pl-2">
                           <h4 className={`font-medium text-sm truncate leading-4 ${todo.status === 'completed' ? 'line-through text-gray-cool-500' : 'text-gray-cool-800'}`}>
