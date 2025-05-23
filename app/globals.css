@@ -17,6 +17,20 @@ body {
   position: relative;
 }
 
+:root {
+  --gray-cool-25: #FCFCFD;
+  --gray-cool-50: #F9F9FB;
+  --gray-cool-100: #EFF1F5;
+  --gray-cool-200: #DCDFEA;
+  --gray-cool-300: #B9C0D4;
+  --gray-cool-400: #7D89AF;
+  --gray-cool-500: #5D6A97;
+  --gray-cool-600: #4A5578;
+  --gray-cool-700: #404968;
+  --gray-cool-800: #30374E;
+  --gray-cool-900: #111322;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
