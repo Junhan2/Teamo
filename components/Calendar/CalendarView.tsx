@@ -405,7 +405,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter(null)}
-            className={`${statusFilter === null ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === null ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
           >
             All
           </Button>
@@ -413,7 +413,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("pending")}
-            className={`${statusFilter === "pending" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "pending" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
           >
             Not yet
           </Button>
@@ -421,7 +421,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("in_progress")}
-            className={`${statusFilter === "in_progress" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "in_progress" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
           >
             Doing
           </Button>
@@ -429,7 +429,7 @@ const CalendarView = ({
             variant="outline"
             size="sm"
             onClick={() => setStatusFilter("completed")}
-            className={`${statusFilter === "completed" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border-2`}
+            className={`${statusFilter === "completed" ? 'bg-gray-cool-800 text-white border-gray-cool-900' : 'bg-gray-cool-50 text-gray-cool-500 border-gray-cool-200 hover:bg-gray-cool-100 hover:border-gray-cool-400 active:bg-gray-cool-200'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
           >
             Complete
           </Button>
@@ -487,7 +487,7 @@ const CalendarView = ({
                     </span>
                     
                     {dayTodos.length > 0 && (
-                      <div className="w-5 h-5 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-xs font-medium">
+                      <div className="w-5 h-5 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-sm font-medium">
                         {dayTodos.length}
                       </div>
                     )}
@@ -560,7 +560,7 @@ const CalendarView = ({
                       {dayName}
                     </h3>
                     {dayTodos.length > 0 && (
-                      <div className="w-6 h-6 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      <div className="w-6 h-6 bg-[#EFF1F5] text-[#5D6A97] border border-[#DCDFEA] rounded-full flex items-center justify-center text-sm font-medium mt-1">
                         {dayTodos.length}
                       </div>
                     )}

@@ -56,13 +56,25 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       if (membersError) {
         console.error('Error fetching team members:', membersError)
         setTeamMembers([])
-        setSubscribedUserIds([])
+        setSubscribedUserIds([userId]) // 기본값: 본인만 체크
         return
       }
       
       setTeamMembers(members || [])
       
-      // Get current user's subscriptions
+      // localStorage에서 이전 설정 확인
+      const savedSubscriptions = localStorage.getItem(`calendar-subscriptions-${userId}`)
+      let defaultSubscriptions: string[] = []
+      
+      if (savedSubscriptions) {
+        // 이전 설정이 있으면 사용
+        defaultSubscriptions = JSON.parse(savedSubscriptions)
+      } else {
+        // 처음 사용자는 본인만 기본 선택
+        defaultSubscriptions = [userId]
+      }
+      
+      // Get current user's subscriptions from database
       try {
         const { data: subscriptionsData, error: subscriptionsError } = await supabase
           .from('calendar_subscriptions')
@@ -71,18 +83,24 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
         
         if (subscriptionsError) {
           console.error('Error fetching subscriptions:', subscriptionsError)
-          setSubscribedUserIds([])
+          setSubscribedUserIds(defaultSubscriptions)
         } else {
-          setSubscribedUserIds(subscriptionsData?.map(sub => sub.subscribed_to_user_id) || [])
+          const dbSubscriptions = subscriptionsData?.map(sub => sub.subscribed_to_user_id) || []
+          // DB 구독과 본인 ID를 합쳐서 설정
+          const finalSubscriptions = [...new Set([userId, ...dbSubscriptions])]
+          setSubscribedUserIds(finalSubscriptions)
+          
+          // localStorage에 저장
+          localStorage.setItem(`calendar-subscriptions-${userId}`, JSON.stringify(finalSubscriptions))
         }
       } catch (subError) {
         console.error('Subscription fetch failed:', subError)
-        setSubscribedUserIds([])
+        setSubscribedUserIds(defaultSubscriptions)
       }
     } catch (error) {
       console.error('Error in fetchData:', error)
       setTeamMembers([])
-      setSubscribedUserIds([])
+      setSubscribedUserIds([userId]) // 기본값: 본인만 체크
     } finally {
       setLoading(false)
     }
@@ -98,11 +116,17 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
   // Toggle subscription for a team member
   const toggleSubscription = (memberId: string) => {
     setSubscribedUserIds(prev => {
+      let newSubscriptions: string[]
       if (prev.includes(memberId)) {
-        return prev.filter(id => id !== memberId)
+        newSubscriptions = prev.filter(id => id !== memberId)
       } else {
-        return [...prev, memberId]
+        newSubscriptions = [...prev, memberId]
       }
+      
+      // localStorage에 저장
+      localStorage.setItem(`calendar-subscriptions-${userId}`, JSON.stringify(newSubscriptions))
+      
+      return newSubscriptions
     })
   }
 
@@ -162,6 +186,9 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       // Notify parent component
       onSubscriptionChange(subscribedUserIds)
       
+      // localStorage에도 저장
+      localStorage.setItem(`calendar-subscriptions-${userId}`, JSON.stringify(subscribedUserIds))
+      
       toast.success('Team member subscriptions updated!')
     } catch (error) {
       console.error('Error saving subscriptions:', error)
@@ -208,6 +235,29 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
               className="overflow-hidden"
             >
               <div className="mt-4 space-y-3">
+                {/* My Tasks 옵션 추가 */}
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="my-tasks"
+                    checked={subscribedUserIds.includes(userId)}
+                    onCheckedChange={() => toggleSubscription(userId)}
+                    className="data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500"
+                  />
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center overflow-hidden ring-2 ring-sky-200 ring-offset-1 shadow-sm">
+                      <span className="text-xs font-medium text-sky-700">
+                        Me
+                      </span>
+                    </div>
+                    <label htmlFor="my-tasks" className="flex-1 cursor-pointer">
+                      <div className="text-sm font-medium text-gray-cool-700 font-dm-sans">
+                        My Tasks
+                      </div>
+                      <div className="text-xs text-gray-cool-500 font-dm-sans">Show your own tasks</div>
+                    </label>
+                  </div>
+                </div>
+                
                 {teamMembers.length === 0 ? (
                   <p className="text-sm text-gray-cool-500 font-dm-sans">No team members found</p>
                 ) : (

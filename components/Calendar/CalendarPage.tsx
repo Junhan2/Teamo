@@ -33,6 +33,21 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   const isMobile = useIsMobile()
   const supabase = createClient()
 
+  // 초기 설정 로드
+  useEffect(() => {
+    if (user?.id) {
+      // localStorage에서 이전 구독 설정 확인
+      const savedSubscriptions = localStorage.getItem(`calendar-subscriptions-${user.id}`)
+      if (savedSubscriptions) {
+        const subscriptions = JSON.parse(savedSubscriptions)
+        setSubscribedUserIds(subscriptions)
+      } else {
+        // 기본값: 본인만 선택
+        setSubscribedUserIds([user.id])
+      }
+    }
+  }, [user?.id])
+
   // Handle subscription changes
   const handleSubscriptionChange = (userIds: string[]) => {
     setSubscribedUserIds(userIds)
