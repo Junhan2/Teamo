@@ -239,17 +239,17 @@ body {
 @layer base {
   :root {
     /* Gray Cool Palette CSS Variables */
-    --gray-cool-25: 252 252 253;
-    --gray-cool-50: 249 249 251;
-    --gray-cool-100: 239 241 245;
-    --gray-cool-200: 220 223 234;
-    --gray-cool-300: 185 192 212;
-    --gray-cool-400: 125 137 175;
-    --gray-cool-500: 93 106 151;
-    --gray-cool-600: 74 85 120;
-    --gray-cool-700: 64 73 104;
-    --gray-cool-800: 48 55 78;
-    --gray-cool-900: 17 19 34;    
+    --gray-cool-25: #FCFCFD;
+    --gray-cool-50: #F9F9FB;
+    --gray-cool-100: #EFF1F5;
+    --gray-cool-200: #DCDFEA;
+    --gray-cool-300: #B9C0D4;
+    --gray-cool-400: #7D89AF;
+    --gray-cool-500: #5D6A97;
+    --gray-cool-600: #4A5578;
+    --gray-cool-700: #404968;
+    --gray-cool-800: #30374E;
+    --gray-cool-900: #111322;    
     /* Original variables */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
