@@ -309,7 +309,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                       id="show-completed-mobile"
                       checked={showCompletedTasks}
                       onCheckedChange={setShowCompletedTasks}
-                      className="data-[state=checked]:bg-sky-500"
+                      className="data-[state=checked]:bg-[#3fcf8e]"
                     />
                     <Label htmlFor="show-completed-mobile" className="text-sm text-gray-cool-700 flex items-center font-dm-sans">
                       <Eye size={14} className="mr-1" />
