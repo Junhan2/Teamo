@@ -49,6 +49,8 @@ export default function DebugSessionPage() {
   }
 
   const clearStorageAndReload = () => {
+    if (typeof window === 'undefined') return
+    
     // localStorage 정리
     const keys = Object.keys(localStorage)
     keys.forEach(key => {
@@ -199,17 +201,21 @@ export default function DebugSessionPage() {
               <div>
                 <h3 className="font-semibold mb-2">LocalStorage Keys:</h3>
                 <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto max-h-40">
-                  {Object.keys(localStorage)
-                    .filter(key => key.includes('supabase') || key.startsWith('sb-'))
-                    .join('\n') || 'No Supabase keys found'}
+                  {typeof window !== 'undefined' 
+                    ? Object.keys(localStorage)
+                        .filter(key => key.includes('supabase') || key.startsWith('sb-'))
+                        .join('\n') || 'No Supabase keys found'
+                    : 'Server-side rendering - localStorage not available'}
                 </pre>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Cookies:</h3>
                 <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto max-h-40">
-                  {document.cookie.split(';')
-                    .filter(cookie => cookie.includes('supabase') || cookie.includes('sb-'))
-                    .join('\n') || 'No Supabase cookies found'}
+                  {typeof window !== 'undefined'
+                    ? document.cookie.split(';')
+                        .filter(cookie => cookie.includes('supabase') || cookie.includes('sb-'))
+                        .join('\n') || 'No Supabase cookies found'
+                    : 'Server-side rendering - cookies not available'}
                 </pre>
               </div>
             </div>
