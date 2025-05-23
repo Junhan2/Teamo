@@ -150,7 +150,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-2.5">
       {/* Title input */}
       <div className="relative">
         <Input
