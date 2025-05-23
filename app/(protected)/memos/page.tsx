@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { CheckSquare, Calendar, StickyNote } from "lucide-react"
 import Navbar from "@/components/Navbar"
-import TeamMemoWall from "@/components/TeamMemo/TeamMemoWall"
+import AdvancedMemoGrid from "@/components/AdvancedMemoGrid"
 
 interface UserProfile {
   id: string
@@ -91,10 +91,7 @@ export default function MemosPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
-      <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
-        <TeamMemoWall user={user} />
-      </main>
+      <AdvancedMemoGrid />
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">

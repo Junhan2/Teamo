@@ -4,6 +4,11 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
+  // 테스트 경로는 건너뛰기
+  if (pathname.startsWith('/test-memo')) {
+    return NextResponse.next()
+  }
+  
   // 보호된 경로 체크
   const isProtectedRoute = 
     pathname.startsWith('/dashboard') ||
