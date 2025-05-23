@@ -41,31 +41,15 @@ export default function Navbar({ user }: NavbarProps) {
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-cool-25/90 border-b border-gray-cool-200">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 h-16">
-          <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2 relative">
-            <div className="relative flex items-center">
-              {/* Hero image behind text */}
-              <div className="relative w-[60px] h-[40px] mr-[-20px]">
-                <img
-                  src="/images/hero-3d-svg.svg"
-                  alt="tide"
-                  className="w-full h-full object-contain opacity-30 relative z-0"
-                  style={{ 
-                    filter: "drop-shadow(0 2px 8px rgba(63, 207, 142, 0.15))"
-                  }}
-                />
-              </div>
-              
-              {/* tide text overlapping with the image */}
-              <span 
-                className="text-gray-cool-700 font-black font-dm-sans relative z-10 text-xl"
-                style={{
-                  textShadow: "0 1px 3px rgba(0, 0, 0, 0.05)"
-                }}
-              >
-                tide.
-              </span>
-            </div>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img
+              src="/logo.png"
+              alt="Teamo Logo"
+              className="h-8 w-auto"
+            />
           </Link>
+
+
 
           <div className="flex items-center gap-4">
             {/* 플로팅 버튼으로 이동됨 */}

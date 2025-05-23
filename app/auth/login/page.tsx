@@ -38,9 +38,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/30">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/30 relative overflow-hidden">
+      {/* Grid pattern background */}
       <div className="absolute inset-0 z-0">
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
+            backgroundSize: '20px 20px'
+          }}
+        />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-100/20 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-cool-50/50 to-sky-50/20"></div>
       </div>
       
       <div className="container relative z-10 max-w-md">
@@ -48,9 +57,13 @@ export default function LoginPage() {
           className="text-center mb-10 animate-fadeIn"
         >
           <div className="relative mb-6">
-            {/* Logo mark */}
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-sky-500 to-sky-600 rounded-2xl shadow-2xl flex items-center justify-center transform hover:scale-105 transition-transform duration-300">
-              <span className="text-3xl font-bold text-white">T</span>
+            {/* Logo */}
+            <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+              <img
+                src="/logo.png"
+                alt="Teamo Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             
             {/* Title */}
@@ -61,7 +74,7 @@ export default function LoginPage() {
                 letterSpacing: "-0.02em"
               }}
             >
-              tide.
+              Teamo
             </h1>
             <p 
               className="text-gray-cool-600 text-lg"
@@ -86,7 +99,7 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full h-14 bg-white text-neutral-900 hover:bg-gray-cool-50 text-sm font-normal outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-3"
+                className="w-full h-14 bg-white text-neutral-900 hover:bg-gray-cool-50 text-base font-normal outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-3"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
