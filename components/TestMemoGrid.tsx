@@ -1,26 +1,16 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { 
-  PlusCircle, 
-  Maximize2, 
-  Minimize2, 
-  ZoomIn,
-  ZoomOut
-} from "lucide-react"
+import { PlusCircle, Maximize2, Minimize2, ZoomIn, ZoomOut } from "lucide-react"
 
 interface Memo {
   id: string
   title: string
   content: string
   created_at: string
-  user_id: string
-  user_email?: string
   color: string
   position_x: number
   position_y: number
@@ -32,8 +22,6 @@ interface Memo {
 type ViewState = 'expanded' | 'collapsed' | 'mixed'
 
 const GRID_SIZE = 20
-const MIN_WIDTH = 200
-const MIN_HEIGHT = 160
 const DEFAULT_WIDTH = 240
 const DEFAULT_HEIGHT = 200
 
@@ -42,9 +30,8 @@ const MEMO_COLORS = [
   '#FEF08A', '#BFDBFE', '#F3E8FF', '#FCE7F3', '#D1FAE5'
 ]
 
-export default function AdvancedMemoGrid() {
+export default function TestMemoGrid() {
   const [memos, setMemos] = useState<Memo[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const [viewState, setViewState] = useState<ViewState>('collapsed')
   const [zoom, setZoom] = useState(1)
   const [showForm, setShowForm] = useState(false)
@@ -56,7 +43,7 @@ export default function AdvancedMemoGrid() {
     y: number
   } | null>(null)
   
-  // 드래그 상태 관리
+  // 드래그 상태
   const [dragState, setDragState] = useState<{
     isDragging: boolean
     memoId: string | null
@@ -74,145 +61,46 @@ export default function AdvancedMemoGrid() {
   })
   
   const gridRef = useRef<HTMLDivElement>(null)
-  const { toast } = useToast()
-  const supabase = createClientComponentClient()
-
   const snapToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE
-  // 메모 데이터 가져오기 (인증 체크 포함)
-  const fetchMemos = async () => {
-    try {
-      // 세션 확인
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        console.log('No session found, skipping memo fetch')
-        setIsLoading(false)
-        return
+  // 새 메모 추가
+  const addMemo = () => {
+    if (!newMemo.title || !newMemo.content) return
+
+    const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
+    let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
+    let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
+    
+    while (existingPositions.some(pos => pos.x === newX && pos.y === newY)) {
+      newX += DEFAULT_WIDTH + GRID_SIZE
+      if (newX > 1000) {
+        newX = 0
+        newY += DEFAULT_HEIGHT + GRID_SIZE
       }
-
-      const { data, error } = await supabase
-        .from('advanced_memos')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setMemos(data || [])
-    } catch (error) {
-      console.error('Error fetching memos:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // 새 메모 추가 (인증 체크 강화)
-  const addMemo = async () => {
-    if (!newMemo.title || !newMemo.content) {
-      toast({
-        title: "입력 오류",
-        description: "제목과 내용을 모두 입력해주세요.",
-        variant: "destructive",
-      })
-      return
+      newX = snapToGrid(newX)
+      newY = snapToGrid(newY)
     }
 
-    try {
-      // 세션 확인
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        toast({
-          title: "인증 오류",
-          description: "로그인이 필요합니다.",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // 사용자 정보 가져오기
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      if (userError || !userData.user) {
-        toast({
-          title: "사용자 오류",
-          description: "사용자 정보를 가져올 수 없습니다.",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // 겹치지 않는 위치 계산
-      const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
-      let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
-      let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
-      
-      // 위치 충돌 방지
-      while (existingPositions.some(pos => pos.x === newX && pos.y === newY)) {
-        newX += DEFAULT_WIDTH + GRID_SIZE
-        if (newX > 1000) {
-          newX = 0
-          newY += DEFAULT_HEIGHT + GRID_SIZE
-        }
-        newX = snapToGrid(newX)
-        newY = snapToGrid(newY)
-      }
-
-      const { error } = await supabase
-        .from('advanced_memos')
-        .insert({
-          title: newMemo.title,
-          content: newMemo.content,
-          user_id: userData.user.id,
-          color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
-          position_x: newX,
-          position_y: newY,
-          width: DEFAULT_WIDTH,
-          height: DEFAULT_HEIGHT,
-          is_expanded: false
-        })
-
-      if (error) throw error
-
-      setNewMemo({ title: '', content: '' })
-      setShowForm(false)
-      fetchMemos()
-      
-      toast({
-        title: "성공!",
-        description: "메모가 추가되었습니다.",
-      })
-    } catch (error) {
-      console.error('Error adding memo:', error)
-      toast({
-        title: "오류",
-        description: "메모 추가에 실패했습니다.",
-        variant: "destructive",
-      })
+    const memo: Memo = {
+      id: Date.now().toString(),
+      title: newMemo.title,
+      content: newMemo.content,
+      created_at: new Date().toISOString(),
+      color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
+      position_x: newX,
+      position_y: newY,
+      width: DEFAULT_WIDTH,
+      height: DEFAULT_HEIGHT,
+      is_expanded: false
     }
-  }
-  // 메모 위치 업데이트
-  const updateMemoPosition = async (memoId: string, newX: number, newY: number) => {
-    try {
-      const { error } = await supabase
-        .from('advanced_memos')
-        .update({ 
-          position_x: snapToGrid(newX), 
-          position_y: snapToGrid(newY) 
-        })
-        .eq('id', memoId)
 
-      if (error) throw error
-
-      // 로컬 상태 업데이트
-      setMemos(prev => prev.map(memo => 
-        memo.id === memoId 
-          ? { ...memo, position_x: snapToGrid(newX), position_y: snapToGrid(newY) }
-          : memo
-      ))
-    } catch (error) {
-      console.error('Error updating memo position:', error)
-    }
+    setMemos(prev => [...prev, memo])
+    setNewMemo({ title: '', content: '' })
+    setShowForm(false)
   }
 
   // 드래그 시작
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
-    if (e.button !== 0) return // 좌클릭만 처리
+    if (e.button !== 0) return
     
     const memo = memos.find(m => m.id === memoId)
     if (!memo) return
@@ -232,7 +120,6 @@ export default function AdvancedMemoGrid() {
       offsetY: startY - memo.position_y
     })
 
-    // 드래그 중 선택 방지
     e.preventDefault()
   }, [memos, zoom])
 
@@ -249,11 +136,9 @@ export default function AdvancedMemoGrid() {
     const newX = Math.max(0, currentX - dragState.offsetX)
     const newY = Math.max(0, currentY - dragState.offsetY)
 
-    // 실시간 위치 업데이트 (스냅 적용)
     const snappedX = snapToGrid(newX)
     const snappedY = snapToGrid(newY)
 
-    // 로컬 상태만 즉시 업데이트 (부드러운 드래그)
     setMemos(prev => prev.map(memo => 
       memo.id === dragState.memoId 
         ? { ...memo, position_x: snappedX, position_y: snappedY }
@@ -263,14 +148,6 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 종료
   const handleMouseUp = useCallback(() => {
-    if (!dragState.isDragging || !dragState.memoId) return
-
-    const memo = memos.find(m => m.id === dragState.memoId)
-    if (memo) {
-      // 데이터베이스에 최종 위치 저장
-      updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
-    }
-
     setDragState({
       isDragging: false,
       memoId: null,
@@ -279,9 +156,9 @@ export default function AdvancedMemoGrid() {
       offsetX: 0,
       offsetY: 0
     })
-  }, [dragState, memos, updateMemoPosition])
+  }, [])
 
-  // 마우스 이벤트 리스너 등록
+  // 마우스 이벤트 리스너
   useEffect(() => {
     if (dragState.isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
@@ -298,7 +175,7 @@ export default function AdvancedMemoGrid() {
     setZoom(prev => Math.max(0.5, Math.min(2, prev + delta)))
   }, [])
 
-  // 키보드 이벤트 처리
+  // 키보드 이벤트
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey) {
@@ -328,9 +205,9 @@ export default function AdvancedMemoGrid() {
     }
   }, [handleZoom])
 
-  // 호버 효과 처리
+  // 호버 효과
   const handleMemoHover = (memoId: string, isEntering: boolean) => {
-    if (dragState.isDragging) return // 드래그 중에는 호버 무시
+    if (dragState.isDragging) return
     
     if (isEntering) {
       const timer = setTimeout(() => {
@@ -345,7 +222,7 @@ export default function AdvancedMemoGrid() {
     }
   }
 
-  // 컨텍스트 메뉴 처리
+  // 컨텍스트 메뉴
   const handleContextMenu = (e: React.MouseEvent, memoId: string) => {
     e.preventDefault()
     setContextMenu({
@@ -356,35 +233,18 @@ export default function AdvancedMemoGrid() {
   }
 
   // 색상 변경
-  const changeColor = async (memoId: string, color: string) => {
-    try {
-      const { error } = await supabase
-        .from('advanced_memos')
-        .update({ color })
-        .eq('id', memoId)
-
-      if (error) throw error
-
-      setMemos(prev => prev.map(memo => 
-        memo.id === memoId ? { ...memo, color } : memo
-      ))
-      
-      setContextMenu(null)
-    } catch (error) {
-      console.error('Error changing color:', error)
-    }
+  const changeColor = (memoId: string, color: string) => {
+    setMemos(prev => prev.map(memo => 
+      memo.id === memoId ? { ...memo, color } : memo
+    ))
+    setContextMenu(null)
   }
 
-  // 전체 뷰 상태 변경
+  // 뷰 상태 토글
   const toggleViewState = () => {
     const newState = viewState === 'collapsed' ? 'expanded' : 'collapsed'
     setViewState(newState)
   }
-
-  // 초기 로드
-  useEffect(() => {
-    fetchMemos()
-  }, [])
 
   // 뷰 상태 계산
   useEffect(() => {
@@ -399,21 +259,13 @@ export default function AdvancedMemoGrid() {
       setViewState('mixed')
     }
   }, [memos, hoveredMemo])
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center text-gray-600">로딩 중...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg"
+          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
         >
           <PlusCircle className="h-4 w-4" />
           ADD MEMO
@@ -424,18 +276,16 @@ export default function AdvancedMemoGrid() {
             variant={viewState === 'expanded' ? 'default' : 'outline'}
             size="sm"
             onClick={toggleViewState}
-            className="flex items-center gap-1"
           >
-            <Maximize2 className="h-3 w-3" />
+            <Maximize2 className="h-3 w-3 mr-1" />
             펼침
           </Button>
           <Button
             variant={viewState === 'collapsed' ? 'default' : 'outline'}
             size="sm"
             onClick={toggleViewState}
-            className="flex items-center gap-1"
           >
-            <Minimize2 className="h-3 w-3" />
+            <Minimize2 className="h-3 w-3 mr-1" />
             닫힘
           </Button>
           {viewState === 'mixed' && (
@@ -503,7 +353,7 @@ export default function AdvancedMemoGrid() {
         style={{
           transform: `scale(${zoom})`,
           transformOrigin: 'top left',
-          backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.15) 1px, transparent 1px)`,
           backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
           cursor: dragState.isDragging ? 'grabbing' : 'default'
         }}
@@ -523,7 +373,7 @@ export default function AdvancedMemoGrid() {
             <div
               key={memo.id}
               className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
-                isDragging ? 'cursor-grabbing z-50 rotate-2 scale-105' : 'cursor-grab'
+                isDragging ? 'cursor-grabbing z-50' : 'cursor-grab'
               }`}
               style={{
                 left: memo.position_x,
@@ -533,7 +383,7 @@ export default function AdvancedMemoGrid() {
                 minHeight: memo.height,
                 backgroundColor: memo.color,
                 transform: isHovered && !isDragging ? 'translateY(-4px) scale(1.02)' : 
-                          isDragging ? 'rotate(2deg) scale(1.05)' : 'none',
+                          isDragging ? 'rotate(3deg) scale(1.05)' : 'none',
                 zIndex: isDragging ? 50 : (isHovered ? 30 : 10),
                 boxShadow: isDragging ? '0 20px 40px rgba(0,0,0,0.3)' : 
                           isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)'
@@ -559,7 +409,7 @@ export default function AdvancedMemoGrid() {
               
               {/* 드래그 표시 */}
               {isDragging && (
-                <div className="absolute inset-0 bg-black/5 rounded-lg pointer-events-none" />
+                <div className="absolute inset-0 bg-black/10 rounded-lg pointer-events-none border-2 border-dashed border-blue-400" />
               )}
             </div>
           )

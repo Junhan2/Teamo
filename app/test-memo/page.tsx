@@ -1,9 +1,5 @@
-import AdvancedMemoGrid from '@/components/AdvancedMemoGrid'
+import TestMemoGrid from '@/components/TestMemoGrid'
 
 export default function TestMemoPage() {
-  return (
-    <div>
-      <AdvancedMemoGrid />
-    </div>
-  )
+  return <TestMemoGrid />
 }
