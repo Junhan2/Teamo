@@ -1,4 +1,4 @@
-import "@/app/globals.css"
+import "./globals.css"
 import type { Metadata } from "next"
 import { DM_Sans, Fira_Mono } from "next/font/google"
 import { Analytics } from '@vercel/analytics/react'
@@ -62,7 +62,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${firaMono.variable}`}>
-      <body className={`${dmSans.className} bg-light-background text-light-primary min-h-screen`}>
+      <body className={dmSans.className}>
         {children}
         <Analytics />
         <SpeedInsights />
