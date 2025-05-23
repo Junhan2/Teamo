@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { DM_Sans, Fira_Mono } from "next/font/google"
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import ClientInitializer from './client-initializer'
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -29,8 +30,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-  },
-  openGraph: {
+  },  openGraph: {
     title: "tide | Team Task Management",
     description: "Elegant team collaboration and task management platform for seamless productivity",
     type: "website",
@@ -63,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${firaMono.variable}`}>
       <body className={dmSans.className}>
+        <ClientInitializer />
         {children}
         <Analytics />
         <SpeedInsights />

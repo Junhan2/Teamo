@@ -4,7 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { PlusCircle, Maximize2, Minimize2, ZoomIn, ZoomOut } from "lucide-react"
+import { PlusCircle, ZoomIn, ZoomOut } from "lucide-react"
 
 interface Memo {
   id: string
@@ -66,6 +66,7 @@ export default function TestMemoGrid() {
     setNewMemo({ title: '', content: '' })
     setShowForm(false)
   }
+
   // 드래그 시작
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return
@@ -150,15 +151,13 @@ export default function TestMemoGrid() {
     ))
     setContextMenu(null)
   }
+
   return (
     <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
         <Button
-          onClick={() => {
-            console.log('ADD MEMO 버튼 클릭됨, 현재 showForm:', showForm)
-            setShowForm(!showForm)
-          }}
+          onClick={() => setShowForm(!showForm)}
           className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
         >
           <PlusCircle className="h-4 w-4" />

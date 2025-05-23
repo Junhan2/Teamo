@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -75,7 +75,7 @@ export default function AdvancedMemoGrid() {
   
   const gridRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   const snapToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE
   // 메모 데이터 가져오기 (인증 체크 포함)
