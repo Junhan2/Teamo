@@ -8,8 +8,8 @@ html {
 
 body {
   font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background-color: #FCFCFD;
-  color: #404968;
+  background-color: var(--gray-cool-25);
+  color: var(--gray-cool-700);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -18,6 +18,7 @@ body {
 }
 
 :root {
+  /* Gray Cool 팔레트 */
   --gray-cool-25: #FCFCFD;
   --gray-cool-50: #F9F9FB;
   --gray-cool-100: #EFF1F5;
@@ -29,6 +30,44 @@ body {
   --gray-cool-700: #404968;
   --gray-cool-800: #30374E;
   --gray-cool-900: #111322;
+  
+  /* shadcn/ui 필수 CSS 변수 - Gray Cool 팔레트로 매핑 */
+  --background: 220 33% 99%; /* gray-cool-25 */
+  --foreground: 225 25% 33%; /* gray-cool-700 */
+  
+  --card: 220 33% 99%; /* gray-cool-25 */
+  --card-foreground: 225 25% 33%; /* gray-cool-700 */
+  
+  --popover: 220 33% 99%; /* gray-cool-25 */
+  --popover-foreground: 225 25% 33%; /* gray-cool-700 */
+  
+  --primary: 225 25% 33%; /* gray-cool-700 */
+  --primary-foreground: 220 33% 99%; /* gray-cool-25 */
+  
+  --secondary: 220 33% 95%; /* gray-cool-100 */
+  --secondary-foreground: 225 25% 33%; /* gray-cool-700 */
+  
+  --muted: 220 33% 95%; /* gray-cool-100 */
+  --muted-foreground: 225 25% 59%; /* gray-cool-400 */
+  
+  --accent: 220 33% 95%; /* gray-cool-100 */
+  --accent-foreground: 225 25% 33%; /* gray-cool-700 */
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 220 33% 99%; /* gray-cool-25 */
+  
+  --border: 220 33% 91%; /* gray-cool-200 */
+  --input: 220 33% 91%; /* gray-cool-200 */
+  --ring: 225 25% 33%; /* gray-cool-700 */
+  
+  --radius: 0.5rem;
+  
+  /* 차트 색상 */
+  --chart-1: 225 25% 33%; /* gray-cool-700 */
+  --chart-2: 225 25% 59%; /* gray-cool-400 */
+  --chart-3: 220 33% 95%; /* gray-cool-100 */
+  --chart-4: 220 33% 99%; /* gray-cool-25 */
+  --chart-5: 0 0% 90%;
 }
 
 @layer utilities {
@@ -52,42 +91,42 @@ body {
   }
 }
 
-/* Gray Cool 클래스 직접 정의 */
-.bg-gray-cool-25 { background-color: #FCFCFD; }
-.bg-gray-cool-50 { background-color: #F9F9FB; }
-.bg-gray-cool-100 { background-color: #EFF1F5; }
-.bg-gray-cool-200 { background-color: #DCDFEA; }
-.bg-gray-cool-300 { background-color: #B9C0D4; }
-.bg-gray-cool-400 { background-color: #7D89AF; }
-.bg-gray-cool-500 { background-color: #5D6A97; }
-.bg-gray-cool-600 { background-color: #4A5578; }
-.bg-gray-cool-700 { background-color: #404968; }
-.bg-gray-cool-800 { background-color: #30374E; }
-.bg-gray-cool-900 { background-color: #111322; }
+/* Gray Cool 클래스 직접 정의 - 우선순위 강화 */
+.bg-gray-cool-25 { background-color: #FCFCFD !important; }
+.bg-gray-cool-50 { background-color: #F9F9FB !important; }
+.bg-gray-cool-100 { background-color: #EFF1F5 !important; }
+.bg-gray-cool-200 { background-color: #DCDFEA !important; }
+.bg-gray-cool-300 { background-color: #B9C0D4 !important; }
+.bg-gray-cool-400 { background-color: #7D89AF !important; }
+.bg-gray-cool-500 { background-color: #5D6A97 !important; }
+.bg-gray-cool-600 { background-color: #4A5578 !important; }
+.bg-gray-cool-700 { background-color: #404968 !important; }
+.bg-gray-cool-800 { background-color: #30374E !important; }
+.bg-gray-cool-900 { background-color: #111322 !important; }
 
-.text-gray-cool-25 { color: #FCFCFD; }
-.text-gray-cool-50 { color: #F9F9FB; }
-.text-gray-cool-100 { color: #EFF1F5; }
-.text-gray-cool-200 { color: #DCDFEA; }
-.text-gray-cool-300 { color: #B9C0D4; }
-.text-gray-cool-400 { color: #7D89AF; }
-.text-gray-cool-500 { color: #5D6A97; }
-.text-gray-cool-600 { color: #4A5578; }
-.text-gray-cool-700 { color: #404968; }
-.text-gray-cool-800 { color: #30374E; }
-.text-gray-cool-900 { color: #111322; }
+.text-gray-cool-25 { color: #FCFCFD !important; }
+.text-gray-cool-50 { color: #F9F9FB !important; }
+.text-gray-cool-100 { color: #EFF1F5 !important; }
+.text-gray-cool-200 { color: #DCDFEA !important; }
+.text-gray-cool-300 { color: #B9C0D4 !important; }
+.text-gray-cool-400 { color: #7D89AF !important; }
+.text-gray-cool-500 { color: #5D6A97 !important; }
+.text-gray-cool-600 { color: #4A5578 !important; }
+.text-gray-cool-700 { color: #404968 !important; }
+.text-gray-cool-800 { color: #30374E !important; }
+.text-gray-cool-900 { color: #111322 !important; }
 
-.border-gray-cool-25 { border-color: #FCFCFD; }
-.border-gray-cool-50 { border-color: #F9F9FB; }
-.border-gray-cool-100 { border-color: #EFF1F5; }
-.border-gray-cool-200 { border-color: #DCDFEA; }
-.border-gray-cool-300 { border-color: #B9C0D4; }
-.border-gray-cool-400 { border-color: #7D89AF; }
-.border-gray-cool-500 { border-color: #5D6A97; }
-.border-gray-cool-600 { border-color: #4A5578; }
-.border-gray-cool-700 { border-color: #404968; }
-.border-gray-cool-800 { border-color: #30374E; }
-.border-gray-cool-900 { border-color: #111322; }
+.border-gray-cool-25 { border-color: #FCFCFD !important; }
+.border-gray-cool-50 { border-color: #F9F9FB !important; }
+.border-gray-cool-100 { border-color: #EFF1F5 !important; }
+.border-gray-cool-200 { border-color: #DCDFEA !important; }
+.border-gray-cool-300 { border-color: #B9C0D4 !important; }
+.border-gray-cool-400 { border-color: #7D89AF !important; }
+.border-gray-cool-500 { border-color: #5D6A97 !important; }
+.border-gray-cool-600 { border-color: #4A5578 !important; }
+.border-gray-cool-700 { border-color: #404968 !important; }
+.border-gray-cool-800 { border-color: #30374E !important; }
+.border-gray-cool-900 { border-color: #111322 !important; }
 
 .hover\:bg-gray-cool-50:hover { background-color: #F9F9FB; }
 .hover\:bg-gray-cool-100:hover { background-color: #EFF1F5; }

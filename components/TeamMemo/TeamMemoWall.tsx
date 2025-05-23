@@ -369,7 +369,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <h1 className="text-3xl font-bold text-gray-cool-800">Memo</h1>
           <Button 
             onClick={createNewMemo}
-            className="bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 px-4 py-2"
+            className="bg-[#3b82f6] text-white hover:bg-[#2563eb] text-sm font-normal uppercase tracking-wide outline outline-2 outline-offset-[-2px] outline-[#1e40af] rounded-md transition-all duration-200 px-4 py-2 shadow-sm"
           >
             <Plus className="w-4 h-4 mr-2" />
             ADD MEMO
@@ -473,13 +473,12 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
       </div>
 
       {/* Memos Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
         <AnimatePresence>
           {filteredMemos.map((memo, index) => {
             const colorClasses = getColorClasses(memo.color)
             const isEditing = editingMemoId === memo.id
-            const taggedTodos = getTaggedTodos(isEditing ? editTaggedTodos : (memo.tagged_todos || []))
-            
+            const taggedTodos = getTaggedTodos(isEditing ? editTaggedTodos : (memo.tagged_todos || []))            
             return (
               <motion.div
                 key={memo.id}
@@ -493,7 +492,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 whileHover={{ scale: 1.05, rotateZ: 0, zIndex: 10 }}
-                className={`relative min-h-[250px] p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-none ${colorClasses.shadow} hover:shadow-xl transition-all duration-200 group cursor-pointer transform`}
+                className={`relative p-4 ${colorClasses.bg} ${colorClasses.border} border-2 rounded-none ${colorClasses.shadow} hover:shadow-xl transition-all duration-200 group cursor-pointer transform`}
                 style={{
                   transform: `rotate(${Math.random() * 6 - 3}deg)`,
                   boxShadow: '0 4px 15px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1)'
@@ -514,15 +513,15 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                 )}
 
                 {/* Content */}
-                <div className="mb-4">
+                <div className="flex flex-col h-full">
                   {isEditing ? (
-                    <div className="space-y-2 relative">
+                    <div className="flex flex-col h-full relative">
                       <Textarea
                         ref={textareaRef}
                         value={editContent}
                         onChange={(e) => handleContentChange(e.target.value)}
-                        className="bg-white/80 border-none resize-none text-sm min-h-[100px]"
-                        rows={4}
+                        className="bg-white/80 border-none resize-none text-base flex-1 mb-3 p-3 rounded-md"
+                        rows={8}
                         placeholder="Type # to link tasks..."
                         autoFocus
                         onKeyDown={(e) => {
@@ -536,16 +535,15 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                       
                       {/* Todo Search Dropdown */}
                       {showTodoSearch && (
-                        <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
+                        <div className="absolute top-[calc(100%-80px)] left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-48 overflow-y-auto">
                           {filteredTodos.length > 0 ? (
                             filteredTodos.map(todo => (
                               <div
                                 key={todo.id}
-                                onClick={() => selectTodo(todo)}
-                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                onClick={() => selectTodo(todo)}                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                               >
                                 <div className="flex items-center justify-between">
-                                  <span className="font-medium truncate flex-1 mr-2 text-sm">
+                                  <span className="font-medium truncate flex-1 mr-2 text-base">
                                     {todo.title}
                                   </span>
                                   <div className="flex items-center gap-2 text-xs">
@@ -565,99 +563,97 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
                               </div>
                             ))
                           ) : (
-                            <div className="p-3 text-gray-500 text-sm">
+                            <div className="p-3 text-gray-500 text-base">
                               No tasks found for "{todoSearchQuery}"
                             </div>
                           )}
                         </div>
                       )}
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-3 mt-auto">
                         <Button
                           size="sm"
                           onClick={() => saveMemo(memo.id)}
-                          className="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 hover:border-blue-400 active:bg-blue-200 text-xs px-2 py-1 h-6 font-medium"
+                          className="bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 hover:border-blue-400 active:bg-blue-200 px-4 py-2 h-10 font-medium flex-1"
                         >
                           Save
                         </Button>
                         <Button
                           size="sm"
                           onClick={cancelEditing}
-                          className="bg-[#F9F9FB] hover:bg-[#EFF1F5] text-[#7D89AF] border border-[#B9C0D4] hover:border-[#7D89AF] active:bg-[#DCDFEA] text-xs px-2 py-1 h-6"
+                          className="bg-[#F9F9FB] hover:bg-[#EFF1F5] text-[#7D89AF] border border-[#B9C0D4] hover:border-[#7D89AF] active:bg-[#DCDFEA] px-4 py-2 h-10 flex-1"
                         >
                           Cancel
                         </Button>
                       </div>
                     </div>
                   ) : (
-                    <div className={`text-gray-800 text-sm font-medium whitespace-pre-wrap leading-relaxed ${
-                      memo.content === "Double click to edit..." ? "text-gray-500 italic" : ""
-                    }`}>
-                      {memo.content.split(/(#[^#\s]+)/g).map((part, index) => {
-                        if (part.startsWith('#')) {
-                          const todoTitle = part.substring(1)
-                          const linkedTodo = todos.find(todo => todo.title === todoTitle)
-                          return linkedTodo ? (
-                            <span 
-                              key={index} 
-                              className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EFF1F5] text-[#5D6A97] rounded-md text-xs font-medium mx-0.5 border border-[#B9C0D4]"
-                            >
-                              <Hash className="w-3 h-3" />
-                              {todoTitle}
-                            </span>
-                          ) : (
-                            <span key={index} className="text-gray-500">#{todoTitle}</span>
-                          )
-                        }
-                        return part
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Tagged Todos */}
-                {taggedTodos.length > 0 && !isEditing && (
-                  <div className="space-y-2 mb-3">
-                    <div className="flex items-center gap-1 text-xs text-gray-600">
-                      <Hash className="w-3 h-3" />
-                      <span>Linked Tasks</span>
-                    </div>
-                    {taggedTodos.map(todo => (
-                      <div key={todo.id} className="bg-white/80 p-2 rounded text-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium truncate flex-1 mr-2">
-                            {todo.title}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            {todo.due_date && (
-                              <span className="text-gray-500">
-                                {format(new Date(todo.due_date), 'MM/dd')}
+                    <>                      <div className={`text-gray-800 text-base font-medium whitespace-pre-wrap leading-relaxed mb-3 ${
+                        memo.content === "Double click to edit..." ? "text-gray-500 italic" : ""
+                      }`}>
+                        {memo.content.split(/(#[^#\s]+)/g).map((part, index) => {
+                          if (part.startsWith('#')) {
+                            const todoTitle = part.substring(1)
+                            const linkedTodo = todos.find(todo => todo.title === todoTitle)
+                            return linkedTodo ? (
+                              <span 
+                                key={index} 
+                                className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#EFF1F5] text-[#5D6A97] rounded-md text-xs font-medium mx-0.5 border border-[#B9C0D4]"
+                              >
+                                <Hash className="w-3 h-3" />
+                                {todoTitle}
                               </span>
-                            )}
-                            <span className={`px-1.5 py-0.5 rounded text-white text-xs ${getStatusColor(todo.status)}`}>
-                              {getStatusText(todo.status)}
-                            </span>
-                            <span className="text-gray-500 ml-1">
-                              {todo.user?.full_name?.split(' ')[0] || 'N/A'}
-                            </span>
+                            ) : (
+                              <span key={index} className="text-gray-500">#{todoTitle}</span>
+                            )
+                          }
+                          return part
+                        })}
+                      </div>
+
+                      {/* Tagged Todos */}
+                      {taggedTodos.length > 0 && (
+                        <div className="space-y-2 mt-auto">
+                          <div className="flex items-center gap-1 text-sm text-gray-600 font-semibold uppercase tracking-wide">
+                            <Hash className="w-3 h-3" />
+                            <span>LINKED TASKS</span>
                           </div>
+                          {taggedTodos.map(todo => (
+                            <div key={todo.id} className="bg-white/80 p-2 rounded text-sm">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium truncate flex-1 mr-2">
+                                  {todo.title}
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  {todo.due_date && (
+                                    <span className="text-gray-500">
+                                      {format(new Date(todo.due_date), 'MM/dd')}
+                                    </span>
+                                  )}
+                                  <span className={`px-1.5 py-0.5 rounded text-white text-xs ${getStatusColor(todo.status)}`}>
+                                    {getStatusText(todo.status)}
+                                  </span>
+                                  <span className="text-gray-500 ml-1">
+                                    {todo.user?.full_name?.split(' ')[0] || 'N/A'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}                        </div>
+                      )}
+
+                      {/* Author and date */}
+                      <div className="text-sm text-gray-600 mt-auto pt-3">
+                        <div className="font-medium">
+                          {memo.user?.full_name || memo.user?.email || 'Unknown User'}
+                        </div>
+                        <div className="opacity-70">
+                          {new Date(memo.created_at).toLocaleDateString()}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Author and date */}
-                {!isEditing && (
-                  <div className="text-xs text-gray-600 mt-auto">
-                    <div className="font-medium">
-                      {memo.user?.full_name || memo.user?.email || 'Unknown User'}
-                    </div>
-                    <div className="opacity-70">
-                      {new Date(memo.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                )}
+                    </>
+                  )}
+                </div>
               </motion.div>
             )
           })}

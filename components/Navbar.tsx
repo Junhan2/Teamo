@@ -38,7 +38,7 @@ export default function Navbar({ user }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#FCFCFD]/90 border-b border-[#DCDFEA]">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-cool-25/90 border-b border-gray-cool-200">
       <div className="container mx-auto max-w-5xl">
         <div className="flex justify-between items-center px-4 h-16">
           <Link href="/dashboard" className="text-2xl tracking-tight flex items-center gap-2 relative">
@@ -57,7 +57,7 @@ export default function Navbar({ user }: NavbarProps) {
               
               {/* tide text overlapping with the image */}
               <span 
-                className="text-[#404968] font-black font-dm-sans relative z-10 text-xl"
+                className="text-gray-cool-700 font-black font-dm-sans relative z-10 text-xl"
                 style={{
                   textShadow: "0 1px 3px rgba(0, 0, 0, 0.05)"
                 }}
@@ -73,47 +73,47 @@ export default function Navbar({ user }: NavbarProps) {
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-10 w-10 rounded-full p-0 hover:bg-[#EFF1F5] transition-all duration-200">
-                    <Avatar className="h-10 w-10 ring-2 ring-[#DCDFEA] ring-offset-2 ring-offset-[#FCFCFD]">
+                  <Button variant="ghost" className="h-10 w-10 rounded-full p-0 hover:bg-gray-cool-100 transition-all duration-200">
+                    <Avatar className="h-10 w-10 ring-2 ring-gray-cool-200 ring-offset-2 ring-offset-gray-cool-25">
                       {user.avatar_url ? (
                         <AvatarImage src={user.avatar_url} alt={user.full_name || user.email} />
                       ) : (
-                        <AvatarFallback className="bg-gradient-to-br from-[#404968] to-[#30374E] text-white">
+                        <AvatarFallback className="bg-gradient-to-br from-gray-cool-700 to-gray-cool-800 text-white">
                           <User size={16} />
                         </AvatarFallback>
                       )}
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-72 bg-[#FCFCFD] border-[#DCDFEA] shadow-2xl rounded-2xl p-2">
+                <DropdownMenuContent align="end" className="w-72 bg-gray-cool-25 border-gray-cool-200 shadow-2xl rounded-2xl p-2">
                   <DropdownMenuLabel className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-12 w-12">
                         {user.avatar_url ? (
                           <AvatarImage src={user.avatar_url} alt={user.full_name || user.email} />
                         ) : (
-                          <AvatarFallback className="bg-gradient-to-br from-[#404968] to-[#30374E] text-white text-sm">
+                          <AvatarFallback className="bg-gradient-to-br from-gray-cool-700 to-gray-cool-800 text-white text-sm">
                             {user.full_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
                           </AvatarFallback>
                         )}
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[#404968] truncate">{user.full_name || 'User'}</p>
-                        <p className="text-xs text-[#7D89AF] truncate">{user.email}</p>
+                        <p className="text-sm font-semibold text-gray-cool-700 truncate">{user.full_name || 'User'}</p>
+                        <p className="text-xs text-gray-cool-400 truncate">{user.email}</p>
                       </div>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#EFF1F5] my-1" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-[#EFF1F5] focus:bg-[#EFF1F5] text-[#5D6A97] rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+                  <DropdownMenuSeparator className="bg-gray-cool-100 my-1" />
+                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-cool-100 focus:bg-gray-cool-100 text-gray-cool-500 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
                     My Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-[#EFF1F5] focus:bg-[#EFF1F5] text-[#5D6A97] rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-cool-100 focus:bg-gray-cool-100 text-gray-cool-500 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#EFF1F5] my-1" />
+                  <DropdownMenuSeparator className="bg-gray-cool-100 my-1" />
                   <DropdownMenuItem 
                     onClick={handleSignOut} 
-                    className="text-[#5D6A97] cursor-pointer hover:bg-[#EFF1F5] hover:text-[#404968] focus:bg-[#EFF1F5] focus:text-[#404968] rounded-lg px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2"
+                    className="text-gray-cool-500 cursor-pointer hover:bg-gray-cool-100 hover:text-gray-cool-700 focus:bg-gray-cool-100 focus:text-gray-cool-700 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2"
                   >
                     <LogOut className="w-4 h-4" />
                     Sign Out
