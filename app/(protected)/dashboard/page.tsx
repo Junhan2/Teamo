@@ -505,57 +505,57 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-3">
                 {/* Complete */}
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-emerald-50 border border-emerald-200 h-12">
                   <div 
-                    className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 ease-out"
+                    className="absolute inset-0 bg-[#d1fae5] transition-all duration-700 ease-out"
                     style={{
                       width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
                     }}
                   ></div>
                   <div className="relative z-10 h-full flex items-center justify-between px-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
-                      <span className="text-sm font-medium text-gray-700">Complete</span>
+                      <div className="w-2 h-2 rounded-full bg-[#059669]"></div>
+                      <span className="text-sm font-medium text-[#065f46]">Complete</span>
                     </div>
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-[#065f46]">
                       {todoStats.completed}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-blue-50 border border-blue-200 h-12">
                   <div 
-                    className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700 ease-out"
+                    className="absolute inset-0 bg-[#dbeafe] transition-all duration-700 ease-out"
                     style={{
                       width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
                     }}
                   ></div>
                   <div className="relative z-10 h-full flex items-center justify-between px-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
-                      <span className="text-sm font-medium text-gray-700">Doing</span>
+                      <div className="w-2 h-2 rounded-full bg-[#2563eb]"></div>
+                      <span className="text-sm font-medium text-[#1e40af]">Doing</span>
                     </div>
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-[#1e40af]">
                       {todoStats.inProgress}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.inProgress / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="relative rounded-xl overflow-hidden bg-gray-100 h-12">
+                <div className="relative rounded-xl overflow-hidden bg-amber-50 border border-amber-200 h-12">
                   <div 
-                    className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700 ease-out"
+                    className="absolute inset-0 bg-[#fef3c7] transition-all duration-700 ease-out"
                     style={{
                       width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
                     }}
                   ></div>
                   <div className="relative z-10 h-full flex items-center justify-between px-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-white/80"></div>
-                      <span className="text-sm font-medium text-gray-700">Not yet</span>
+                      <div className="w-2 h-2 rounded-full bg-[#d97706]"></div>
+                      <span className="text-sm font-medium text-[#92400e]">Not yet</span>
                     </div>
-                    <span className="text-sm font-semibold text-gray-700">
+                    <span className="text-sm font-semibold text-[#92400e]">
                       {todoStats.pending}/{todoStats.total} ({todoStats.total > 0 ? Math.round((todoStats.pending / todoStats.total) * 100) : 0}%)
                     </span>
                   </div>
