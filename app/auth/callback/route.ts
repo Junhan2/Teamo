@@ -1,35 +1,86 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/auth/supabase-server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
-  // 쿠키 기반 클라이언트 생성 (서버 사이드)
-  const supabase = await createClient()
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') || '/dashboard'
   
-  if (code) {
-    try {
-      // PKCE 인증 흐름 완료
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
-      if (!error) {
-        // 성공적으로 세션을 획득했으므로 대시보드로 리다이렉션
-        return NextResponse.redirect(`${origin}${next}`)
-      }
-      console.error('Error during auth code exchange:', error)
-      
-      // 오류 메시지를 URL 파라미터로 전달
-      const errorMsg = encodeURIComponent(error.message || '인증 코드 교환 중 오류 발생')
-      return NextResponse.redirect(`${origin}/auth/error?error=${errorMsg}`)
-    } catch (err: any) {
-      console.error('Exception during auth callback:', err)
-      
-      // 오류 메시지를 URL 파라미터로 전달
-      const errorMsg = encodeURIComponent(err?.message || '인증 콜백 처리 중 예외 발생')
-      return NextResponse.redirect(`${origin}/auth/error?error=${errorMsg}`)
-    }
+  console.log('🔄 Auth callback started:', { code: !!code, next })
+
+  if (!code) {
+    console.error('❌ No auth code provided')
+    return NextResponse.redirect(`${origin}/auth/login?error=no_code`)
   }
 
-  // 코드가 없는 경우 오류 메시지와 함께 에러 페이지로 이동
-  return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent('인증 코드가 제공되지 않았습니다')}`)
+  try {
+    const cookieStore = await cookies()
+    
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+          set(name: string, value: string, options: any) {
+            try {
+              cookieStore.set({ name, value, ...options })
+            } catch (error) {
+              console.warn('Cookie set error:', error)
+            }
+          },
+          remove(name: string, options: any) {
+            try {
+              cookieStore.set({ name, value: '', ...options, maxAge: 0 })
+            } catch (error) {
+              console.warn('Cookie remove error:', error)
+            }
+          },
+        },
+      }
+    )
+    
+    console.log('🔄 Exchanging code for session...')
+    
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)    
+    if (error) {
+      console.error('❌ Auth exchange error:', error)
+      return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(error.message)}`)
+    }
+
+    if (!data.session) {
+      console.error('❌ No session data received')
+      return NextResponse.redirect(`${origin}/auth/login?error=no_session`)
+    }
+
+    console.log('✅ Session created:', data.session.user.email)
+    
+    // 사용자 프로필 확인/생성
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.session.user.id)
+      .single()
+    
+    if (profileError && profileError.code === 'PGRST116') {
+      console.log('📝 Creating user profile...')
+      await supabase.from('profiles').insert([{
+        id: data.session.user.id,
+        email: data.session.user.email,
+        full_name: data.session.user.user_metadata?.full_name,
+        avatar_url: data.session.user.user_metadata?.avatar_url
+      }])
+    }
+    
+    const redirectUrl = `${origin}${next}`
+    console.log('🚀 Redirecting to:', redirectUrl)
+    return NextResponse.redirect(redirectUrl)
+    
+  } catch (err: any) {
+    console.error('💥 Callback exception:', err)
+    return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(err?.message || 'callback_error')}`)
+  }
 }

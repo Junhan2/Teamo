@@ -10,6 +10,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
+  
+  // URL 파라미터에서 에러 메시지 확인
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
+  }, [])
 
   const handleGoogleSignIn = async () => {
     try {
