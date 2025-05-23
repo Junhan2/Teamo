@@ -931,10 +931,10 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                       {(filter === "my" || todo.user_id === userId) ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 hover:opacity-80`}>
+                            <Badge className={`${getStatusColor(todo.status)} text-sm px-2 py-1 h-6 rounded-sm shadow-sm cursor-pointer flex items-center gap-1 transition-all duration-200 hover:opacity-80 hover:scale-105 border-2 border-transparent hover:border-gray-400`}>
                               {getStatusIcon(todo.status)}
                               <span>{getStatusText(todo.status)}</span>
-                              <ChevronDown size={10} />
+                              <ChevronDown size={12} className="opacity-60" />
                             </Badge>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent 

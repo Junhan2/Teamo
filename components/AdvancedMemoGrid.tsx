@@ -50,6 +50,7 @@ export default function AdvancedMemoGrid() {
   const [showForm, setShowForm] = useState(false)
   const [newMemo, setNewMemo] = useState({ title: '', content: '' })
   const [hoveredMemo, setHoveredMemo] = useState<string | null>(null)
+  const [newlyCreatedMemoId, setNewlyCreatedMemoId] = useState<string | null>(null)
   const [contextMenu, setContextMenu] = useState<{
     memoId: string
     x: number
@@ -144,7 +145,7 @@ export default function AdvancedMemoGrid() {
         let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
         let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
         
-        const { error } = await supabase
+        const { data: insertedMemo, error } = await supabase
           .from('advanced_memos')
           .insert({
             title: newMemo.title,
@@ -157,9 +158,19 @@ export default function AdvancedMemoGrid() {
             height: DEFAULT_HEIGHT,
             is_expanded: false
           })
+          .select()
+          .single()
 
         if (error) throw error
-      } else {
+        
+        // 새로 생성된 메모 ID 저장
+        if (insertedMemo) {
+          setNewlyCreatedMemoId(insertedMemo.id)
+          // 5초 후 하이라이트 제거
+          setTimeout(() => {
+            setNewlyCreatedMemoId(null)
+          }, 5000)
+        } else {
         const rect = gridElement.getBoundingClientRect()
         const scrollLeft = gridElement.scrollLeft
         const scrollTop = gridElement.scrollTop
@@ -194,7 +205,7 @@ export default function AdvancedMemoGrid() {
           attempts++
         }
 
-        const { error } = await supabase
+        const { data: insertedMemo, error } = await supabase
           .from('advanced_memos')
           .insert({
             title: newMemo.title,
@@ -207,9 +218,19 @@ export default function AdvancedMemoGrid() {
             height: DEFAULT_HEIGHT,
             is_expanded: false
           })
+          .select()
+          .single()
 
         if (error) throw error
-      }
+        
+        // 새로 생성된 메모 ID 저장
+        if (insertedMemo) {
+          setNewlyCreatedMemoId(insertedMemo.id)
+          // 5초 후 하이라이트 제거
+          setTimeout(() => {
+            setNewlyCreatedMemoId(null)
+          }, 5000)
+        }
 
       setNewMemo({ title: '', content: '' })
       setShowForm(false)
@@ -560,13 +581,14 @@ export default function AdvancedMemoGrid() {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
           const isDragging = dragState.memoId === memo.id
           const isExpanded = memo.is_expanded || isHovered || viewState === 'expanded'
+          const isNewlyCreated = newlyCreatedMemoId === memo.id
           
           return (
             <div
               key={memo.id}
               className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
                 isDragging ? 'cursor-grabbing z-50 rotate-2 scale-105' : 'cursor-grab'
-              }`}
+              } ${isNewlyCreated ? 'animate-pulse' : ''}`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
@@ -578,7 +600,9 @@ export default function AdvancedMemoGrid() {
                           isDragging ? 'rotate(2deg) scale(1.05)' : 'none',
                 zIndex: isDragging ? 50 : (isHovered ? 30 : 10),
                 boxShadow: isDragging ? '0 20px 40px rgba(0,0,0,0.3)' : 
-                          isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)'
+                          isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)',
+                outline: isNewlyCreated ? '3px solid #3B82F6' : 'none',
+                outlineOffset: isNewlyCreated ? '2px' : '0'
               }}
               onMouseDown={(e) => handleMouseDown(e, memo.id)}
               onMouseEnter={() => handleMemoHover(memo.id, true)}
