@@ -27,14 +27,28 @@ export async function GET(request: Request) {
           },
           set(name: string, value: string, options: any) {
             try {
-              cookieStore.set({ name, value, ...options })
+              cookieStore.set({ 
+                name, 
+                value, 
+                ...options,
+                path: '/',
+                httpOnly: false,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+              })
             } catch (error) {
               console.warn('Cookie set error:', error)
             }
           },
           remove(name: string, options: any) {
             try {
-              cookieStore.set({ name, value: '', ...options, maxAge: 0 })
+              cookieStore.set({ 
+                name, 
+                value: '', 
+                ...options, 
+                maxAge: 0,
+                path: '/'
+              })
             } catch (error) {
               console.warn('Cookie remove error:', error)
             }
@@ -75,9 +89,28 @@ export async function GET(request: Request) {
       }])
     }
     
+    // 명시적 응답 생성 및 쿠키 설정
     const redirectUrl = `${origin}${next}`
     console.log('🚀 Redirecting to:', redirectUrl)
-    return NextResponse.redirect(redirectUrl)
+    
+    const response = NextResponse.redirect(redirectUrl)
+    
+    // 세션 쿠키를 수동으로 설정 (클라이언트에서 읽을 수 있도록)
+    const sessionCookies = await cookieStore.getAll()
+    sessionCookies.forEach(cookie => {
+      if (cookie.name.includes('supabase') || cookie.name.startsWith('sb-')) {
+        response.cookies.set({
+          name: cookie.name,
+          value: cookie.value,
+          path: '/',
+          httpOnly: false,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        })
+      }
+    })
+    
+    return response
     
   } catch (err: any) {
     console.error('💥 Callback exception:', err)

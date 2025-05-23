@@ -112,48 +112,69 @@ export default function DashboardPage() {
     const checkSession = async () => {
       try {
         setLoading(true)
-        const { data: { session }, error } = await supabase.auth.getSession()
+        console.log('🔍 Dashboard: Checking session...')
         
-        if (error || !session) {
-          router.push('/auth/login')
-          return
-        }
-
-        // 사용자 프로필 정보 가져오기
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError)
+        // 세션 체크를 여러 번 시도 (쿠키 동기화 대기)
+        let retryCount = 0
+        const maxRetries = 3
+        
+        while (retryCount < maxRetries) {
+          const { data: { session }, error } = await supabase.auth.getSession()
           
-          // 프로필이 없으면 생성 시도
-          if (profileError.code === 'PGRST116') {
-            const { data: newProfile, error: createError } = await supabase
+          console.log(`🔍 Session check attempt ${retryCount + 1}:`, { 
+            hasSession: !!session, 
+            user: session?.user?.email,
+            error: error?.message 
+          })
+          
+          if (session && !error) {
+            // 세션이 있으면 프로필 처리
+            const { data: profile, error: profileError } = await supabase
               .from('profiles')
-              .insert([{ 
-                id: session.user.id,
-                email: session.user.email,
-                full_name: session.user.user_metadata?.full_name,
-                avatar_url: session.user.user_metadata?.avatar_url
-              }])
-              .select()
+              .select('*')
+              .eq('id', session.user.id)
               .single()
-              
-            if (!createError && newProfile) {
-              setUser(newProfile)
-            } else {
-              console.error('Error creating profile:', createError)
-            }
-          }
-          return
-        }
 
-        setUser(profile)
+            if (profileError && profileError.code === 'PGRST116') {
+              // 프로필 생성
+              const { data: newProfile, error: createError } = await supabase
+                .from('profiles')
+                .insert([{ 
+                  id: session.user.id,
+                  email: session.user.email,
+                  full_name: session.user.user_metadata?.full_name,
+                  avatar_url: session.user.user_metadata?.avatar_url
+                }])
+                .select()
+                .single()
+                
+              if (!createError && newProfile) {
+                setUser(newProfile)
+              }
+            } else if (!profileError && profile) {
+              setUser(profile)
+            }
+            
+            console.log('✅ Dashboard: Session validated')
+            return // 성공시 함수 종료
+          }
+          
+          // 세션이 없으면 잠시 대기 후 재시도
+          if (retryCount < maxRetries - 1) {
+            console.log('⏳ Waiting for session sync...')
+            await new Promise(resolve => setTimeout(resolve, 1000))
+          }
+          
+          retryCount++
+        }
+        
+        // 모든 시도 실패시 로그인으로 리다이렉트
+        console.log('❌ Dashboard: No valid session found after retries')
+        router.push('/auth/login')
+        
       } catch (error) {
-        console.error('Error checking auth session:', error)
+        console.error('💥 Dashboard session check error:', error)
+        router.push('/auth/login')
       } finally {
         setLoading(false)
       }
