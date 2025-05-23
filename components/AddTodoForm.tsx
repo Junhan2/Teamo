@@ -221,8 +221,6 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
             <span>ADD TASK</span>
           </>
         )}
-          </>
-        )}
       </Button>
       
       {message && (
