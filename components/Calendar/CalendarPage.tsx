@@ -173,6 +173,13 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
                             )}
                             
                             <div className="flex items-center gap-2 mt-2">
+                              {/* Show due date */}
+                              {todo.due_date && (
+                                <span className="text-xs text-gray-600">
+                                  Due: {format(new Date(todo.due_date), 'yy-MM-dd')}
+                                </span>
+                              )}
+                              
                               {/* Show user name for team tasks */}
                               {todo.user_id !== user?.id && (
                                 <span className="px-2 py-1 text-xs rounded-sm bg-[#f5f5f5] text-[#171717] border border-[rgba(0,0,0,0.10)]">

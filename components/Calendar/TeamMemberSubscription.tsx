@@ -186,7 +186,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
       <div className="p-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent focus:outline-none focus:ring-0 border-0 bg-transparent"
+          className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent focus:outline-none focus:ring-0 border-0 bg-transparent cursor-pointer"
         >
           <div className="flex items-center gap-2">
             <Users size={16} className="text-[#171717]" />

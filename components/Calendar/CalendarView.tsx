@@ -492,7 +492,7 @@ const CalendarView = ({
                         {/* User color indicator */}
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
                         
-                        <span className="pl-1.5 truncate text-gray-cool-800">{todo.title}</span>
+                        <span className="pl-1.5 truncate text-gray-cool-800 text-sm">{todo.title}</span>
                         <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
                           {getStatusIcon(todo.status)}
                         </span>
@@ -566,7 +566,7 @@ const CalendarView = ({
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
                         
                         <div className="pl-2">
-                          <h4 className={`font-medium text-xs truncate leading-4 ${todo.status === 'completed' ? 'line-through text-gray-cool-500' : 'text-gray-cool-800'}`}>
+                          <h4 className={`font-medium text-sm truncate leading-4 ${todo.status === 'completed' ? 'line-through text-gray-cool-500' : 'text-gray-cool-800'}`}>
                             {todo.title}
                           </h4>
                           <div className="flex items-center justify-between mt-1">
