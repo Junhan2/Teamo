@@ -114,7 +114,7 @@ export default function CalendarPageRoute() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-600 hover:to-sky-700 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-semibold"
+            className="rounded-full bg-gray-cool-700 text-white hover:bg-gray-cool-800 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-semibold"
           >
             <Calendar className="w-4 h-4" />
             <span>Calendar</span>

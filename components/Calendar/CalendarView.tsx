@@ -466,7 +466,7 @@ const CalendarView = ({
                       className={`
                         text-sm font-semibold rounded-full w-6 h-6 flex items-center justify-center
                         ${!isCurrentMonth ? 'text-gray-cool-500' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-gray-cool-800'}
-                        ${isCurrentDay ? 'bg-gray-cool-700 text-white' : ''}
+                        ${isCurrentDay ? 'bg-gray-cool-200 text-gray-cool-800 ring-2 ring-gray-cool-400' : ''}
                       `}
                     >
                       {format(day, 'd')}
@@ -537,7 +537,7 @@ const CalendarView = ({
                       className={`
                         text-lg sm:text-xl font-bold rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-1
                         ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-gray-cool-800'}
-                        ${isCurrentDay ? 'bg-gray-cool-700 text-white' : 'bg-gray-cool-50'}
+                        ${isCurrentDay ? 'bg-gray-cool-200 text-gray-cool-800 ring-2 ring-gray-cool-400' : 'bg-gray-cool-50'}
                       `}
                     >
                       {format(day, 'd')}

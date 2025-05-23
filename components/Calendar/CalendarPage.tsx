@@ -102,9 +102,9 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         </h1>
       </div>
       
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        {/* Main calendar view - full width on mobile */}
-        <div className="xl:col-span-2 order-2 xl:order-1">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
+        {/* Main calendar view - wider on desktop */}
+        <div className="xl:col-span-3 order-2 xl:order-1">
           <CalendarView
             userId={user.id}
             onTaskUpdate={handleTaskUpdate}

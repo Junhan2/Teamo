@@ -7,6 +7,8 @@ export async function middleware(request: NextRequest) {
   // 보호된 경로 체크
   const isProtectedRoute = 
     pathname.startsWith('/dashboard') ||
+    pathname.startsWith('/calendar') ||
+    pathname.startsWith('/memos') ||
     pathname === '/'
 
   // 인증 경로 체크
@@ -68,6 +70,8 @@ export const config = {
   matcher: [
     '/',
     '/dashboard/:path*',
+    '/calendar/:path*',
+    '/memos/:path*',
     '/auth/login',
   ],
 }
