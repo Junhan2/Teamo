@@ -918,11 +918,6 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                           )}
                         </div>
                       )}
-                              D+{Math.abs(calculateDaysLeft(todo.due_date))}
-                            </span>
-                          )}
-                        </div>
-                      )}
                       
                       {todo.due_date && todo.status === 'completed' && (
                         <div className="flex items-center bg-gray-50 px-3 py-1 rounded-md border border-gray-cool-200 shadow-sm">
