@@ -29,7 +29,35 @@ const config: Config = {
     // Sky colors for buttons
     'from-sky-500', 'to-sky-600', 'from-sky-600', 'to-sky-700',
     'focus:ring-sky-300', 'bg-sky-100', 'bg-sky-200', 'text-sky-700',
-    'border-sky-600', 'border-sky-700', 'bg-blue-300', 'border-sky-900'
+    'border-sky-600', 'border-sky-700', 'bg-blue-300', 'border-sky-900',
+    // Additional classes for components
+    'bg-gradient-to-br', 'from-gray-cool-25', 'via-gray-cool-50', 'to-gray-cool-100/50',
+    'bg-white', 'bg-white/90', 'bg-white/80', 'backdrop-blur-md', 'backdrop-blur-sm',
+    'shadow-sm', 'shadow-md', 'shadow-lg', 'shadow-xl', 'shadow-2xl',
+    'rounded-md', 'rounded-lg', 'rounded-xl', 'rounded-2xl', 'rounded-full',
+    'border', 'border-2', 'outline', 'outline-1', 'outline-offset-[-1px]', 'outline-black/20',
+    'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl',
+    'font-normal', 'font-medium', 'font-semibold', 'font-bold',
+    'uppercase', 'tracking-wide', 'animate-fadeIn', 'animate-pulse',
+    // Specific color values
+    'bg-[#EFF1F5]', 'bg-[#DCDFEA]', 'bg-[#F9F9FB]', 'bg-[#404968]', 'bg-[#30374E]',
+    'text-[#404968]', 'text-[#7D89AF]', 'text-[#5D6A97]', 'text-[#065f46]', 'text-[#1e40af]', 'text-[#92400e]',
+    'hover:bg-[#EFF1F5]', 'hover:bg-[#DCDFEA]', 'hover:bg-[#30374E]',
+    'border-[#B9C0D4]', 'border-[#DCDFEA]', 'border-[#059669]', 'border-[#2563eb]', 'border-[#d97706]',
+    'bg-[#d1fae5]', 'bg-[#dbeafe]', 'bg-[#fef3c7]',
+    // Status colors
+    'bg-emerald-100', 'bg-emerald-200', 'bg-emerald-300', 'bg-emerald-400', 'bg-emerald-500',
+    'text-emerald-600', 'text-emerald-700', 'text-emerald-800',
+    'bg-blue-100', 'bg-blue-200', 'bg-blue-300', 'bg-blue-400', 'bg-blue-500',
+    'text-blue-600', 'text-blue-700', 'text-blue-800',
+    'bg-amber-100', 'bg-amber-200', 'bg-amber-300', 'bg-amber-400', 'bg-amber-500',
+    'text-amber-600', 'text-amber-700', 'text-amber-800',
+    'border-emerald-400', 'border-white', 'animate-pulse',
+    // Gradient classes
+    'bg-gradient-to-r', 'from-sky-400', 'to-sky-600', 'from-sky-500', 'to-sky-600',
+    'from-sky-600', 'to-sky-700', 'hover:from-sky-600', 'hover:to-sky-700',
+    'from-emerald-400', 'to-emerald-500', 'from-blue-400', 'to-blue-500',
+    'from-amber-400', 'to-amber-500'
   ],
   theme: {
   	extend: {
