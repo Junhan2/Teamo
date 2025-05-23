@@ -316,7 +316,7 @@ const CalendarView = ({
   return (
     <div className="space-y-4">
       {/* Calendar Header */}
-      <div className="bg-white rounded-xl shadow-md border border-gray-cool-200 p-4 mx-2">
+      <div className="bg-white rounded-xl shadow-md border border-gray-cool-200 p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-semibold text-gray-cool-800">

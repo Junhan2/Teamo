@@ -94,7 +94,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
   }
 
   return (
-    <div className="w-full animate-fadeIn max-w-7xl mx-auto">
+    <div className="w-full animate-fadeIn mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-sm font-medium text-[#171717] uppercase tracking-[.1em] leading-[1.5rem] font-[600] font-['Inter'] flex items-center">
           <Calendar className="mr-2" size={16} />
@@ -102,9 +102,9 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
         </h1>
       </div>
       
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-        {/* Main calendar view - wider on desktop */}
-        <div className="xl:col-span-4 order-2 xl:order-1">
+      <div className="grid grid-cols-1 2xl:grid-cols-[1fr_400px] gap-6">
+        {/* Main calendar view - flexible width */}
+        <div className="order-2 2xl:order-1">
           <CalendarView
             userId={user.id}
             onTaskUpdate={handleTaskUpdate}
@@ -114,8 +114,8 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
           />
         </div>
         
-        {/* Sidebar with controls and selected date tasks */}
-        <div className="xl:col-span-1 space-y-4 order-1 xl:order-2">
+        {/* Sidebar with controls and selected date tasks - fixed width */}
+        <div className="space-y-4 order-1 2xl:order-2">
           {/* Team Member Subscription */}
           <div>
             <TeamMemberSubscription

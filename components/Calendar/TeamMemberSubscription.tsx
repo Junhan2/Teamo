@@ -173,7 +173,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
 
   if (loading) {
     return (
-      <div className="bg-gray-cool-50 rounded-xl shadow-md border border-gray-cool-200 p-4">
+      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500"></div>
         </div>
@@ -182,22 +182,21 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
   }
 
   return (
-    <div className="bg-gray-cool-50 rounded-xl shadow-md border border-gray-cool-200">
+    <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)]">
       <div className="p-4">
-        <Button
-          variant="ghost"
+        <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent focus:outline-none focus:ring-0"
+          className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent focus:outline-none focus:ring-0 border-0 bg-transparent"
         >
           <div className="flex items-center gap-2">
-            <Users size={18} className="text-gray-cool-700" />
-            <span className="font-medium text-gray-cool-700 font-dm-sans">Subscription</span>
+            <Users size={16} className="text-[#171717]" />
+            <span className="text-sm text-[#171717]">Subscription</span>
           </div>
           <ChevronDown 
-            size={18} 
-            className={`text-gray-cool-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            size={16} 
+            className={`text-[#707070] transition-transform ${isOpen ? 'rotate-180' : ''}`}
           />
-        </Button>
+        </button>
         
         <AnimatePresence>
           {isOpen && (

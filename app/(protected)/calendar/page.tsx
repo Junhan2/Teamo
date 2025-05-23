@@ -92,7 +92,7 @@ export default function CalendarPageRoute() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
       <Navbar user={user} />
-      <main className="container mx-auto px-4 py-8 max-w-[1600px]">
+      <main className="container mx-auto px-6 py-8" style={{ maxWidth: '1920px' }}>
         <CalendarPage user={user} />
       </main>
       
