@@ -503,80 +503,71 @@ export default function DashboardPage() {
                 </div>
                 STATISTICS
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Complete */}
-                <div className="p-4 rounded-xl bg-[#d1fae5] border border-[#059669]">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                      </div>
-                      <span className="text-sm font-semibold text-[#065f46]">Complete</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-[#065f46]">{todoStats.completed}</span>
-                      <span className="text-sm text-[#065f46]">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <span className="text-sm font-medium text-emerald-700">Complete</span>
                   </div>
-                  <div className="w-full bg-emerald-200/30 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="h-2 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-700 ease-out"
-                      style={{
-                        width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
-                      }}
-                    ></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 bg-emerald-100 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="h-1.5 rounded-full bg-emerald-500 transition-all duration-700 ease-out"
+                        style={{
+                          width: `${todoStats.total > 0 ? (todoStats.completed / todoStats.total) * 100 : 0}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-semibold text-emerald-700 min-w-[3rem] text-right">
+                      {todoStats.completed}/{todoStats.total}
+                    </span>
                   </div>
                 </div>
                 
                 {/* Doing */}
-                <div className="p-4 rounded-xl bg-[#dbeafe] border border-[#2563eb]">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      </div>
-                      <span className="text-sm font-semibold text-[#1e40af]">Doing</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-[#1e40af]">{todoStats.inProgress}</span>
-                      <span className="text-sm text-[#1e40af]">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <span className="text-sm font-medium text-blue-700">Doing</span>
                   </div>
-                  <div className="w-full bg-blue-200/30 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 transition-all duration-700 ease-out"
-                      style={{
-                        width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
-                      }}
-                    ></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 bg-blue-100 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="h-1.5 rounded-full bg-blue-500 transition-all duration-700 ease-out"
+                        style={{
+                          width: `${todoStats.total > 0 ? (todoStats.inProgress / todoStats.total) * 100 : 0}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-semibold text-blue-700 min-w-[3rem] text-right">
+                      {todoStats.inProgress}/{todoStats.total}
+                    </span>
                   </div>
                 </div>
                 
                 {/* Not yet */}
-                <div className="p-4 rounded-xl bg-[#fef3c7] border border-[#d97706]">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                      </div>
-                      <span className="text-sm font-semibold text-[#92400e]">Not yet</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-[#92400e]">{todoStats.pending}</span>
-                      <span className="text-sm text-[#92400e]">/ {todoStats.total}</span>
-                    </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-amber-50 border border-amber-200">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                    <span className="text-sm font-medium text-amber-700">Not yet</span>
                   </div>
-                  <div className="w-full bg-amber-200/30 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="h-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-700 ease-out"
-                      style={{
-                        width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
-                      }}
-                    ></div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 bg-amber-100 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className="h-1.5 rounded-full bg-amber-500 transition-all duration-700 ease-out"
+                        style={{
+                          width: `${todoStats.total > 0 ? (todoStats.pending / todoStats.total) * 100 : 0}%`,
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm font-semibold text-amber-700 min-w-[3rem] text-right">
+                      {todoStats.pending}/{todoStats.total}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className="mt-8" style={{ overflow: 'visible' }}>
+              <div className="mt-6" style={{ overflow: 'visible' }}>
                 {user && <ContributionGraph userId={user.id} />}
               </div>
             </div>
