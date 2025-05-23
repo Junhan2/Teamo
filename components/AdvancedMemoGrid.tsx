@@ -170,7 +170,8 @@ export default function AdvancedMemoGrid() {
           setTimeout(() => {
             setNewlyCreatedMemoId(null)
           }, 5000)
-        } else {
+        }
+      } else {
         const rect = gridElement.getBoundingClientRect()
         const scrollLeft = gridElement.scrollLeft
         const scrollTop = gridElement.scrollTop
