@@ -114,69 +114,85 @@ export default function DashboardPage() {
         setLoading(true)
         console.log('🔍 Dashboard: Checking session...')
         
-        // 세션 체크를 여러 번 시도 (쿠키 동기화 대기)
-        let retryCount = 0
-        const maxRetries = 3
-        
-        while (retryCount < maxRetries) {
-          const { data: { session }, error } = await supabase.auth.getSession()
-          
-          console.log(`🔍 Session check attempt ${retryCount + 1}:`, { 
-            hasSession: !!session, 
-            user: session?.user?.email,
-            error: error?.message 
-          })
-          
-          if (session && !error) {
-            // 세션이 있으면 프로필 처리
-            const { data: profile, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single()
-
-            if (profileError && profileError.code === 'PGRST116') {
-              // 프로필 생성
-              const { data: newProfile, error: createError } = await supabase
-                .from('profiles')
-                .insert([{ 
-                  id: session.user.id,
-                  email: session.user.email,
-                  full_name: session.user.user_metadata?.full_name,
-                  avatar_url: session.user.user_metadata?.avatar_url
-                }])
-                .select()
-                .single()
-                
-              if (!createError && newProfile) {
-                setUser(newProfile)
-              }
-            } else if (!profileError && profile) {
-              setUser(profile)
-            }
+        // 먼저 auth 상태 변화 리스너 설정
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log('🔍 Auth state change:', event, session?.user?.email)
             
-            console.log('✅ Dashboard: Session validated')
-            return // 성공시 함수 종료
+            if (event === 'SIGNED_IN' && session) {
+              // 로그인 완료시 프로필 처리
+              await handleUserProfile(session)
+              setLoading(false)
+            } else if (event === 'SIGNED_OUT' || !session) {
+              console.log('❌ Session expired or signed out')
+              setUser(null)
+              setLoading(false)
+              router.push('/auth/login')
+            }
           }
-          
-          // 세션이 없으면 잠시 대기 후 재시도
-          if (retryCount < maxRetries - 1) {
-            console.log('⏳ Waiting for session sync...')
-            await new Promise(resolve => setTimeout(resolve, 1000))
-          }
-          
-          retryCount++
+        )
+        
+        // 현재 세션 상태 확인
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        console.log('🔍 Current session:', { 
+          hasSession: !!session, 
+          user: session?.user?.email,
+          error: error?.message 
+        })
+        
+        if (session && !error) {
+          await handleUserProfile(session)
+        } else {
+          console.log('❌ No valid session, redirecting to login')
+          router.push('/auth/login')
         }
         
-        // 모든 시도 실패시 로그인으로 리다이렉트
-        console.log('❌ Dashboard: No valid session found after retries')
-        router.push('/auth/login')
+        setLoading(false)
+        
+        // Cleanup subscription
+        return () => {
+          subscription.unsubscribe()
+        }
         
       } catch (error) {
         console.error('💥 Dashboard session check error:', error)
-        router.push('/auth/login')
-      } finally {
         setLoading(false)
+        router.push('/auth/login')
+      }
+    }
+
+    const handleUserProfile = async (session: any) => {
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+
+        if (profileError && profileError.code === 'PGRST116') {
+          // 프로필 생성
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert([{ 
+              id: session.user.id,
+              email: session.user.email,
+              full_name: session.user.user_metadata?.full_name,
+              avatar_url: session.user.user_metadata?.avatar_url
+            }])
+            .select()
+            .single()
+            
+          if (!createError && newProfile) {
+            setUser(newProfile)
+            console.log('✅ Profile created and user set')
+          }
+        } else if (!profileError && profile) {
+          setUser(profile)
+          console.log('✅ Profile loaded and user set')
+        }
+      } catch (error) {
+        console.error('💥 Profile handling error:', error)
       }
     }
 

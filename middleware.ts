@@ -11,7 +11,8 @@ export async function middleware(request: NextRequest) {
       pathname.startsWith('/auth/callback') ||
       pathname.startsWith('/auth/error') ||
       pathname.startsWith('/_next') ||
-      pathname.startsWith('/api')) {
+      pathname.startsWith('/api') ||
+      pathname.includes('.')) { // 정적 파일들 건너뛰기
     return NextResponse.next()
   }
   
@@ -48,18 +49,25 @@ export async function middleware(request: NextRequest) {
       }
     )
 
-    const { data: { session }, error } = await supabase.auth.getSession()
-    const hasSession = !!session && !error
+    // 더 안정적인 세션 검증
+    const { data: { user }, error } = await supabase.auth.getUser()
+    const hasValidUser = !!(user && !error)
     
-    console.log('🔍 Session:', { hasSession, user: session?.user?.email, pathname })
+    console.log('🔍 User check:', { 
+      hasValidUser, 
+      email: user?.email, 
+      pathname,
+      error: error?.message 
+    })
+
     // 인증된 유저가 인증 페이지에 접근하면 대시보드로 리다이렉트
-    if (hasSession && isAuthRoute) {
+    if (hasValidUser && isAuthRoute) {
       console.log('🚀 Redirecting to dashboard (authenticated)')
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
     // 인증되지 않은 유저가 보호된 경로에 접근하면 로그인 페이지로 리다이렉트
-    if (!hasSession && isProtectedRoute) {
+    if (!hasValidUser && isProtectedRoute) {
       console.log('🚀 Redirecting to login (unauthenticated)')
       return NextResponse.redirect(new URL('/auth/login', request.url))
     }
