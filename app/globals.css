@@ -17,23 +17,6 @@ body {
   position: relative;
 }
 
-@layer base {
-  :root {
-    --gray-cool-25: #FCFCFD;
-    --gray-cool-50: #F9F9FB;
-    --gray-cool-100: #EFF1F5;
-    --gray-cool-200: #DCDFEA;
-    --gray-cool-300: #B9C0D4;
-    --gray-cool-400: #7D89AF;
-    --gray-cool-500: #5D6A97;
-    --gray-cool-600: #4A5578;
-    --gray-cool-700: #404968;
-    --gray-cool-800: #30374E;
-    --gray-cool-900: #111322;
-    --gray-cool-950: #0C0E19;
-  }
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -41,14 +24,6 @@ body {
   
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-out;
-  }
-  
-  .animate-slideIn {
-    animation: slideIn 0.3s ease-out;
-  }
-  
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
   @keyframes fadeIn {
@@ -61,24 +36,5 @@ body {
       transform: translateY(0);
     }
   }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: .5;
-    }
-  }
 }
+EOF < /dev/null
