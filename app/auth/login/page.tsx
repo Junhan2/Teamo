@@ -61,7 +61,7 @@ export default function LoginPage() {
                 letterSpacing: "-0.02em"
               }}
             >
-              Teamo
+              tide.
             </h1>
             <p 
               className="text-gray-cool-600 text-lg"
@@ -153,7 +153,7 @@ export default function LoginPage() {
             className="text-xs text-gray-cool-400"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            © 2025 Teamo. All rights reserved.
+            © 2025 Tide. All rights reserved.
           </p>
         </div>
       </div>

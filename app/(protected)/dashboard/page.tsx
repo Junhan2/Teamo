@@ -324,7 +324,7 @@ export default function DashboardPage() {
                 className="w-full text-base"
               >
                 <div className="flex justify-start mb-6">
-                  <TabsList className="relative bg-white/80 backdrop-blur-sm border border-gray-cool-200 rounded-2xl p-1.5 h-auto shadow-sm">
+                  <TabsList className="relative bg-[#F9F9FB] border border-[#B9C0D4] rounded-2xl p-1.5 h-auto shadow-sm">
                     {/* Animated background slider */}
                     <motion.div
                       className="absolute bg-white shadow-md rounded-xl"
@@ -352,7 +352,7 @@ export default function DashboardPage() {
                     >
                       <motion.div
                         animate={{
-                          color: activeTab === 'my-todos' ? '#475569' : '#94a3b8',
+                          color: activeTab === 'my-todos' ? '#404968' : '#7D89AF',
                         }}
                         transition={{ duration: 0.3 }}
                       >
@@ -360,7 +360,7 @@ export default function DashboardPage() {
                       </motion.div>
                       <motion.span
                         animate={{
-                          color: activeTab === 'my-todos' ? '#374151' : '#94a3b8',
+                          color: activeTab === 'my-todos' ? '#404968' : '#7D89AF',
                         }}
                         transition={{ duration: 0.3 }}
                       >
@@ -375,7 +375,7 @@ export default function DashboardPage() {
                     >
                       <motion.div
                         animate={{
-                          color: activeTab === 'team-todos' ? '#475569' : '#94a3b8',
+                          color: activeTab === 'team-todos' ? '#404968' : '#7D89AF',
                         }}
                         transition={{ duration: 0.3 }}
                       >
@@ -383,7 +383,7 @@ export default function DashboardPage() {
                       </motion.div>
                       <motion.span
                         animate={{
-                          color: activeTab === 'team-todos' ? '#374151' : '#94a3b8',
+                          color: activeTab === 'team-todos' ? '#404968' : '#7D89AF',
                         }}
                         transition={{ duration: 0.3 }}
                       >
@@ -427,7 +427,7 @@ export default function DashboardPage() {
           {/* 할일 추가 및 통계 섹션 */}
           <div className="w-full md:w-2/5 order-2 md:order-1 animate-fadeIn flex flex-col">
             {/* 할일 추가 섹션 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-cool-100 mb-6 hover:shadow-md transition-shadow duration-300" id="addTodoForm">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#DCDFEA] mb-6 hover:shadow-md transition-shadow duration-300" id="addTodoForm">
               <div className="p-6">
                 <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
@@ -448,7 +448,7 @@ export default function DashboardPage() {
             </div>
             
             {/* 통계 섹션 */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-cool-100 p-6 hover:shadow-md transition-shadow duration-300" style={{ overflow: 'visible' }}>
+            <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#DCDFEA] p-6 hover:shadow-md transition-shadow duration-300" style={{ overflow: 'visible' }}>
               <h2 className="text-sm font-semibold mb-5 text-gray-cool-700 uppercase tracking-wider flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
                   <BarChart3 className="w-4 h-4 text-purple-600" />
@@ -457,17 +457,17 @@ export default function DashboardPage() {
               </h2>
               <div className="space-y-4">
                 {/* Complete */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200">
+                <div className="p-4 rounded-xl bg-[#d1fae5] border border-[#059669]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
                         <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
                       </div>
-                      <span className="text-sm font-semibold text-emerald-700">Complete</span>
+                      <span className="text-sm font-semibold text-[#065f46]">Complete</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-emerald-700">{todoStats.completed}</span>
-                      <span className="text-sm text-emerald-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-[#065f46]">{todoStats.completed}</span>
+                      <span className="text-sm text-[#065f46]">/ {todoStats.total}</span>
                     </div>
                   </div>
                   <div className="w-full bg-emerald-200/30 rounded-full h-2 overflow-hidden">
@@ -481,17 +481,17 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Doing */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200">
+                <div className="p-4 rounded-xl bg-[#dbeafe] border border-[#2563eb]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                         <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                       </div>
-                      <span className="text-sm font-semibold text-blue-700">Doing</span>
+                      <span className="text-sm font-semibold text-[#1e40af]">Doing</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-blue-700">{todoStats.inProgress}</span>
-                      <span className="text-sm text-blue-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-[#1e40af]">{todoStats.inProgress}</span>
+                      <span className="text-sm text-[#1e40af]">/ {todoStats.total}</span>
                     </div>
                   </div>
                   <div className="w-full bg-blue-200/30 rounded-full h-2 overflow-hidden">
@@ -505,17 +505,17 @@ export default function DashboardPage() {
                 </div>
                 
                 {/* Not yet */}
-                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200">
+                <div className="p-4 rounded-xl bg-[#fef3c7] border border-[#d97706]">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
                         <div className="w-3 h-3 rounded-full bg-amber-500"></div>
                       </div>
-                      <span className="text-sm font-semibold text-amber-700">Not yet</span>
+                      <span className="text-sm font-semibold text-[#92400e]">Not yet</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-amber-700">{todoStats.pending}</span>
-                      <span className="text-sm text-amber-600">/ {todoStats.total}</span>
+                      <span className="text-2xl font-bold text-[#92400e]">{todoStats.pending}</span>
+                      <span className="text-sm text-[#92400e]">/ {todoStats.total}</span>
                     </div>
                   </div>
                   <div className="w-full bg-amber-200/30 rounded-full h-2 overflow-hidden">

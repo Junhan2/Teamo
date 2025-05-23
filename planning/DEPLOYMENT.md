@@ -1,11 +1,11 @@
-# Team Todo 프로젝트 배포 문서
+# Tide 프로젝트 배포 문서
 
 ## 1. 프로젝트 개요
 
-**Team Todo**는 팀의 작업을 효율적으로 관리하기 위한 현대적인 협업 도구입니다. 직관적인 인터페이스와 실시간 업데이트 기능을 통해 사용자들이 쉽게 작업을 추적하고, 진행 상황을 공유하며, 팀 생산성을 향상시킬 수 있습니다.
+**Tide**는 팀의 작업을 효율적으로 관리하기 위한 현대적인 협업 도구입니다. 직관적인 인터페이스와 실시간 업데이트 기능을 통해 사용자들이 쉽게 작업을 추적하고, 진행 상황을 공유하며, 팀 생산성을 향상시킬 수 있습니다.
 
-**배포 URL**: [https://teamo-tau.vercel.app](https://teamo-tau.vercel.app)
-**GitHub 저장소**: [https://github.com/Junhan2/Teamo](https://github.com/Junhan2/Teamo)
+**배포 URL**: [https://tide-tau.vercel.app](https://tide-tau.vercel.app)
+**GitHub 저장소**: [https://github.com/Junhan2/Tide](https://github.com/Junhan2/Tide)
 
 ## 2. 기술 스택
 
@@ -49,8 +49,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 ### 4.2 Supabase 설정
 
 - **인증 공급자**: Google OAuth 활성화
-- **콜백 URL**: https://teamo-tau.vercel.app/auth/callback
-- **Site URL**: https://teamo-tau.vercel.app
+- **콜백 URL**: https://tide-tau.vercel.app/auth/callback
+- **Site URL**: https://tide-tau.vercel.app
 
 ### 4.3 Vercel 설정
 
@@ -259,7 +259,7 @@ export async function createClient() {
 
 ## 7. 배포 완료 및 확인
 
-- **배포 URL**: https://teamo-tau.vercel.app
+- **배포 URL**: https://tide-tau.vercel.app
 - **로그인 방법**: Google 계정으로 로그인
 - **기능 확인**: Todo 추가/상태 변경, 통계 확인
 

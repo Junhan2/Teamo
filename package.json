@@ -1,5 +1,5 @@
 {
-  "name": "teamo",
+  "name": "tide",
   "version": "1.0.0",
   "description": "Minimal todo management app for individuals and teams",
   "main": "index.js",

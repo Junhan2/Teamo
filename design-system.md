@@ -1,4 +1,4 @@
-# Teamo Design System - Gray Cool Foundation
+# Tide Design System - Gray Cool Foundation
 
 ## Color Foundation
 

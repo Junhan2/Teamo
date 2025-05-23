@@ -78,29 +78,35 @@ export default function CalendarPageRoute() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-light-background">
-        <div className="text-lg text-light-primary relative z-10 font-medium">Loading Calendar...</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-gradient-to-r from-sky-400 to-sky-600 rounded-xl mx-auto mb-4 shadow-lg"></div>
+            <div className="text-lg text-gray-cool-600 font-medium">Loading Calendar...</div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-light-background">
+    <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
       <Navbar user={user} />
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <CalendarPage user={user} />
       </main>
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/90 backdrop-blur-md rounded-full shadow-2xl border border-gray-cool-100 p-2 flex items-center gap-2">
         <Link href="/dashboard">
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
           >
             <CheckSquare className="w-4 h-4" />
-            <span className="font-medium">Tasks</span>
+            <span>Tasks</span>
           </Button>
         </Link>
         
@@ -108,12 +114,12 @@ export default function CalendarPageRoute() {
           <Button
             variant="default"
             size="sm"
-            className="rounded-full shadow-lg bg-[#525252] text-white hover:bg-[#404040] flex items-center gap-2 px-4 py-2 h-10 relative outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-600 hover:to-sky-700 shadow-lg flex items-center gap-2 px-5 py-2.5 h-11 relative border-0 font-semibold"
           >
             <Calendar className="w-4 h-4" />
-            <span className="font-medium">Calendar</span>
+            <span>Calendar</span>
             {/* Active indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3fcf8e] rounded-full border-2 border-light-background"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></div>
           </Button>
         </Link>
         
@@ -121,12 +127,13 @@ export default function CalendarPageRoute() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full shadow-lg bg-light-background text-light-primary hover:bg-gray-100 flex items-center gap-2 px-4 py-2 h-10 outline outline-1 outline-light-border outline-offset-[-1px]"
+            className="rounded-full bg-white/80 border border-gray-cool-200 text-gray-cool-700 hover:bg-gray-cool-50 hover:border-gray-cool-300 shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-medium"
           >
             <StickyNote className="w-4 h-4" />
-            <span className="font-medium">Memos</span>
+            <span>Memos</span>
           </Button>
         </Link>
+        </div>
       </div>
     </div>
   )
