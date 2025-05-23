@@ -231,6 +231,7 @@ export default function AdvancedMemoGrid() {
             setNewlyCreatedMemoId(null)
           }, 5000)
         }
+      }
 
       setNewMemo({ title: '', content: '' })
       setShowForm(false)
