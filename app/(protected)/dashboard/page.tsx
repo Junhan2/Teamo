@@ -109,30 +109,59 @@ export default function DashboardPage() {
   }, [fetchTodoStats, user?.id]);
 
   useEffect(() => {
+    let isSubscribed = true // cleanup을 위한 플래그
+    let authSubscription: any = null
+    
     const checkSession = async () => {
       try {
         setLoading(true)
         console.log('🔍 Dashboard: Checking session...')
         
-        // 먼저 auth 상태 변화 리스너 설정
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        // Auth 상태 변화 리스너 설정
+        authSubscription = supabase.auth.onAuthStateChange(
           async (event, session) => {
+            if (!isSubscribed) return // 컴포넌트가 언마운트되었으면 무시
+            
             console.log('🔍 Auth state change:', event, session?.user?.email)
             
             if (event === 'SIGNED_IN' && session) {
               // 로그인 완료시 프로필 처리
               await handleUserProfile(session)
-              setLoading(false)
-            } else if (event === 'SIGNED_OUT' || !session) {
+              if (isSubscribed) setLoading(false)
+            } else if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
               console.log('❌ Session expired or signed out')
-              setUser(null)
-              setLoading(false)
-              router.push('/auth/login')
+              if (isSubscribed) {
+                setUser(null)
+                setLoading(false)
+                router.push('/auth/login')
+              }
+            } else if (event === 'INITIAL_SESSION') {
+              // 초기 세션 체크
+              if (session) {
+                console.log('✅ Initial session found:', session.user.email)
+                await handleUserProfile(session)
+              } else {
+                console.log('⚠️ No initial session')
+                // 잠시 대기 후 한 번 더 체크
+                setTimeout(async () => {
+                  if (!isSubscribed) return
+                  const { data: { session: retrySession } } = await supabase.auth.getSession()
+                  if (retrySession) {
+                    await handleUserProfile(retrySession)
+                  } else {
+                    console.log('❌ No session after retry, redirecting to login')
+                    router.push('/auth/login')
+                  }
+                  if (isSubscribed) setLoading(false)
+                }, 1000)
+                return // 대기 중이므로 loading은 유지
+              }
+              if (isSubscribed) setLoading(false)
             }
           }
         )
         
-        // 현재 세션 상태 확인
+        // 현재 세션 상태도 확인 (fallback)
         const { data: { session }, error } = await supabase.auth.getSession()
         
         console.log('🔍 Current session:', { 
@@ -141,28 +170,33 @@ export default function DashboardPage() {
           error: error?.message 
         })
         
+        // 만약 onAuthStateChange가 INITIAL_SESSION을 트리거하지 않았다면
         if (session && !error) {
           await handleUserProfile(session)
-        } else {
-          console.log('❌ No valid session, redirecting to login')
-          router.push('/auth/login')
-        }
-        
-        setLoading(false)
-        
-        // Cleanup subscription
-        return () => {
-          subscription.unsubscribe()
+          if (isSubscribed) setLoading(false)
+        } else if (!session && !error) {
+          // 세션이 없으면 로그인으로 리다이렉트 (단, 초기 로딩 시간 고려)
+          setTimeout(() => {
+            if (isSubscribed && !user) {
+              console.log('❌ No valid session, redirecting to login')
+              router.push('/auth/login')
+              setLoading(false)
+            }
+          }, 2000)
         }
         
       } catch (error) {
         console.error('💥 Dashboard session check error:', error)
-        setLoading(false)
-        router.push('/auth/login')
+        if (isSubscribed) {
+          setLoading(false)
+          router.push('/auth/login')
+        }
       }
     }
 
     const handleUserProfile = async (session: any) => {
+      if (!isSubscribed) return
+      
       try {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -183,11 +217,11 @@ export default function DashboardPage() {
             .select()
             .single()
             
-          if (!createError && newProfile) {
+          if (!createError && newProfile && isSubscribed) {
             setUser(newProfile)
             console.log('✅ Profile created and user set')
           }
-        } else if (!profileError && profile) {
+        } else if (!profileError && profile && isSubscribed) {
           setUser(profile)
           console.log('✅ Profile loaded and user set')
         }
@@ -197,6 +231,14 @@ export default function DashboardPage() {
     }
 
     checkSession()
+    
+    // Cleanup function
+    return () => {
+      isSubscribed = false
+      if (authSubscription?.data?.subscription) {
+        authSubscription.data.subscription.unsubscribe()
+      }
+    }
   }, [router, supabase])
   
   // 실시간 할일 업데이트 구독 및 통계 업데이트

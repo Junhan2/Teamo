@@ -8,6 +8,7 @@ export async function middleware(request: NextRequest) {
   
   // 건너뛸 경로들
   if (pathname.startsWith('/test-memo') || 
+      pathname.startsWith('/debug-auth') ||
       pathname.startsWith('/auth/callback') ||
       pathname.startsWith('/auth/error') ||
       pathname.startsWith('/_next') ||

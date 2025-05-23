@@ -149,6 +149,15 @@ export function createClient() {
         console.warn('🔍 Session check warning:', error.message)
       } else {
         console.log('🔍 Current session status:', !!session)
+        if (session) {
+          console.log('✅ Session found:', {
+            userId: session.user.id,
+            email: session.user.email,
+            expiresAt: new Date(session.expires_at! * 1000).toLocaleString()
+          })
+        } else {
+          console.log('⚠️ No active session found')
+        }
       }
     }).catch(err => {
       console.warn('🔍 Session check failed:', err)
