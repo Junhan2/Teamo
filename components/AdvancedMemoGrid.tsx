@@ -245,34 +245,6 @@ export default function AdvancedMemoGrid() {
     }
   }, [currentPageId])
 
-  // 메모 데이터 가져오기 (인증 체크 포함)
-  const fetchMemos = async () => {
-    if (!currentPageId) return
-
-    try {
-      // 세션 확인
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        console.log('No session found, skipping memo fetch')
-        setIsLoading(false)
-        return
-      }
-
-      const { data, error } = await supabase
-        .from('advanced_memos')
-        .select('*')
-        .eq('page_id', currentPageId)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setMemos(data || [])
-    } catch (error) {
-      console.error('Error fetching memos:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   // 새 메모 추가 (인증 체크 강화)
   const addMemo = async () => {
     if (!newMemo.title || !newMemo.content) {
