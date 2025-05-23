@@ -166,10 +166,7 @@ export default function AdvancedMemoGrid() {
         // 새로 생성된 메모 ID 저장
         if (insertedMemo) {
           setNewlyCreatedMemoId(insertedMemo.id)
-          // 5초 후 하이라이트 제거
-          setTimeout(() => {
-            setNewlyCreatedMemoId(null)
-          }, 5000)
+          // 클릭하기 전까지는 하이라이트 유지 (타이머 제거)
         }
       } else {
         const rect = gridElement.getBoundingClientRect()
@@ -227,10 +224,7 @@ export default function AdvancedMemoGrid() {
         // 새로 생성된 메모 ID 저장
         if (insertedMemo) {
           setNewlyCreatedMemoId(insertedMemo.id)
-          // 5초 후 하이라이트 제거
-          setTimeout(() => {
-            setNewlyCreatedMemoId(null)
-          }, 5000)
+          // 클릭하기 전까지는 하이라이트 유지 (타이머 제거)
         }
       }
 
@@ -346,6 +340,70 @@ export default function AdvancedMemoGrid() {
     })
   }, [dragState, memos, updateMemoPosition])
 
+  // 메모 자동 정렬
+  const autoAlignMemos = async () => {
+    try {
+      const sortedMemos = [...memos].sort((a, b) => {
+        if (a.position_y === b.position_y) {
+          return a.position_x - b.position_x;
+        }
+        return a.position_y - b.position_y;
+      });
+
+      let currentX = GRID_SIZE;
+      let currentY = GRID_SIZE;
+      let rowHeight = 0;
+      const maxWidth = 1200; // 최대 너비
+
+      const updates = sortedMemos.map((memo) => {
+        // 현재 행에 메모가 들어갈 공간이 없으면 다음 행으로
+        if (currentX + memo.width > maxWidth) {
+          currentX = GRID_SIZE;
+          currentY += rowHeight + GRID_SIZE;
+          rowHeight = 0;
+        }
+
+        const newPosition = {
+          id: memo.id,
+          x: currentX,
+          y: currentY
+        };
+
+        // 다음 메모 위치 계산
+        currentX += memo.width + GRID_SIZE;
+        rowHeight = Math.max(rowHeight, memo.height);
+
+        return newPosition;
+      });
+
+      // 로컬 상태 업데이트
+      setMemos(prev => prev.map(memo => {
+        const update = updates.find(u => u.id === memo.id);
+        if (update) {
+          return { ...memo, position_x: update.x, position_y: update.y };
+        }
+        return memo;
+      }));
+
+      // DB 업데이트
+      for (const update of updates) {
+        await updateMemoPosition(update.id, update.x, update.y);
+      }
+
+      toast({
+        title: "정렬 완료",
+        description: "메모가 자동으로 정렬되었습니다."
+      });
+    } catch (error) {
+      console.error('Error auto-aligning memos:', error);
+      toast({
+        title: "오류",
+        description: "메모 정렬에 실패했습니다.",
+        variant: "destructive"
+      });
+    }
+  }
+
   // 마우스 이벤트 리스너 등록
   useEffect(() => {
     if (dragState.isDragging) {
@@ -358,6 +416,33 @@ export default function AdvancedMemoGrid() {
       }
     }
   }, [dragState.isDragging, handleMouseMove, handleMouseUp])
+  // 메모 삭제
+  const deleteMemo = async (memoId: string) => {
+    try {
+      const { error } = await supabase
+        .from('advanced_memos')
+        .delete()
+        .eq('id', memoId)
+
+      if (error) throw error
+
+      setMemos(prev => prev.filter(m => m.id !== memoId))
+      setContextMenu(null)
+      
+      toast({
+        title: "삭제 완료",
+        description: "메모가 삭제되었습니다."
+      })
+    } catch (error) {
+      console.error('Error deleting memo:', error)
+      toast({
+        title: "오류",
+        description: "메모 삭제에 실패했습니다.",
+        variant: "destructive"
+      })
+    }
+  }
+
   // 줌 컨트롤
   const handleZoom = useCallback((delta: number) => {
     setZoom(prev => Math.max(0.5, Math.min(2, prev + delta)))
@@ -474,6 +559,15 @@ export default function AdvancedMemoGrid() {
 
   return (
     <div className="w-full h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+      {/* CSS 애니메이션 추가 */}
+      <style jsx>{`
+        @keyframes highlight {
+          0% { opacity: 1; }
+          50% { opacity: 0.7; }
+          100% { opacity: 1; }
+        }
+      `}</style>
+      
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
         <Button
@@ -498,6 +592,30 @@ export default function AdvancedMemoGrid() {
             variant={viewState === 'collapsed' ? 'default' : 'outline'}
             size="sm"
             onClick={toggleViewState}
+            className="flex items-center gap-1"
+          >
+            <Minimize2 className="h-3 w-3" />
+            닫힘
+          </Button>
+          {viewState === 'mixed' && (
+            <span className="text-sm text-gray-500 px-2">Mixed</span>
+          )}
+        </div>
+        
+        <div className="h-6 w-px bg-gray-300"></div>
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={autoAlignMemos}
+          className="flex items-center gap-2"
+          title="메모 자동 정렬"
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          정렬
+        </Button>
             className="flex items-center gap-1"
           >
             <Minimize2 className="h-3 w-3" />
@@ -575,6 +693,7 @@ export default function AdvancedMemoGrid() {
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             setContextMenu(null)
+            setNewlyCreatedMemoId(null) // 클릭 시 하이라이트 제거
           }
         }}
       >
@@ -590,7 +709,7 @@ export default function AdvancedMemoGrid() {
               key={memo.id}
               className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
                 isDragging ? 'cursor-grabbing z-50 rotate-2 scale-105' : 'cursor-grab'
-              } ${isNewlyCreated ? 'animate-pulse' : ''}`}
+              } ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
@@ -640,16 +759,62 @@ export default function AdvancedMemoGrid() {
           className="absolute z-30 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-3"
           style={{ left: contextMenu.x, top: contextMenu.y }}
         >
-          <div className="text-xs text-gray-600 mb-2 font-medium">색상 선택</div>
-          <div className="grid grid-cols-5 gap-2">
-            {MEMO_COLORS.map((color, index) => (
-              <button
-                key={index}
-                className="w-8 h-8 rounded-full border-2 border-white shadow-md hover:scale-110 transition-transform duration-200"
-                style={{ backgroundColor: color }}
-                onClick={() => changeColor(contextMenu.memoId, color)}
-              />
-            ))}
+          <div className="space-y-3">
+            {/* 색상 선택 */}
+            <div>
+              <div className="text-xs text-gray-600 mb-2 font-medium">색상 선택</div>
+              <div className="grid grid-cols-5 gap-2">
+                {MEMO_COLORS.map((color, index) => (
+                  <button
+                    key={index}
+                    className="w-8 h-8 rounded-full border-2 border-white shadow-md hover:scale-110 transition-transform duration-200"
+                    style={{ backgroundColor: color }}
+                    onClick={() => changeColor(contextMenu.memoId, color)}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* 구분선 */}
+            <div className="border-t border-gray-200"></div>
+            
+            {/* 액션 버튼들 */}
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  const memo = memos.find(m => m.id === contextMenu.memoId)
+                  if (memo) {
+                    setNewMemo({ title: memo.title, content: memo.content })
+                    setShowForm(true)
+                    // TODO: 수정 모드 구현
+                  }
+                  setContextMenu(null)
+                }}
+                className="flex items-center gap-1 text-sm"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                수정
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => {
+                  if (confirm('정말로 이 메모를 삭제하시겠습니까?')) {
+                    deleteMemo(contextMenu.memoId)
+                  }
+                }}
+                className="flex items-center gap-1 text-sm"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                삭제
+              </Button>
+            </div>
           </div>
         </div>
       )}
