@@ -146,7 +146,7 @@ const CalendarPage = ({ user }: CalendarPageProps) => {
                 id="show-completed"
                 checked={showCompletedTasks}
                 onCheckedChange={setShowCompletedTasks}
-                className="data-[state=checked]:bg-[#3fcf8e]"
+                className="data-[state=checked]:bg-sky-600"
               />
               <Label htmlFor="show-completed" className="text-sm text-[#171717] flex items-center">
                 <Eye size={14} className="mr-1" />
