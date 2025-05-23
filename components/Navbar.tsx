@@ -39,8 +39,8 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-cool-25/90 border-b border-gray-cool-200">
-      <div className="container mx-auto max-w-5xl">
-        <div className="flex justify-between items-center px-4 h-16">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="flex justify-between items-center h-16">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
               src="/logo.png"

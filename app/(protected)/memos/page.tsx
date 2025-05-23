@@ -91,6 +91,7 @@ export default function MemosPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
+      <Navbar user={user} />
       <AdvancedMemoGrid />
       
       {/* 화면 중앙 하단 플로팅 버튼 영역 */}
