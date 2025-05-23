@@ -109,161 +109,104 @@ export default function DashboardPage() {
   }, [fetchTodoStats, user?.id]);
 
   useEffect(() => {
-    let isSubscribed = true // cleanup을 위한 플래그
-    let authSubscription: any = null
-    let sessionCheckTimeout: NodeJS.Timeout | null = null
-    
-    const checkSession = async () => {
+    const checkSessionAndProfile = async () => {
       try {
         setLoading(true)
         console.log('🔍 Dashboard: Checking session...')
         
-        // Auth 상태 변화 리스너 설정
-        authSubscription = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            if (!isSubscribed) return // 컴포넌트가 언마운트되었으면 무시
-            
-            console.log('🔍 Auth state change:', event, session?.user?.email)
-            
-            if (event === 'SIGNED_IN' && session) {
-              // 로그인 완료시 프로필 처리
-              await handleUserProfile(session)
-              if (isSubscribed) setLoading(false)
-            } else if (event === 'SIGNED_OUT') {
-              console.log('❌ User signed out')
-              if (isSubscribed) {
-                setUser(null)
-                setLoading(false)
-                router.push('/auth/login')
-              }
-            } else if (event === 'INITIAL_SESSION') {
-              // 초기 세션 체크
-              if (session) {
-                console.log('✅ Initial session found:', session.user.email)
-                await handleUserProfile(session)
-                if (isSubscribed) setLoading(false)
-              } else {
-                console.log('⚠️ No initial session - will retry...')
-                // 여러 번 재시도 로직 (OAuth 콜백 후 세션 동기화 대기)
-                let retryCount = 0
-                const maxRetries = 5
-                
-                const retrySessionCheck = async () => {
-                  if (!isSubscribed || retryCount >= maxRetries) {
-                    if (retryCount >= maxRetries) {
-                      console.log('❌ Max retries reached, redirecting to login')
-                      if (isSubscribed) {
-                        setLoading(false)
-                        router.push('/auth/login')
-                      }
-                    }
-                    return
-                  }
-                  
-                  retryCount++
-                  console.log(`🔄 Session retry ${retryCount}/${maxRetries}...`)
-                  
-                  const { data: { session: retrySession }, error } = await supabase.auth.getSession()
-                  
-                  if (retrySession && !error) {
-                    console.log('✅ Session found on retry:', retrySession.user.email)
-                    await handleUserProfile(retrySession)
-                    if (isSubscribed) setLoading(false)
-                  } else {
-                    // 1초 후 다시 시도
-                    sessionCheckTimeout = setTimeout(retrySessionCheck, 1000)
-                  }
-                }
-                
-                // 즉시 첫 번째 재시도 시작
-                sessionCheckTimeout = setTimeout(retrySessionCheck, 500)
-                return // 재시도 중이므로 loading 상태 유지
-              }
-            }
-          }
-        )
+        // 세션 확인
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
-        // 현재 세션 상태도 확인 (fallback)
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        console.log('🔍 Current session:', { 
-          hasSession: !!session, 
-          user: session?.user?.email,
-          error: error?.message 
-        })
-        
-        // 세션이 있으면 즉시 처리 (onAuthStateChange보다 빠를 수 있음)
-        if (session && !error) {
-          await handleUserProfile(session)
-          if (isSubscribed) setLoading(false)
-        } else if (!session && !error) {
-          // 세션이 없지만 onAuthStateChange에서 처리할 수 있으므로 잠시 대기
-          console.log('⏳ Waiting for auth state change...')
-          sessionCheckTimeout = setTimeout(() => {
-            if (isSubscribed && !user) {
-              console.log('❌ Timeout waiting for session, redirecting to login')
-              setLoading(false)
-              router.push('/auth/login')
-            }
-          }, 3000) // 3초 대기
-        }
-        
-      } catch (error) {
-        console.error('💥 Dashboard session check error:', error)
-        if (isSubscribed) {
-          setLoading(false)
+        if (sessionError) {
+          console.error('❌ Session error:', sessionError)
           router.push('/auth/login')
+          return
         }
-      }
-    }
-
-    const handleUserProfile = async (session: any) => {
-      if (!isSubscribed) return
-      
-      try {
+        
+        if (!session) {
+          console.log('❌ No session found')
+          router.push('/auth/login')
+          return
+        }
+        
+        console.log('✅ Session found:', session.user.email)
+        
+        // 프로필 확인 또는 생성
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single()
-
-        if (profileError && profileError.code === 'PGRST116') {
-          // 프로필 생성
-          const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert([{ 
-              id: session.user.id,
-              email: session.user.email,
-              full_name: session.user.user_metadata?.full_name,
-              avatar_url: session.user.user_metadata?.avatar_url
-            }])
-            .select()
-            .single()
+        
+        if (profileError) {
+          if (profileError.code === 'PGRST116') {
+            // 프로필이 없으므로 생성
+            console.log('📝 Creating user profile...')
+            const { data: newProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert([{
+                id: session.user.id,
+                email: session.user.email!,
+                full_name: session.user.user_metadata?.full_name || null,
+                avatar_url: session.user.user_metadata?.avatar_url || null
+              }])
+              .select()
+              .single()
             
-          if (!createError && newProfile && isSubscribed) {
-            setUser(newProfile)
-            console.log('✅ Profile created and user set')
+            if (createError) {
+              console.error('❌ Profile creation error:', createError)
+              console.error('Error details:', {
+                code: createError.code,
+                message: createError.message,
+                details: createError.details,
+                hint: createError.hint
+              })
+              // 기본 프로필 정보라도 설정
+              setUser({
+                id: session.user.id,
+                email: session.user.email!,
+                full_name: session.user.user_metadata?.full_name || null,
+                avatar_url: session.user.user_metadata?.avatar_url || null
+              })
+            } else if (newProfile) {
+              console.log('✅ Profile created')
+              setUser(newProfile)
+            }
+          } else {
+            console.error('❌ Profile fetch error:', profileError)
           }
-        } else if (!profileError && profile && isSubscribed) {
+        } else {
+          console.log('✅ Profile loaded')
           setUser(profile)
-          console.log('✅ Profile loaded and user set')
         }
+        
+        setLoading(false)
       } catch (error) {
-        console.error('💥 Profile handling error:', error)
+        console.error('💥 Dashboard error:', error)
+        setLoading(false)
+        router.push('/auth/login')
       }
     }
-
-    checkSession()
     
-    // Cleanup function
+    checkSessionAndProfile()
+    
+    // Auth 상태 변화 구독
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('🔍 Auth state change:', event, session?.user?.email)
+        
+        if (event === 'SIGNED_OUT') {
+          setUser(null)
+          router.push('/auth/login')
+        } else if (event === 'SIGNED_IN' && session) {
+          // 새로 로그인한 경우 프로필 다시 확인
+          checkSessionAndProfile()
+        }
+      }
+    )
+    
     return () => {
-      isSubscribed = false
-      if (sessionCheckTimeout) {
-        clearTimeout(sessionCheckTimeout)
-      }
-      if (authSubscription?.data?.subscription) {
-        authSubscription.data.subscription.unsubscribe()
-      }
+      subscription.unsubscribe()
     }
   }, [router, supabase])
   
