@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { CheckSquare, Calendar, StickyNote } from "lucide-react"
 import Navbar from "@/components/Navbar"
 import CalendarPage from "@/components/Calendar/CalendarPage"
+import PageLoading from "@/components/PageLoading"
 
 interface UserProfile {
   id: string
@@ -77,16 +78,7 @@ export default function CalendarPageRoute() {
   }, [router, supabase])
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/50">
-        <div className="text-center">
-          <div className="animate-pulse">
-            <div className="w-16 h-16 bg-gradient-to-r from-sky-400 to-sky-600 rounded-xl mx-auto mb-4 shadow-lg"></div>
-            <div className="text-lg text-gray-cool-600 font-medium">Loading Calendar...</div>
-          </div>
-        </div>
-      </div>
-    )
+    return <PageLoading message="Loading Calendar..." />
   }
 
   return (

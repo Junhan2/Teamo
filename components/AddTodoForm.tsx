@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { CalendarIcon, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { DotsLoader } from "@/components/ui/loading"
 
 interface AddTodoFormProps {
   userId: string
@@ -213,11 +214,13 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         disabled={loading}
       >
         {loading ? (
-          <span className="animate-pulse">ADDING...</span>
+          <DotsLoader className="justify-center" />
         ) : (
           <>
             <Plus className="w-5 h-5 mr-1" />
             <span>ADD TASK</span>
+          </>
+        )}
           </>
         )}
       </Button>

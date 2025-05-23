@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { createClient } from "@/lib/supabase/client"
 import { format, subDays, eachDayOfInterval } from "date-fns"
+import { MinimalSpinner } from "@/components/ui/loading"
 
 interface ContributionGraphProps {
   userId: string
@@ -129,7 +130,9 @@ export default function ContributionGraph({ userId, days = 90 }: ContributionGra
   
   if (loading) {
     return (
-      <div className="animate-pulse bg-gray-100 h-24 rounded-xl"></div>
+      <div className="flex items-center justify-center h-24 bg-gray-50 rounded-xl">
+        <MinimalSpinner size="sm" />
+      </div>
     )
   }
   

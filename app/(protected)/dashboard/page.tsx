@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
 import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote, User, Users } from "lucide-react"
+import PageLoading from "@/components/PageLoading"
 
 interface UserProfile {
   id: string
@@ -346,16 +347,7 @@ export default function DashboardPage() {
   }, [activeTab, user?.id, fetchTodoStats]);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center" style={{background: 'linear-gradient(135deg, #FCFCFD 0%, #F9F9FB 50%, rgba(239, 241, 245, 0.5) 100%)'}}>
-        <div className="text-center">
-          <div className="animate-pulse">
-            <div className="w-16 h-16 bg-gradient-to-r from-sky-400 to-sky-600 rounded-xl mx-auto mb-4 shadow-lg"></div>
-            <div className="text-lg font-medium" style={{color: '#4A5578'}}>Loading your tasks...</div>
-          </div>
-        </div>
-      </div>
-    )
+    return <PageLoading message="Loading your tasks..." />
   }
 
   return (

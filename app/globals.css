@@ -147,3 +147,51 @@ body {
 .from-gray-cool-25 { --tw-gradient-from: #FCFCFD; }
 .via-gray-cool-50 { --tw-gradient-via: #F9F9FB; }
 .to-gray-cool-100\/50 { --tw-gradient-to: rgba(239, 241, 245, 0.5); }
+
+/* Custom Loading Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25%);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Smooth transitions for loading states */
+.loading-transition {
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Enhanced blur effect for loading backgrounds */
+.loading-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
