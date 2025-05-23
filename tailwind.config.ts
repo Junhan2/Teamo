@@ -54,6 +54,28 @@ const config: Config = {
     'bg-amber-100', 'bg-amber-200', 'bg-amber-300', 'bg-amber-400', 'bg-amber-500',
     'text-amber-600', 'text-amber-700', 'text-amber-800',
     'border-emerald-400', 'border-white', 'animate-pulse',
+    // Additional missing classes
+    'focus:border-gray-cool-500',
+    // Sky additional
+    'bg-sky-50', 'bg-sky-500', 'bg-sky-600', 'border-sky-300', 'border-sky-500', 'border-sky-600', 'border-sky-700',
+    'from-sky-100', 'hover:bg-sky-200', 'hover:bg-sky-600', 'hover:text-sky-800',
+    'text-sky-600', 'text-sky-700', 'text-sky-800', 'data-[state=checked]:bg-sky-500', 'data-[state=checked]:border-sky-500',
+    // Emerald additional
+    'bg-emerald-50', 'border-emerald-200', 'border-emerald-300',
+    'hover:bg-emerald-100', 'hover:text-emerald-800',
+    // Amber additional
+    'bg-amber-50', 'border-amber-200', 'border-amber-300',
+    'hover:bg-amber-100', 'hover:text-amber-800',
+    // Blue additional
+    'bg-blue-50', 'border-blue-200', 'border-blue-300', 'border-blue-400',
+    'focus:ring-blue-400', 'hover:bg-blue-100', 'hover:border-blue-400',
+    'hover:text-blue-800', 'text-blue-400', 'text-blue-500', 'text-blue-600',
+    // Red colors
+    'text-red-400', 'text-red-500',
+    // Gray additional
+    'text-gray-300', 'text-gray-400', 'bg-gray-50', 'bg-gray-50/80',
+    // Other
+    'dark:bg-gray-100',
     // Gradient classes
     'bg-gradient-to-r', 'from-sky-400', 'to-sky-600', 'from-sky-500', 'to-sky-600',
     'from-sky-600', 'to-sky-700', 'hover:from-sky-600', 'hover:to-sky-700',
@@ -82,22 +104,7 @@ const config: Config = {
   				900: '#111322',
   				950: '#0C0E19'
   			},
-  			// Light mode color scheme - individual keys for Tailwind classes
-  			'light-background': '#FCFCFD',
-  			'light-primary': '#404968',
-  			'light-secondary': '#5D6A97', 
-  			'light-muted': '#7D89AF',
-  			'light-accent': '#3fcf8e',
-  			'light-hover': '#00bb68',
-  			'light-border': '#DCDFEA',
-  			'light-input': '#F9F9FB',
-  			// Light mode color scheme (legacy object)
-  			light: {
-  				background: '#fcfcfc',
-  				primary: '#171717',
-  				secondary: '#525252', 
-  				muted: '#707070',
-  				accent: '#3fcf8e',
+  			// Remove light mode colors to avoid conflicts
   				hover: '#00bb68',
   				'green-button': '#72E3AD',
   				'button-text': '#171717',
