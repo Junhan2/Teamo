@@ -19,20 +19,20 @@ function ErrorContent() {
   
   return (
     <div className="w-full max-w-md text-center relative z-10 animate-fadeIn">
-      <h1 className="text-2xl font-bold mb-4 text-white">로그인 오류 발생</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">Authentication Error</h1>
       <p className="text-gray-400 mb-6">
-        로그인 중 문제가 발생했습니다. 다시 시도해 주세요.
+        There was a problem signing in. Please try again.
       </p>
       
       {errorDetails && (
         <div className="p-3 mb-6 rounded-lg bg-red-900/30 text-red-400 border border-red-800/50 text-sm">
-          <p className="font-semibold">오류 상세정보:</p>
+          <p className="font-semibold">Error details:</p>
           <p className="mt-1 text-xs">{errorDetails}</p>
         </div>
       )}
       
       <Button asChild className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md">
-        <Link href="/auth/login">로그인 페이지로 돌아가기</Link>
+        <Link href="/auth/login">Back to Sign In</Link>
       </Button>
     </div>
   )
@@ -48,7 +48,7 @@ export default function AuthErrorPage() {
       
       <Suspense fallback={
         <div className="w-full max-w-md text-center relative z-10">
-          <h1 className="text-2xl font-bold mb-4 text-white">로딩 중...</h1>
+          <h1 className="text-2xl font-bold mb-4 text-white">Loading...</h1>
         </div>
       }>
         <ErrorContent />

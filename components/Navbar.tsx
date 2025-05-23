@@ -116,7 +116,7 @@ export default function Navbar({ user }: NavbarProps) {
                     className="text-[#5D6A97] cursor-pointer hover:bg-[#EFF1F5] hover:text-[#404968] focus:bg-[#EFF1F5] focus:text-[#404968] rounded-lg px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2"
                   >
                     <LogOut className="w-4 h-4" />
-                    Logout
+                    Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

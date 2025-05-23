@@ -69,7 +69,7 @@ export default function LoginPage() {
                 fontFamily: "var(--font-dm-sans)"
               }}
             >
-              팀과 함께하는 스마트한 할일 관리
+              Smart task management for teams
             </p>
           </div>
         </div>
@@ -113,34 +113,14 @@ export default function LoginPage() {
                   />
                 </svg>
                 <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  {isLoading ? "로그인 중..." : "Google 계정으로 시작하기"}
+                  {isLoading ? "Signing in..." : "Sign in with Google"}
                 </span>
               </Button>
               
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-cool-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-cool-500" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                    또는
-                  </span>
-                </div>
-              </div>
-              
-              <Button
-                onClick={handleGoogleSignIn}
-                disabled={isLoading}
-                className="w-full h-14 bg-[#404968] text-white hover:bg-[#30374E] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200"
-              >
-                <span style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  START YOUR PROJECT
-                </span>
-              </Button>
             </CardContent>
             <CardFooter className="bg-gray-cool-50/50 px-8 py-4 text-center">
               <p className="text-xs text-gray-cool-500 w-full" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                로그인 시 서비스 이용약관과 개인정보 처리방침에 동의하는 것으로 간주됩니다.
+                By signing in, you agree to our Terms of Service and Privacy Policy.
               </p>
             </CardFooter>
           </Card>
