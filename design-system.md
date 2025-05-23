@@ -23,30 +23,30 @@ Based on the Gray Cool palette from /Users/gangjoon5/Downloads/palette.json:
 For main action buttons like ADD TASK, Google Sign-in:
 - Background: `#e0f2fe` (sky-100)
 - Text: `#0369a1` (sky-700)
-- Border: `#7dd3fc` (sky-300)
+- Border: `#0284c7` (sky-600)
 - Hover Background: `#bae6fd` (sky-200)
-- Hover Border: `#0284c7` (sky-600)
-- Active Background: `#7dd3fc` (sky-300)
-- Active Border: `#0369a1` (sky-700)
+- Hover Border: `#0369a1` (sky-700)
+- Active Background: `#93c5fd` (blue-300)
+- Active Border: `#075985` (sky-900)
 
 #### Status Colors (Muted, harmonious with Gray Cool)
 
 **Not Yet (Pending) - Amber:**
 - Background: `#fef3c7` (amber-100)
 - Text: `#92400e` (amber-800)
-- Border: `#fcd34d` (amber-300)
+- Border: `#d97706` (amber-600)
 - Icon: Clock
 
 **Doing (In Progress) - Blue:**
 - Background: `#dbeafe` (blue-100)
 - Text: `#1e40af` (blue-800)
-- Border: `#93c5fd` (blue-300)
+- Border: `#2563eb` (blue-600)
 - Icon: Play
 
 **Complete - Emerald:**
 - Background: `#d1fae5` (emerald-100)
 - Text: `#065f46` (emerald-800)
-- Border: `#6ee7b7` (emerald-300)
+- Border: `#059669` (emerald-600)
 - Icon: Check
 
 #### Secondary Controls
@@ -78,9 +78,9 @@ Selected: Dark Gray Cool (#30374E, white, #111322)
 ### 3. Status Badges
 Muted colors that don't overpower the interface:
 ```
-Not Yet: Amber muted (#fef3c7, #92400e, #fcd34d)
-Doing: Blue muted (#dbeafe, #1e40af, #93c5fd)  
-Complete: Emerald muted (#d1fae5, #065f46, #6ee7b7)
+Not Yet: Amber muted (#fef3c7, #92400e, #d97706)
+Doing: Blue muted (#dbeafe, #1e40af, #2563eb)  
+Complete: Emerald muted (#d1fae5, #065f46, #059669)
 ```
 
 ## Implementation
