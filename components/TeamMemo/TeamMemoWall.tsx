@@ -354,7 +354,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-light-muted">Loading memos...</div>
+        <div className="text-gray-cool-500">Loading memos...</div>
       </div>
     )
   }
@@ -362,11 +362,11 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
   const filteredMemos = getFilteredMemos()
 
   return (
-    <div className="p-6 bg-light-background min-h-screen">
+    <div className="p-6 bg-gray-cool-50 min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-light-primary">Memo</h1>
+          <h1 className="text-3xl font-bold text-gray-cool-800">Memo</h1>
           <Button 
             onClick={createNewMemo}
             className="bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 px-4 py-2"
@@ -465,7 +465,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
               />
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-light-muted">
+            <div className="flex items-center gap-2 text-sm text-gray-cool-500">
               {filteredMemos.length} memo{filteredMemos.length !== 1 ? 's' : ''}
             </div>
           </div>
@@ -670,8 +670,8 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
           <div className="w-20 h-20 mb-4 rounded-full bg-yellow-100 flex items-center justify-center">
             <Plus size={32} className="text-yellow-600" />
           </div>
-          <h3 className="text-lg font-semibold text-light-primary mb-2">No memos yet</h3>
-          <p className="text-light-muted max-w-xs mb-4">
+          <h3 className="text-lg font-semibold text-gray-cool-800 mb-2">No memos yet</h3>
+          <p className="text-gray-cool-500 max-w-xs mb-4">
             Click "Add Memo" to create your first {activeTab === 'my-todos' ? 'personal' : 'team'} memo!
           </p>
           <Button

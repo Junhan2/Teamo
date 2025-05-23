@@ -304,9 +304,9 @@ const CalendarView = ({
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-8 text-[#171717]">
+      <div className="flex justify-center items-center p-8 text-gray-cool-800">
         <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-t-2 border-b-2 border-[#3fcf8e] rounded-full animate-spin mb-2"></div>
+          <div className="w-12 h-12 border-t-2 border-b-2 border-sky-500 rounded-full animate-spin mb-2"></div>
           <p className="text-lg font-medium">Loading Calendar...</p>
         </div>
       </div>
@@ -316,10 +316,10 @@ const CalendarView = ({
   return (
     <div className="space-y-4">
       {/* Calendar Header */}
-      <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4 mx-2">
+      <div className="bg-white rounded-xl shadow-md border border-gray-cool-200 p-4 mx-2">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold text-[#171717]">
+            <h2 className="text-xl font-semibold text-gray-cool-800">
               {viewMode === 'month' 
                 ? format(currentDate, 'MMMM yyyy')
                 : `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`
@@ -332,14 +332,14 @@ const CalendarView = ({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="bg-transparent text-light-primary hover:bg-[#EFF1F5] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-light-border outline-offset-[-1px]"
+                  className="bg-transparent text-gray-cool-700 hover:bg-[#EFF1F5] text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded flex items-center gap-1 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
                 >
                   <span className="font-light">View: </span>
                   <span>{viewMode === 'month' ? 'Month' : 'Week'}</span>
                   <ChevronDown size={12} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-light-background border border-light-border text-light-primary shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
+              <DropdownMenuContent className="bg-gray-cool-50 border border-gray-cool-200 text-gray-cool-700 shadow-[0_0_25px_rgba(0,0,0,0.1)] min-w-[180px] p-1">
                 <DropdownMenuItem 
                   onClick={() => setViewMode('month')}
                   className={`flex items-center px-3 py-2 text-sm hover:bg-[#EFF1F5] cursor-pointer rounded-md transition-all duration-200 mb-1 ${viewMode === 'month' ? 'bg-[#EFF1F5]' : ''}`}
@@ -423,14 +423,14 @@ const CalendarView = ({
       </div>
 
       {/* Calendar grid */}
-      <div className={`${viewMode === 'month' ? 'bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] overflow-hidden' : ''}`}>
+      <div className={`${viewMode === 'month' ? 'bg-white rounded-xl shadow-md border border-gray-cool-200 overflow-hidden' : ''}`}>
         {/* Day names header - only for month view */}
         {viewMode === 'month' && (
           <div className="grid grid-cols-7 mb-2 px-2">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
               <div 
                 key={day} 
-                className={`text-center py-2 text-sm font-medium ${index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-[#707070]'}`}
+                className={`text-center py-2 text-sm font-medium ${index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-gray-cool-500'}`}
               >
                 {day}
               </div>
@@ -452,10 +452,10 @@ const CalendarView = ({
                   key={i}
                   className={`
                     min-h-[100px] p-1 border relative rounded-md cursor-pointer
-                    ${isCurrentMonth ? 'border-[rgba(0,0,0,0.20)]' : 'border-[rgba(0,0,0,0.10)] bg-[rgba(0,0,0,0.02)]'} 
+                    ${isCurrentMonth ? 'border-gray-cool-200' : 'border-gray-cool-100 bg-gray-cool-50'} 
                     ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : ''}
-                    ${isCurrentDay ? 'border-[#3fcf8e]' : ''}
-                    hover:border-[rgba(0,0,0,0.30)] transition-colors
+                    ${isCurrentDay ? 'border-sky-500' : ''}
+                    hover:border-gray-cool-300 transition-colors
                   `}
                   onClick={() => setSelectedDate(day)}
                   whileHover={{ scale: 1.02 }}
@@ -465,8 +465,8 @@ const CalendarView = ({
                     <span 
                       className={`
                         text-sm font-semibold rounded-full w-6 h-6 flex items-center justify-center
-                        ${!isCurrentMonth ? 'text-[#707070]' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                        ${isCurrentDay ? 'bg-[#525252] text-white' : ''}
+                        ${!isCurrentMonth ? 'text-gray-cool-500' : i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-gray-cool-800'}
+                        ${isCurrentDay ? 'bg-gray-cool-700 text-white' : ''}
                       `}
                     >
                       {format(day, 'd')}
@@ -492,7 +492,7 @@ const CalendarView = ({
                         {/* User color indicator */}
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
                         
-                        <span className="pl-1.5 truncate text-[#171717]">{todo.title}</span>
+                        <span className="pl-1.5 truncate text-gray-cool-800">{todo.title}</span>
                         <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
                           {getStatusIcon(todo.status)}
                         </span>
@@ -501,7 +501,7 @@ const CalendarView = ({
                     
                     {/* If there are more tasks than can be shown, show a "more" indicator */}
                     {dayTodos.length > 3 && (
-                      <div className="text-xs text-[#707070] text-center">
+                      <div className="text-xs text-gray-cool-500 text-center">
                         +{dayTodos.length - 3} more
                       </div>
                     )}
@@ -524,9 +524,9 @@ const CalendarView = ({
                   key={i}
                   className={`
                     min-h-[180px] sm:min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white shadow-sm
-                    ${isDaySelected ? 'border-[#3fcf8e] bg-[#3fcf8e]/5' : 'border-[rgba(0,0,0,0.15)]'}
-                    ${isCurrentDay ? 'border-[#3fcf8e] border-2' : ''}
-                    hover:border-[rgba(0,0,0,0.30)] hover:shadow-md transition-all duration-200
+                    ${isDaySelected ? 'border-sky-500 bg-sky-50' : 'border-gray-cool-200'}
+                    ${isCurrentDay ? 'border-sky-500 border-2' : ''}
+                    hover:border-gray-cool-300 hover:shadow-md transition-all duration-200
                   `}
                   onClick={() => setSelectedDate(day)}
                   whileHover={{ scale: 1.02 }}
@@ -536,13 +536,13 @@ const CalendarView = ({
                     <span 
                       className={`
                         text-lg sm:text-xl font-bold rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mb-1
-                        ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}
-                        ${isCurrentDay ? 'bg-[#525252] text-white' : 'bg-[#f8f9fa]'}
+                        ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-gray-cool-800'}
+                        ${isCurrentDay ? 'bg-gray-cool-700 text-white' : 'bg-gray-cool-50'}
                       `}
                     >
                       {format(day, 'd')}
                     </span>
-                    <h3 className={`text-sm font-semibold ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-[#171717]'}`}>
+                    <h3 className={`text-sm font-semibold ${i % 7 === 0 ? 'text-red-400' : i % 7 === 6 ? 'text-blue-400' : 'text-gray-cool-800'}`}>
                       {dayName}
                     </h3>
                     {dayTodos.length > 0 && (
@@ -566,12 +566,12 @@ const CalendarView = ({
                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${getUserColor(todo.user_id)}`}></div>
                         
                         <div className="pl-2">
-                          <h4 className={`font-medium text-xs truncate leading-4 ${todo.status === 'completed' ? 'line-through text-[#707070]' : 'text-[#171717]'}`}>
+                          <h4 className={`font-medium text-xs truncate leading-4 ${todo.status === 'completed' ? 'line-through text-gray-cool-500' : 'text-gray-cool-800'}`}>
                             {todo.title}
                           </h4>
                           <div className="flex items-center justify-between mt-1">
                             {todo.user_id !== userId && (
-                              <span className="text-xs text-[#707070] bg-[#f5f5f5] px-1 py-0.5 rounded text-xs">
+                              <span className="text-xs text-gray-cool-500 bg-gray-cool-50 px-1 py-0.5 rounded text-xs">
                                 {todo.user?.full_name?.split(' ')[0] || todo.user?.email?.split('@')[0] || 'Unknown'}
                               </span>
                             )}
@@ -585,13 +585,13 @@ const CalendarView = ({
                     
                     {/* If there are more tasks than can be shown, show a "more" indicator */}
                     {dayTodos.length > 3 && (
-                      <div className="text-xs text-[#707070] text-center py-1 font-medium">
+                      <div className="text-xs text-gray-cool-500 text-center py-1 font-medium">
                         +{dayTodos.length - 3} more
                       </div>
                     )}
                     
                     {dayTodos.length === 0 && (
-                      <div className="text-center py-3 text-[#999] text-xs">
+                      <div className="text-center py-3 text-gray-cool-400 text-xs">
                         No tasks
                       </div>
                     )}

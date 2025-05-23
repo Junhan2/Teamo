@@ -173,16 +173,16 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
 
   if (loading) {
     return (
-      <div className="bg-light-background rounded-xl shadow-md border border-light-border p-4">
+      <div className="bg-gray-cool-50 rounded-xl shadow-md border border-gray-cool-200 p-4">
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-light-accent"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500"></div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-light-background rounded-xl shadow-md border border-light-border">
+    <div className="bg-gray-cool-50 rounded-xl shadow-md border border-gray-cool-200">
       <div className="p-4">
         <Button
           variant="ghost"
@@ -190,12 +190,12 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
           className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent"
         >
           <div className="flex items-center gap-2">
-            <Users size={18} className="text-light-primary" />
-            <span className="font-medium text-light-primary font-dm-sans">Subscription</span>
+            <Users size={18} className="text-gray-cool-700" />
+            <span className="font-medium text-gray-cool-700 font-dm-sans">Subscription</span>
           </div>
           <ChevronDown 
             size={18} 
-            className={`text-light-muted transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-gray-cool-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           />
         </Button>
         
@@ -210,7 +210,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
             >
               <div className="mt-4 space-y-3">
                 {teamMembers.length === 0 ? (
-                  <p className="text-sm text-light-muted font-dm-sans">No team members found</p>
+                  <p className="text-sm text-gray-cool-500 font-dm-sans">No team members found</p>
                 ) : (
                   teamMembers.map(member => (
                     <div key={member.id} className="flex items-center space-x-3">
@@ -218,10 +218,10 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                         id={member.id}
                         checked={subscribedUserIds.includes(member.id)}
                         onCheckedChange={() => toggleSubscription(member.id)}
-                        className="data-[state=checked]:bg-light-accent data-[state=checked]:border-light-accent"
+                        className="data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500"
                       />
                       <div className="flex items-center gap-3 flex-1">
-                        <div className="w-8 h-8 rounded-full bg-light-input flex items-center justify-center overflow-hidden ring-2 ring-light-border ring-offset-1 shadow-sm">
+                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center overflow-hidden ring-2 ring-gray-cool-200 ring-offset-1 shadow-sm">
                           {member.avatar_url ? (
                             <img 
                               src={member.avatar_url} 
@@ -229,17 +229,17 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <span className="text-xs font-medium text-light-primary">
+                            <span className="text-xs font-medium text-gray-cool-700">
                               {(member.full_name || member.email).charAt(0).toUpperCase()}
                             </span>
                           )}
                         </div>
                         <label htmlFor={member.id} className="flex-1 cursor-pointer">
-                          <div className="text-sm font-medium text-light-primary font-dm-sans">
+                          <div className="text-sm font-medium text-gray-cool-700 font-dm-sans">
                             {member.full_name || member.email}
                           </div>
                           {member.full_name && (
-                            <div className="text-xs text-light-muted font-dm-sans">{member.email}</div>
+                            <div className="text-xs text-gray-cool-500 font-dm-sans">{member.email}</div>
                           )}
                         </label>
                       </div>
@@ -247,11 +247,11 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                   ))
                 )}
                 
-                <div className="pt-3 border-t border-light-border">
+                <div className="pt-3 border-t border-gray-cool-200">
                   <Button
                     onClick={saveSubscriptions}
                     disabled={saving}
-                    className="w-full bg-light-accent hover:bg-light-accent/90 text-white font-dm-sans"
+                    className="w-full bg-sky-500 hover:bg-sky-600 text-white font-dm-sans"
                   >
                     {saving ? (
                       <div className="flex items-center gap-2">

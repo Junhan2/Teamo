@@ -232,7 +232,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center p-8 text-light-primary">
+      <div className="flex justify-center items-center p-8 text-gray-cool-700">
         <div className="text-center">
           <p className="text-lg font-medium">Please log in to view your calendar</p>
         </div>
@@ -242,9 +242,9 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-8 text-light-primary">
+      <div className="flex justify-center items-center p-8 text-gray-cool-700">
         <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-t-2 border-b-2 border-light-accent rounded-full animate-spin mb-2"></div>
+          <div className="w-12 h-12 border-t-2 border-b-2 border-sky-500 rounded-full animate-spin mb-2"></div>
           <p className="text-lg font-medium">Loading Calendar...</p>
         </div>
       </div>
@@ -252,10 +252,10 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col bg-light-background animate-fadeIn">
+    <div className="w-full h-screen flex flex-col bg-gray-cool-50 animate-fadeIn">
       {/* Top Header - matching existing design */}
-      <div className="bg-light-background border-b border-light-border px-3 py-3 flex items-center justify-between shadow-sm">
-        <h1 className="text-lg font-semibold text-light-primary font-dm-sans">
+      <div className="bg-gray-cool-50 border-b border-gray-cool-200 px-3 py-3 flex items-center justify-between shadow-sm">
+        <h1 className="text-lg font-semibold text-gray-cool-800 font-dm-sans">
           {format(currentDate, 'MMMM yyyy')}
         </h1>
         
@@ -264,7 +264,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={prevMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-white text-gray-cool-700 hover:bg-[#EFF1F5] border border-gray-cool-200 rounded-md"
           >
             <ChevronLeft size={16} />
           </Button>
@@ -272,7 +272,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={goToToday}
-            className="h-8 px-3 text-xs bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
+            className="h-8 px-3 text-xs bg-white text-gray-cool-700 hover:bg-[#EFF1F5] border border-gray-cool-200 rounded-md"
           >
             Today
           </Button>
@@ -280,7 +280,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
             variant="outline"
             size="sm"
             onClick={nextMonth}
-            className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
+            className="h-8 w-8 p-0 bg-white text-gray-cool-700 hover:bg-[#EFF1F5] border border-gray-cool-200 rounded-md"
           >
             <ChevronRight size={16} />
           </Button>
@@ -291,27 +291,27 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="h-8 w-8 p-0 bg-light-input text-light-primary hover:bg-[#EFF1F5] border border-light-border rounded-md"
+                className="h-8 w-8 p-0 bg-white text-gray-cool-700 hover:bg-[#EFF1F5] border border-gray-cool-200 rounded-md"
               >
                 <Menu size={16} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] p-0 bg-light-background">
-              <SheetHeader className="p-4 border-b border-light-border">
-                <SheetTitle className="text-light-primary font-dm-sans">Calendar Settings</SheetTitle>
+            <SheetContent side="right" className="w-[300px] p-0 bg-gray-cool-50">
+              <SheetHeader className="p-4 border-b border-gray-cool-200">
+                <SheetTitle className="text-gray-cool-800 font-dm-sans">Calendar Settings</SheetTitle>
               </SheetHeader>
               
               <div className="p-4 space-y-4">
                 {/* Show completed tasks toggle */}
-                <div className="bg-light-background rounded-xl shadow-md border border-light-border p-4">
+                <div className="bg-gray-cool-50 rounded-xl shadow-md border border-gray-cool-200 p-4">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="show-completed-mobile"
                       checked={showCompletedTasks}
                       onCheckedChange={setShowCompletedTasks}
-                      className="data-[state=checked]:bg-light-accent"
+                      className="data-[state=checked]:bg-sky-500"
                     />
-                    <Label htmlFor="show-completed-mobile" className="text-sm text-light-primary flex items-center font-dm-sans">
+                    <Label htmlFor="show-completed-mobile" className="text-sm text-gray-cool-700 flex items-center font-dm-sans">
                       <Eye size={14} className="mr-1" />
                       Show completed tasks
                     </Label>
@@ -322,7 +322,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <div>
                   <React.Suspense fallback={
                     <div className="flex items-center justify-center p-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-light-accent"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500"></div>
                     </div>
                   }>
                     <TeamMemberSubscription
@@ -338,14 +338,14 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
       </div>
 
       {/* Calendar Grid - Compact design */}
-      <div className="overflow-auto border-b border-light-border">
+      <div className="overflow-auto border-b border-gray-cool-200">
         {/* Day names header */}
-        <div className="grid grid-cols-7 bg-light-background sticky top-0 z-10">
+        <div className="grid grid-cols-7 bg-gray-cool-50 sticky top-0 z-10">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
             <div 
               key={day} 
               className={`text-center py-3 text-sm font-medium font-dm-sans ${
-                index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-light-muted'
+                index === 0 ? 'text-red-400' : index === 6 ? 'text-blue-400' : 'text-gray-cool-500'
               }`}
             >
               {day}
@@ -365,7 +365,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
               <motion.div
                 key={i}
                 className={`
-                  h-8 flex items-center justify-center cursor-pointer bg-light-background relative
+                  h-8 flex items-center justify-center cursor-pointer bg-gray-cool-50 relative
                   ${!isCurrentMonth ? 'bg-gray-50/80' : ''} 
                   ${isDaySelected ? 'bg-[#EFF1F5] text-black' : ''}
                   ${isCurrentDay && !isDaySelected ? 'bg-blue-50 text-blue-600 font-semibold' : ''}
@@ -379,7 +379,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 <span 
                   className={`
                     text-sm font-medium font-dm-sans
-                    ${!isCurrentMonth ? 'text-gray-300' : isDaySelected ? 'text-black font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-light-primary'}
+                    ${!isCurrentMonth ? 'text-gray-300' : isDaySelected ? 'text-black font-semibold' : i % 7 === 0 ? 'text-red-500' : i % 7 === 6 ? 'text-blue-500' : 'text-gray-cool-700'}
                     ${isCurrentDay && !isDaySelected ? 'text-blue-600 font-semibold' : ''}
                   `}
                 >
@@ -389,7 +389,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
                 {/* Small dot indicator for tasks */}
                 {dayTodos.length > 0 && (
                   <div className={`absolute bottom-1 right-1 w-2 h-2 rounded-full ${
-                    isDaySelected ? 'bg-black' : 'bg-light-accent'
+                    isDaySelected ? 'bg-black' : 'bg-sky-500'
                   }`}></div>
                 )}
               </motion.div>
