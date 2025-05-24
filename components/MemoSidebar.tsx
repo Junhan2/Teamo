@@ -214,13 +214,13 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
           className="fixed top-20 right-4 bottom-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800">메모 편집</h3>
+          <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wider">MEMO</h3>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="hover:bg-gray-100 rounded-full"
+              className="hover:bg-gray-100 rounded-full h-8 w-8"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -231,7 +231,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
             {/* 제목 */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-medium text-gray-700">
-                제목
+                Title
               </Label>
               <Input
                 id="title"
@@ -240,7 +240,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                   setTitle(e.target.value)
                   handleRealtimeUpdate()
                 }}
-                placeholder="메모 제목"
+                placeholder="Enter memo title"
                 className="w-full"
               />
             </div>
@@ -248,7 +248,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
             {/* 내용 */}
             <div className="space-y-2">
               <Label htmlFor="content" className="text-sm font-medium text-gray-700">
-                내용
+                Content
               </Label>
               <Textarea
                 id="content"
@@ -257,7 +257,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                   setContent(e.target.value)
                   handleRealtimeUpdate()
                 }}
-                placeholder="메모 내용을 입력하세요..."
+                placeholder="Write your memo content..."
                 className="w-full min-h-[200px] resize-none"
               />
             </div>
@@ -266,14 +266,14 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <Hash className="h-4 w-4" />
-                태그
+                Tags
               </Label>
               <div className="flex gap-2">
                 <Input
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  placeholder="태그 입력"
+                  placeholder="Add a tag"
                   className="flex-1"
                 />
                 <Button
@@ -282,7 +282,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                   size="sm"
                   variant="outline"
                 >
-                  추가
+                  Add
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
@@ -303,7 +303,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <CheckSquare className="h-4 w-4" />
-                연결된 할일
+                Tasks
               </Label>
               
               {/* 할일 검색 */}
@@ -318,7 +318,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                         setShowTodoSearch(true)
                       }}
                       onFocus={() => setShowTodoSearch(true)}
-                      placeholder="할일 검색..."
+                      placeholder="Search tasks..."
                       className="pl-10"
                     />
                   </div>
@@ -328,7 +328,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                 {showTodoSearch && todoSearch && (
                   <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto z-10">
                     {loading ? (
-                      <div className="p-4 text-center text-gray-500">검색 중...</div>
+                      <div className="p-4 text-center text-gray-500">Searching...</div>
                     ) : searchResults.length > 0 ? (
                       searchResults.map((todo) => (
                         <button
@@ -338,14 +338,17 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-sm">{todo.title}</span>
-                            <Badge variant={todo.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
-                              {todo.status}
+                            <Badge 
+                              variant={todo.status === 'completed' ? 'default' : 'secondary'} 
+                              className="text-xs"
+                            >
+                              {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'pending'}
                             </Badge>
                           </div>
                         </button>
                       ))
                     ) : (
-                      <div className="p-4 text-center text-gray-500">검색 결과가 없습니다</div>
+                      <div className="p-4 text-center text-gray-500">No tasks found</div>
                     )}
                   </div>
                 )}
@@ -363,12 +366,12 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                             variant={todo.status === 'completed' ? 'default' : todo.status === 'in_progress' ? 'secondary' : 'outline'} 
                             className="ml-2 text-xs"
                           >
-                            {todo.status === 'completed' ? '완료' : todo.status === 'in_progress' ? '진행중' : '대기'}
+                            {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'pending'}
                           </Badge>
                         </div>
                         <button
                           onClick={() => removeTodo(todo.id)}
-                          className="text-red-500 hover:text-red-700 text-sm ml-2"
+                          className="text-gray-400 hover:text-gray-600 text-sm ml-2 transition-colors"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -376,7 +379,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                     ))}
                   </div>
                 ) : (
-                  <div className="text-sm text-gray-500 text-center py-4">연결된 할일이 없습니다</div>
+                  <div className="text-sm text-gray-500 text-center py-4">No connected tasks</div>
                 )}
               </div>
             </div>
