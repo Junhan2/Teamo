@@ -10,8 +10,6 @@ import { Label } from "@/components/ui/label"
 import MemoSidebar from "@/components/MemoSidebar"
 import { 
   PlusCircle, 
-  Maximize2, 
-  Minimize2, 
   ZoomIn,
   ZoomOut,
   Filter
@@ -992,7 +990,7 @@ export default function AdvancedMemoGrid() {
   return (
     <div className="w-full h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
       {/* CSS 애니메이션 추가 */}
-      <style jsx>{`
+      <style>{`
         @keyframes highlight {
           0% { opacity: 1; }
           50% { opacity: 0.7; }
