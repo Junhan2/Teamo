@@ -695,6 +695,39 @@ export default function AdvancedMemoGrid() {
     }
   }
 
+  // 실시간 업데이트 (UI만 업데이트, DB 저장 없음)
+  const handleRealtimeUpdate = (updatedMemo: {
+    id: string
+    title: string
+    content: string
+    tags: string[]
+    tagged_todos: string[]
+  }) => {
+    // 로컬 상태 즉시 업데이트
+    setMemos(prev => prev.map(memo => 
+      memo.id === updatedMemo.id 
+        ? { 
+            ...memo, 
+            title: updatedMemo.title,
+            content: updatedMemo.content,
+            tags: updatedMemo.tags,
+            tagged_todos: updatedMemo.tagged_todos
+          } 
+        : memo
+    ))
+
+    // 사이드바 메모도 업데이트
+    if (sidebarMemo?.id === updatedMemo.id) {
+      setSidebarMemo(prev => prev ? {
+        ...prev,
+        title: updatedMemo.title,
+        content: updatedMemo.content,
+        tags: updatedMemo.tags,
+        tagged_todos: updatedMemo.tagged_todos
+      } : null)
+    }
+  }
+
   // 색상 변경
   const changeColor = async (memoId: string, color: string) => {
     try {
@@ -1297,6 +1330,7 @@ export default function AdvancedMemoGrid() {
         onClose={() => setIsSidebarOpen(false)}
         memo={sidebarMemo}
         onSave={handleSidebarSave}
+        onRealtimeUpdate={handleRealtimeUpdate}
       />
     </div>
   )

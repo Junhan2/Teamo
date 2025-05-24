@@ -1,13 +1,21 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { X, Hash, CheckSquare } from 'lucide-react'
+import { X, Hash, CheckSquare, Search, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createClient } from '@/lib/supabase/client'
+
+interface Todo {
+  id: string
+  title: string
+  status: string
+  user_id: string
+}
 
 interface MemoSidebarProps {
   isOpen: boolean
@@ -26,15 +34,28 @@ interface MemoSidebarProps {
     tags: string[]
     tagged_todos: string[]
   }) => void
+  onRealtimeUpdate?: (memo: {
+    id: string
+    title: string
+    content: string
+    tags: string[]
+    tagged_todos: string[]
+  }) => void
 }
 
-export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSidebarProps) {
+export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeUpdate }: MemoSidebarProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
   const [taggedTodos, setTaggedTodos] = useState<string[]>([])
+  const [todoSearch, setTodoSearch] = useState('')
+  const [searchResults, setSearchResults] = useState<Todo[]>([])
+  const [showTodoSearch, setShowTodoSearch] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [linkedTodos, setLinkedTodos] = useState<Todo[]>([])
   const sidebarRef = useRef<HTMLDivElement>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     if (memo) {
@@ -45,7 +66,76 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
     }
   }, [memo])
 
-  // 자동 저장
+  // 연결된 할일 정보 가져오기
+  useEffect(() => {
+    const fetchLinkedTodos = async () => {
+      if (!taggedTodos.length) {
+        setLinkedTodos([])
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('todos')
+          .select('id, title, status, user_id')
+          .in('id', taggedTodos)
+
+        if (error) throw error
+        setLinkedTodos(data || [])
+      } catch (error) {
+        console.error('Error fetching linked todos:', error)
+      }
+    }
+
+    fetchLinkedTodos()
+  }, [taggedTodos])
+
+  // 실시간 업데이트
+  const handleRealtimeUpdate = () => {
+    if (!memo || !onRealtimeUpdate) return
+    
+    onRealtimeUpdate({
+      id: memo.id,
+      title,
+      content,
+      tags,
+      tagged_todos: taggedTodos
+    })
+  }
+
+  // 할일 검색
+  const searchTodos = async () => {
+    if (!todoSearch.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('todos')
+        .select('id, title, status, user_id')
+        .ilike('title', `%${todoSearch}%`)
+        .limit(10)
+
+      if (error) throw error
+      setSearchResults(data || [])
+    } catch (error) {
+      console.error('Error searching todos:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      searchTodos()
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [todoSearch])
+
+  // 자동 저장 (DB 저장용)
   useEffect(() => {
     if (!memo) return
     
@@ -57,7 +147,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
         tags,
         tagged_todos: taggedTodos
       })
-    }, 1000) // 1초 후 자동 저장
+    }, 1000) // 1초 후 DB 저장
 
     return () => clearTimeout(saveTimeout)
   }, [title, content, tags, taggedTodos, memo, onSave])
@@ -81,13 +171,35 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()])
+      const newTags = [...tags, tagInput.trim()]
+      setTags(newTags)
       setTagInput('')
+      handleRealtimeUpdate()
     }
   }
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove))
+    const newTags = tags.filter(tag => tag !== tagToRemove)
+    setTags(newTags)
+    handleRealtimeUpdate()
+  }
+
+  const addTodo = (todo: Todo) => {
+    if (!taggedTodos.includes(todo.id)) {
+      const newTodos = [...taggedTodos, todo.id]
+      setTaggedTodos(newTodos)
+      setLinkedTodos([...linkedTodos, todo])
+      setTodoSearch('')
+      setShowTodoSearch(false)
+      handleRealtimeUpdate()
+    }
+  }
+
+  const removeTodo = (todoId: string) => {
+    const newTodos = taggedTodos.filter(id => id !== todoId)
+    setTaggedTodos(newTodos)
+    setLinkedTodos(linkedTodos.filter(todo => todo.id !== todoId))
+    handleRealtimeUpdate()
   }
 
   return (
@@ -124,7 +236,10 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                  handleRealtimeUpdate()
+                }}
                 placeholder="메모 제목"
                 className="w-full"
               />
@@ -138,7 +253,10 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
               <Textarea
                 id="content"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e) => {
+                  setContent(e.target.value)
+                  handleRealtimeUpdate()
+                }}
                 placeholder="메모 내용을 입력하세요..."
                 className="w-full min-h-[200px] resize-none"
               />
@@ -187,11 +305,79 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave }: MemoSideb
                 <CheckSquare className="h-4 w-4" />
                 연결된 할일
               </Label>
-              <div className="text-sm text-gray-500">
-                {taggedTodos.length > 0 
-                  ? `${taggedTodos.length}개의 할일이 연결됨`
-                  : '연결된 할일이 없습니다'
-                }
+              
+              {/* 할일 검색 */}
+              <div className="relative">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      value={todoSearch}
+                      onChange={(e) => {
+                        setTodoSearch(e.target.value)
+                        setShowTodoSearch(true)
+                      }}
+                      onFocus={() => setShowTodoSearch(true)}
+                      placeholder="할일 검색..."
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                {/* 검색 결과 */}
+                {showTodoSearch && todoSearch && (
+                  <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 max-h-48 overflow-y-auto z-10">
+                    {loading ? (
+                      <div className="p-4 text-center text-gray-500">검색 중...</div>
+                    ) : searchResults.length > 0 ? (
+                      searchResults.map((todo) => (
+                        <button
+                          key={todo.id}
+                          onClick={() => addTodo(todo)}
+                          className="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">{todo.title}</span>
+                            <Badge variant={todo.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
+                              {todo.status}
+                            </Badge>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-500">검색 결과가 없습니다</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* 연결된 할일 목록 */}
+              <div className="space-y-2 mt-3">
+                {linkedTodos.length > 0 ? (
+                  <div className="space-y-1">
+                    {linkedTodos.map((todo) => (
+                      <div key={todo.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
+                          <span className="text-sm font-medium">{todo.title}</span>
+                          <Badge 
+                            variant={todo.status === 'completed' ? 'default' : todo.status === 'in_progress' ? 'secondary' : 'outline'} 
+                            className="ml-2 text-xs"
+                          >
+                            {todo.status === 'completed' ? '완료' : todo.status === 'in_progress' ? '진행중' : '대기'}
+                          </Badge>
+                        </div>
+                        <button
+                          onClick={() => removeTodo(todo.id)}
+                          className="text-red-500 hover:text-red-700 text-sm ml-2"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500 text-center py-4">연결된 할일이 없습니다</div>
+                )}
               </div>
             </div>
           </div>
