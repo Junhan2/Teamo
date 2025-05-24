@@ -262,43 +262,6 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
               />
             </div>
 
-            {/* 태그 */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Hash className="h-4 w-4" />
-                Tags
-              </Label>
-              <div className="flex gap-2">
-                <Input
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                  placeholder="Add a tag"
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  onClick={addTag}
-                  size="sm"
-                  variant="outline"
-                >
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-gray-200"
-                    onClick={() => removeTag(tag)}
-                  >
-                    #{tag} ×
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
             {/* 할일 태깅 */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -334,7 +297,12 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                         <button
                           key={todo.id}
                           onClick={() => addTodo(todo)}
-                          className="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                          disabled={taggedTodos.includes(todo.id)}
+                          className={`w-full text-left p-3 border-b border-gray-100 last:border-0 ${
+                            taggedTodos.includes(todo.id) 
+                              ? 'bg-gray-100 opacity-50 cursor-not-allowed' 
+                              : 'hover:bg-gray-50'
+                          }`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-sm">{todo.title}</span>
@@ -342,7 +310,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                               variant={todo.status === 'completed' ? 'default' : 'secondary'} 
                               className="text-xs"
                             >
-                              {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'pending'}
+                              {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'not yet'}
                             </Badge>
                           </div>
                         </button>
@@ -366,7 +334,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                             variant={todo.status === 'completed' ? 'default' : todo.status === 'in_progress' ? 'secondary' : 'outline'} 
                             className="ml-2 text-xs"
                           >
-                            {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'pending'}
+                            {todo.status === 'completed' ? 'completed' : todo.status === 'in_progress' ? 'in progress' : 'not yet'}
                           </Badge>
                         </div>
                         <button
@@ -381,6 +349,43 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                 ) : (
                   <div className="text-sm text-gray-500 text-center py-4">No connected tasks</div>
                 )}
+              </div>
+            </div>
+
+            {/* 태그 */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Hash className="h-4 w-4" />
+                Tags
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                  placeholder="Add a tag"
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={addTag}
+                  size="sm"
+                  variant="outline"
+                >
+                  Add
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-gray-200"
+                    onClick={() => removeTag(tag)}
+                  >
+                    #{tag} ×
+                  </Badge>
+                ))}
               </div>
             </div>
           </div>

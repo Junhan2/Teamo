@@ -12,7 +12,8 @@ import {
   Maximize2, 
   Minimize2, 
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Filter
 } from "lucide-react"
 
 interface Memo {
@@ -77,6 +78,9 @@ export default function AdvancedMemoGrid() {
   const [tagInput, setTagInput] = useState('')
   const [todos, setTodos] = useState<any[]>([])
   const [showTodoSearch, setShowTodoSearch] = useState<string | null>(null)
+  const [filterTag, setFilterTag] = useState<string>('')
+  const [filterTodo, setFilterTodo] = useState<string>('')
+  const [showFilters, setShowFilters] = useState(false)
   
   // 드래그 상태 관리
   const [dragState, setDragState] = useState<{
@@ -852,6 +856,21 @@ export default function AdvancedMemoGrid() {
     )
   }
 
+  // 필터링된 메모 계산
+  const filteredMemos = memos.filter(memo => {
+    // 태그 필터
+    if (filterTag && (!memo.tags || !memo.tags.includes(filterTag))) {
+      return false
+    }
+    
+    // 할일 필터
+    if (filterTodo && (!memo.tagged_todos || !memo.tagged_todos.includes(filterTodo))) {
+      return false
+    }
+    
+    return true
+  })
+
   return (
     <div className="w-full h-[calc(100vh-4rem)] bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
       {/* CSS 애니메이션 추가 */}
@@ -952,6 +971,15 @@ export default function AdvancedMemoGrid() {
             <PlusCircle className="h-4 w-4" />
             ADD MEMO
           </Button>
+          
+          <Button
+            variant={showFilters ? 'default' : 'outline'}
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Filter
+          </Button>
         
         <div className="flex items-center gap-2">
           <Button
@@ -1016,6 +1044,65 @@ export default function AdvancedMemoGrid() {
         </div>
       </div>
 
+      {/* 필터 패널 */}
+      {showFilters && (
+        <div className="absolute top-20 left-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-gray-200 p-4 w-80">
+          <h3 className="text-sm font-semibold mb-3 text-gray-700">Filter Memos</h3>
+          
+          <div className="space-y-3">
+            {/* 태그 필터 */}
+            <div>
+              <Label className="text-xs text-gray-600 mb-1">Filter by Tag</Label>
+              <select
+                value={filterTag}
+                onChange={(e) => setFilterTag(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">All Tags</option>
+                {Array.from(new Set(memos.flatMap(m => m.tags || []))).map(tag => (
+                  <option key={tag} value={tag}>#{tag}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* 할일 필터 */}
+            <div>
+              <Label className="text-xs text-gray-600 mb-1">Filter by Task</Label>
+              <select
+                value={filterTodo}
+                onChange={(e) => setFilterTodo(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+              >
+                <option value="">All Tasks</option>
+                {todos.map(todo => (
+                  <option key={todo.id} value={todo.id}>{todo.title}</option>
+                ))}
+              </select>
+            </div>
+            
+            {/* 필터 초기화 */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setFilterTag('')
+                setFilterTodo('')
+              }}
+              className="w-full"
+            >
+              Clear Filters
+            </Button>
+          </div>
+          
+          {/* 필터 결과 */}
+          <div className="mt-3 pt-3 border-t border-gray-200">
+            <p className="text-xs text-gray-600">
+              Showing {filteredMemos.length} of {memos.length} memos
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 그리드 캔버스 */}
       <div 
         ref={gridRef}
@@ -1035,7 +1122,7 @@ export default function AdvancedMemoGrid() {
         }}
       >
         {/* 메모들 */}
-        {memos.map((memo) => {
+        {filteredMemos.map((memo) => {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
           const isDragging = dragState.memoId === memo.id
           const isExpanded = memo.is_expanded || isHovered || viewState === 'expanded'
