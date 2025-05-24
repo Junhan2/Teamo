@@ -583,6 +583,29 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 및 리사이즈 중 마우스 이동
   const handleMouseMove = useCallback((e: MouseEvent) => {
+    // 선택 영역 업데이트 처리
+    if (isSelecting && selectionStart && gridRef.current) {
+      const rect = gridRef.current.getBoundingClientRect()
+      const currentX = (e.clientX - rect.left + gridRef.current.scrollLeft) / zoom
+      const currentY = (e.clientY - rect.top + gridRef.current.scrollTop) / zoom
+      
+      setSelectionEnd({ x: currentX, y: currentY })
+      
+      // 선택 영역 내의 메모들 찾기
+      const minX = Math.min(selectionStart.x, currentX)
+      const maxX = Math.max(selectionStart.x, currentX)
+      const minY = Math.min(selectionStart.y, currentY)
+      const maxY = Math.max(selectionStart.y, currentY)
+      
+      const memosInSelection = memos.filter(memo => 
+        memo.position_x < maxX && memo.position_x + memo.width > minX &&
+        memo.position_y < maxY && memo.position_y + memo.height > minY
+      ).map(memo => memo.id)
+      
+      setSelectedMemos(memosInSelection)
+      return
+    }
+    
     // 팬 기능 처리 (스페이스 + 드래그)
     if (panState.isPanning && gridRef.current) {
       const rect = gridRef.current.getBoundingClientRect()
@@ -696,6 +719,14 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 및 리사이즈 종료
   const handleMouseUp = useCallback(async () => {
+    // 선택 종료 처리
+    if (isSelecting) {
+      setIsSelecting(false)
+      setSelectionStart(null)
+      setSelectionEnd(null)
+      return
+    }
+    
     // 팬 종료 처리
     if (panState.isPanning) {
       setPanState(prev => ({ 
@@ -1796,6 +1827,23 @@ export default function AdvancedMemoGrid() {
               gridRef.current.style.cursor = 'grabbing'
             }
             return
+          }
+          
+          // 선택 모드 시작 (빈 공간 클릭 시)
+          if (e.target === e.currentTarget && gridRef.current) {
+            e.preventDefault()
+            const rect = gridRef.current.getBoundingClientRect()
+            const startX = (e.clientX - rect.left + gridRef.current.scrollLeft) / zoom
+            const startY = (e.clientY - rect.top + gridRef.current.scrollTop) / zoom
+            
+            setIsSelecting(true)
+            setSelectionStart({ x: startX, y: startY })
+            setSelectionEnd({ x: startX, y: startY })
+            
+            // Ctrl/Cmd 키가 눌려있지 않으면 기존 선택 해제
+            if (!e.ctrlKey && !e.metaKey) {
+              setSelectedMemos([])
+            }
           } else {
             console.log('팬 조건 불만족:', {
               isSpacePressed: panState.isSpacePressed,
@@ -1828,11 +1876,14 @@ export default function AdvancedMemoGrid() {
           const isDragging = dragState.memoId === memo.id
           const isResizing = resizeState.memoId === memo.id
           const isNewlyCreated = newlyCreatedMemoId === memo.id
+          const isSelected = selectedMemos.includes(memo.id)
           
           return (
             <div
               key={memo.id}
-              className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
+              className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
+                isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''
+              } ${isSelected ? 'memo-selected' : ''}`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
@@ -1935,6 +1986,19 @@ export default function AdvancedMemoGrid() {
             </div>
           )
         })}
+        
+        {/* 선택 영역 시각화 */}
+        {isSelecting && selectionStart && selectionEnd && (
+          <div
+            className="selection-area"
+            style={{
+              left: Math.min(selectionStart.x, selectionEnd.x) * zoom,
+              top: Math.min(selectionStart.y, selectionEnd.y) * zoom,
+              width: Math.abs(selectionEnd.x - selectionStart.x) * zoom,
+              height: Math.abs(selectionEnd.y - selectionStart.y) * zoom,
+            }}
+          />
+        )}
         </div>
       </div>
 
@@ -2063,7 +2127,7 @@ export default function AdvancedMemoGrid() {
       )}
 
       {/* 배경 클릭시 메뉴들 닫기 */}
-      {(contextMenu || showPageMenu || showTodoSearch || pageContextMenu) && (
+      {(contextMenu || showPageMenu || showTodoSearch || pageContextMenu || showAlignDropdown) && (
         <div
           className="fixed inset-0 z-25"
           onClick={() => {
@@ -2071,6 +2135,7 @@ export default function AdvancedMemoGrid() {
             setShowPageMenu(false)
             setShowTodoSearch(null)
             setPageContextMenu(null)
+            setShowAlignDropdown(false)
           }}
         />
       )}
