@@ -835,14 +835,18 @@ export default function AdvancedMemoGrid() {
   // 키보드 이벤트 처리
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 스페이스 키 처리 (팬 모드)
-      if (e.code === 'Space' && !panState.isSpacePressed) {
-        e.preventDefault()
-        console.log('스페이스 키 눌림 - 팬 모드 활성화')
-        setPanState(prev => ({ ...prev, isSpacePressed: true }))
-        if (gridRef.current) {
-          gridRef.current.style.cursor = 'grab'
-          console.log('커서가 grab으로 변경됨')
+      // 스페이스 키 처리 (팬 모드) - 브라우저 기본 동작 완전 차단
+      if (e.code === 'Space') {
+        e.preventDefault() // 브라우저 스크롤 방지
+        e.stopPropagation() // 이벤트 전파 방지
+        
+        if (!panState.isSpacePressed) {
+          console.log('스페이스 키 눌림 - 팬 모드 활성화')
+          setPanState(prev => ({ ...prev, isSpacePressed: true }))
+          if (gridRef.current) {
+            gridRef.current.style.cursor = 'grab'
+            console.log('커서가 grab으로 변경됨')
+          }
         }
         return
       }
@@ -861,6 +865,9 @@ export default function AdvancedMemoGrid() {
     const handleKeyUp = (e: KeyboardEvent) => {
       // 스페이스 키 해제
       if (e.code === 'Space') {
+        e.preventDefault() // 브라우저 기본 동작 방지
+        e.stopPropagation() // 이벤트 전파 방지
+        
         console.log('스페이스 키 해제 - 팬 모드 비활성화')
         setPanState(prev => ({ 
           ...prev, 
@@ -1447,55 +1454,46 @@ export default function AdvancedMemoGrid() {
             targetIsCurrentTarget: e.target === e.currentTarget
           })
           
-          // 팬 기능 - 스페이스가 눌려있고 메모가 아닌 곳 클릭 시
+          // 팬 기능 - 스페이스가 눌려있으면 어디든 팬 가능
           if (panState.isSpacePressed && gridRef.current) {
-            // 클릭한 요소가 메모인지 확인 (메모는 memo-drag-area 클래스 또는 resize-handle 클래스를 가짐)
-            const clickedElement = e.target as HTMLElement
-            const isClickOnMemo = clickedElement.closest('.memo-drag-area') || 
-                                  clickedElement.closest('.resize-handle') ||
-                                  clickedElement.closest('[data-memo-id]')
+            console.log('팬 조건 만족 - 팬 시작 (스페이스 + 클릭)')
+            e.preventDefault()
+            e.stopPropagation() // 다른 이벤트 차단
             
-            if (!isClickOnMemo) {
-              console.log('팬 조건 만족 - 팬 시작 (빈 공간 클릭)')
-              e.preventDefault()
-              
-              const rect = gridRef.current.getBoundingClientRect()
-              const mouseX = e.clientX - rect.left
-              const mouseY = e.clientY - rect.top
-              
-              // 클릭한 위치의 캔버스 상 좌표 계산
-              const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
-              const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
-              
-              console.log('팬 시작:', {
-                mouseX,
-                mouseY,
-                scrollLeft: gridRef.current.scrollLeft,
-                scrollTop: gridRef.current.scrollTop,
-                clickPointX,
-                clickPointY,
-                zoom,
-                isSpacePressed: panState.isSpacePressed
-              })
-              
-              setPanState(prev => ({
-                ...prev,
-                isPanning: true,
-                startX: e.clientX,
-                startY: e.clientY,
-                startScrollX: gridRef.current!.scrollLeft,
-                startScrollY: gridRef.current!.scrollTop,
-                clickPointX,
-                clickPointY
-              }))
-              
-              if (gridRef.current) {
-                gridRef.current.style.cursor = 'grabbing'
-              }
-              return
-            } else {
-              console.log('팬 조건 불만족: 메모 위를 클릭함')
+            const rect = gridRef.current.getBoundingClientRect()
+            const mouseX = e.clientX - rect.left
+            const mouseY = e.clientY - rect.top
+            
+            // 클릭한 위치의 캔버스 상 좌표 계산
+            const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
+            const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
+            
+            console.log('팬 시작:', {
+              mouseX,
+              mouseY,
+              scrollLeft: gridRef.current.scrollLeft,
+              scrollTop: gridRef.current.scrollTop,
+              clickPointX,
+              clickPointY,
+              zoom,
+              isSpacePressed: panState.isSpacePressed
+            })
+            
+            setPanState(prev => ({
+              ...prev,
+              isPanning: true,
+              startX: e.clientX,
+              startY: e.clientY,
+              startScrollX: gridRef.current!.scrollLeft,
+              startScrollY: gridRef.current!.scrollTop,
+              clickPointX,
+              clickPointY
+            }))
+            
+            if (gridRef.current) {
+              gridRef.current.style.cursor = 'grabbing'
             }
+            return
           } else {
             console.log('팬 조건 불만족:', {
               isSpacePressed: panState.isSpacePressed,
@@ -1553,7 +1551,15 @@ export default function AdvancedMemoGrid() {
               {/* 드래그 영역 - 메모 내부 */}
               <div 
                 className="memo-drag-area"
-                onMouseDown={(e) => handleMouseDown(e, memo.id)}
+                onMouseDown={(e) => {
+                  // 스페이스가 눌려있으면 팬 기능 우선 (이벤트를 상위로 전파)
+                  if (panState.isSpacePressed) {
+                    return // 상위 onMouseDown으로 전파되어 팬 기능 실행
+                  }
+                  
+                  // 일반 메모 드래그
+                  handleMouseDown(e, memo.id)
+                }}
                 onDoubleClick={(e) => {
                   // 드래그 관련 상태가 하나라도 활성화되어 있으면 더블클릭 무시
                   if (dragState.hasMoved || dragState.isDragging || dragState.isReady) {
