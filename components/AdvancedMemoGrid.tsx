@@ -90,13 +90,17 @@ export default function AdvancedMemoGrid() {
     startY: number
     startScrollX: number
     startScrollY: number
+    clickPointX: number  // 클릭한 캔버스 상의 위치
+    clickPointY: number
   }>({
     isPanning: false,
     isSpacePressed: false,
     startX: 0,
     startY: 0,
     startScrollX: 0,
-    startScrollY: 0
+    startScrollY: 0,
+    clickPointX: 0,
+    clickPointY: 0
   })
   
   // 드래그 상태 관리
@@ -495,12 +499,19 @@ export default function AdvancedMemoGrid() {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     // 팬 기능 처리 (스페이스 + 드래그)
     if (panState.isPanning && gridRef.current) {
-      const deltaX = e.clientX - panState.startX
-      const deltaY = e.clientY - panState.startY
+      const rect = gridRef.current.getBoundingClientRect()
       
-      // 드래그 방향과 반대로 스크롤 이동 (자연스러운 팬 느낌)
-      gridRef.current.scrollLeft = panState.startScrollX - deltaX
-      gridRef.current.scrollTop = panState.startScrollY - deltaY
+      // 현재 마우스 위치에서 클릭한 캔버스 상의 점까지의 거리
+      const currentMouseX = e.clientX - rect.left
+      const currentMouseY = e.clientY - rect.top
+      
+      // 클릭한 캔버스 위치가 현재 마우스 위치에 오도록 스크롤 조정
+      const targetScrollX = (panState.clickPointX * zoom) - currentMouseX
+      const targetScrollY = (panState.clickPointY * zoom) - currentMouseY
+      
+      // 즉각적이고 자연스러운 이동
+      gridRef.current.scrollLeft = Math.max(0, targetScrollX)
+      gridRef.current.scrollTop = Math.max(0, targetScrollY)
       return
     }
     
@@ -591,7 +602,12 @@ export default function AdvancedMemoGrid() {
   const handleMouseUp = useCallback(async () => {
     // 팬 종료 처리
     if (panState.isPanning) {
-      setPanState(prev => ({ ...prev, isPanning: false }))
+      setPanState(prev => ({ 
+        ...prev, 
+        isPanning: false,
+        clickPointX: 0,
+        clickPointY: 0
+      }))
       if (gridRef.current) {
         gridRef.current.style.cursor = panState.isSpacePressed ? 'grab' : 'default'
       }
@@ -833,7 +849,13 @@ export default function AdvancedMemoGrid() {
     const handleKeyUp = (e: KeyboardEvent) => {
       // 스페이스 키 해제
       if (e.code === 'Space') {
-        setPanState(prev => ({ ...prev, isSpacePressed: false, isPanning: false }))
+        setPanState(prev => ({ 
+          ...prev, 
+          isSpacePressed: false, 
+          isPanning: false,
+          clickPointX: 0,
+          clickPointY: 0
+        }))
         if (gridRef.current) {
           gridRef.current.style.cursor = panState.isPanning ? 'grabbing' : 'default'
         }
@@ -1407,14 +1429,26 @@ export default function AdvancedMemoGrid() {
           // 팬 기능 - 스페이스가 눌려있고 빈 공간 클릭 시
           if (panState.isSpacePressed && e.target === e.currentTarget && gridRef.current) {
             e.preventDefault()
+            
+            const rect = gridRef.current.getBoundingClientRect()
+            const mouseX = e.clientX - rect.left
+            const mouseY = e.clientY - rect.top
+            
+            // 클릭한 위치의 캔버스 상 좌표 계산
+            const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
+            const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
+            
             setPanState(prev => ({
               ...prev,
               isPanning: true,
               startX: e.clientX,
               startY: e.clientY,
               startScrollX: gridRef.current!.scrollLeft,
-              startScrollY: gridRef.current!.scrollTop
+              startScrollY: gridRef.current!.scrollTop,
+              clickPointX,
+              clickPointY
             }))
+            
             if (gridRef.current) {
               gridRef.current.style.cursor = 'grabbing'
             }
