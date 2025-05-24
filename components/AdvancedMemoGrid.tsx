@@ -80,6 +80,23 @@ export default function AdvancedMemoGrid() {
   const [todoSearchQuery, setTodoSearchQuery] = useState<string>('')
   const [selectedTodoIndex, setSelectedTodoIndex] = useState<number>(0)
   
+  // 팬 상태 관리 (스페이스 + 드래그로 뷰포트 이동)
+  const [panState, setPanState] = useState<{
+    isPanning: boolean
+    isSpacePressed: boolean
+    startX: number
+    startY: number
+    startScrollX: number
+    startScrollY: number
+  }>({
+    isPanning: false,
+    isSpacePressed: false,
+    startX: 0,
+    startY: 0,
+    startScrollX: 0,
+    startScrollY: 0
+  })
+  
   // 드래그 상태 관리
   const [dragState, setDragState] = useState<{
     isDragging: boolean
@@ -474,6 +491,16 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 및 리사이즈 중 마우스 이동
   const handleMouseMove = useCallback((e: MouseEvent) => {
+    // 팬 기능 처리 (스페이스 + 드래그)
+    if (panState.isPanning && gridRef.current) {
+      const deltaX = e.clientX - panState.startX
+      const deltaY = e.clientY - panState.startY
+      
+      gridRef.current.scrollLeft = panState.startScrollX - deltaX
+      gridRef.current.scrollTop = panState.startScrollY - deltaY
+      return
+    }
+    
     // 리사이즈 처리 (그리드 기반 즉각 반응)
     if (resizeState.isResizing && resizeState.memoId) {
       const deltaX = e.clientX - resizeState.startX
@@ -555,10 +582,19 @@ export default function AdvancedMemoGrid() {
       }
       return
     }
-  }, [dragState, resizeState, zoom, snapToGrid])
+  }, [dragState, resizeState, zoom, snapToGrid, panState])
 
   // 드래그 및 리사이즈 종료
   const handleMouseUp = useCallback(async () => {
+    // 팬 종료 처리
+    if (panState.isPanning) {
+      setPanState(prev => ({ ...prev, isPanning: false }))
+      if (gridRef.current) {
+        gridRef.current.style.cursor = panState.isSpacePressed ? 'grab' : 'default'
+      }
+      return
+    }
+    
     // 리사이즈 종료 처리
     if (resizeState.isResizing && resizeState.memoId) {
       const memo = memos.find(m => m.id === resizeState.memoId)
@@ -694,8 +730,8 @@ export default function AdvancedMemoGrid() {
 
   // 마우스 이벤트 리스너 등록
   useEffect(() => {
-    // 드래그 또는 리사이즈가 준비되거나 진행 중일 때 전역 이벤트 리스너 등록
-    if (dragState.isReady || dragState.isDragging || resizeState.isResizing) {
+    // 드래그, 리사이즈, 팬 기능이 준비되거나 진행 중일 때 전역 이벤트 리스너 등록
+    if (dragState.isReady || dragState.isDragging || resizeState.isResizing || panState.isPanning) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
       
@@ -704,7 +740,7 @@ export default function AdvancedMemoGrid() {
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [dragState.isReady, dragState.isDragging, resizeState.isResizing, handleMouseMove, handleMouseUp])
+  }, [dragState.isReady, dragState.isDragging, resizeState.isResizing, panState.isPanning, handleMouseMove, handleMouseUp])
   // 메모 삭제
   const deleteMemo = async (memoId: string) => {
     try {
@@ -740,13 +776,33 @@ export default function AdvancedMemoGrid() {
   // 키보드 이벤트 처리
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // 스페이스 키 처리 (팬 모드)
+      if (e.code === 'Space' && !panState.isSpacePressed) {
+        e.preventDefault()
+        setPanState(prev => ({ ...prev, isSpacePressed: true }))
+        if (gridRef.current) {
+          gridRef.current.style.cursor = 'grab'
+        }
+        return
+      }
+      
       if (e.metaKey || e.ctrlKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault()
-          handleZoom(0.025) // 0.05에서 0.025로 더 세밀하게
+          handleZoom(0.03) // 0.025에서 0.03으로 빠르게
         } else if (e.key === '-') {
           e.preventDefault()
-          handleZoom(-0.025) // 0.05에서 0.025로 더 세밀하게
+          handleZoom(-0.03) // 0.025에서 0.03으로 빠르게
+        }
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      // 스페이스 키 해제
+      if (e.code === 'Space') {
+        setPanState(prev => ({ ...prev, isSpacePressed: false, isPanning: false }))
+        if (gridRef.current) {
+          gridRef.current.style.cursor = panState.isPanning ? 'grabbing' : 'default'
         }
       }
     }
@@ -754,18 +810,20 @@ export default function AdvancedMemoGrid() {
     const handleWheel = (e: WheelEvent) => {
       if (e.metaKey || e.ctrlKey) {
         e.preventDefault()
-        handleZoom(e.deltaY > 0 ? -0.025 : 0.025) // 0.05에서 0.025로 더 세밀하게
+        handleZoom(e.deltaY > 0 ? -0.03 : 0.03) // 0.025에서 0.03으로 빠르게
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keyup', handleKeyUp)
     document.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keyup', handleKeyUp)
       document.removeEventListener('wheel', handleWheel)
     }
-  }, [handleZoom])
+  }, [handleZoom, panState.isSpacePressed, panState.isPanning])
 
   // 호버 효과 처리
   const handleMemoHover = (memoId: string, isEntering: boolean) => {
@@ -794,8 +852,8 @@ export default function AdvancedMemoGrid() {
     })
   }
 
-  // 메모 클릭 핸들러
-  const handleMemoClick = (memo: Memo) => {
+  // 메모 클릭 핸들러 (더블클릭으로 변경)
+  const handleMemoDoubleClick = (memo: Memo) => {
     // 드래그 상태가 하나라도 활성화되어 있으면 사이드바 열지 않음
     if (dragState.hasMoved || dragState.isDragging || dragState.isReady) {
       return
@@ -1307,13 +1365,31 @@ export default function AdvancedMemoGrid() {
       {/* 그리드 캔버스 */}
       <div 
         ref={gridRef}
-        className="w-full h-full relative"
+        className="w-full h-full relative overflow-auto"
         style={{
           transform: `scale(${zoom})`,
           transformOrigin: 'top left',
           backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
           backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`,
-          cursor: dragState.isDragging ? 'grabbing' : 'default'
+          cursor: panState.isPanning ? 'grabbing' : panState.isSpacePressed ? 'grab' : dragState.isDragging ? 'grabbing' : 'default'
+        }}
+        onMouseDown={(e) => {
+          // 팬 기능 - 스페이스가 눌려있고 빈 공간 클릭 시
+          if (panState.isSpacePressed && e.target === e.currentTarget && gridRef.current) {
+            e.preventDefault()
+            setPanState(prev => ({
+              ...prev,
+              isPanning: true,
+              startX: e.clientX,
+              startY: e.clientY,
+              startScrollX: gridRef.current!.scrollLeft,
+              startScrollY: gridRef.current!.scrollTop
+            }))
+            if (gridRef.current) {
+              gridRef.current.style.cursor = 'grabbing'
+            }
+            return
+          }
         }}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
@@ -1354,14 +1430,14 @@ export default function AdvancedMemoGrid() {
               <div 
                 className="memo-drag-area"
                 onMouseDown={(e) => handleMouseDown(e, memo.id)}
-                onClick={(e) => {
-                  // 드래그 관련 상태가 하나라도 활성화되어 있으면 클릭 무시
+                onDoubleClick={(e) => {
+                  // 드래그 관련 상태가 하나라도 활성화되어 있으면 더블클릭 무시
                   if (dragState.hasMoved || dragState.isDragging || dragState.isReady) {
                     e.preventDefault()
                     e.stopPropagation()
                     return
                   }
-                  handleMemoClick(memo)
+                  handleMemoDoubleClick(memo)
                 }}
               >
                 <div className="p-3 h-full flex flex-col overflow-hidden pointer-events-none">
