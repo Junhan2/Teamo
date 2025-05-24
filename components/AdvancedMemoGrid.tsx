@@ -1447,49 +1447,58 @@ export default function AdvancedMemoGrid() {
             targetIsCurrentTarget: e.target === e.currentTarget
           })
           
-          // 팬 기능 - 스페이스가 눌려있고 빈 공간 클릭 시
-          if (panState.isSpacePressed && e.target === e.currentTarget && gridRef.current) {
-            console.log('팬 조건 만족 - 팬 시작')
-            e.preventDefault()
+          // 팬 기능 - 스페이스가 눌려있고 메모가 아닌 곳 클릭 시
+          if (panState.isSpacePressed && gridRef.current) {
+            // 클릭한 요소가 메모인지 확인 (메모는 memo-drag-area 클래스 또는 resize-handle 클래스를 가짐)
+            const clickedElement = e.target as HTMLElement
+            const isClickOnMemo = clickedElement.closest('.memo-drag-area') || 
+                                  clickedElement.closest('.resize-handle') ||
+                                  clickedElement.closest('[data-memo-id]')
             
-            const rect = gridRef.current.getBoundingClientRect()
-            const mouseX = e.clientX - rect.left
-            const mouseY = e.clientY - rect.top
-            
-            // 클릭한 위치의 캔버스 상 좌표 계산
-            const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
-            const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
-            
-            console.log('팬 시작:', {
-              mouseX,
-              mouseY,
-              scrollLeft: gridRef.current.scrollLeft,
-              scrollTop: gridRef.current.scrollTop,
-              clickPointX,
-              clickPointY,
-              zoom,
-              isSpacePressed: panState.isSpacePressed
-            })
-            
-            setPanState(prev => ({
-              ...prev,
-              isPanning: true,
-              startX: e.clientX,
-              startY: e.clientY,
-              startScrollX: gridRef.current!.scrollLeft,
-              startScrollY: gridRef.current!.scrollTop,
-              clickPointX,
-              clickPointY
-            }))
-            
-            if (gridRef.current) {
-              gridRef.current.style.cursor = 'grabbing'
+            if (!isClickOnMemo) {
+              console.log('팬 조건 만족 - 팬 시작 (빈 공간 클릭)')
+              e.preventDefault()
+              
+              const rect = gridRef.current.getBoundingClientRect()
+              const mouseX = e.clientX - rect.left
+              const mouseY = e.clientY - rect.top
+              
+              // 클릭한 위치의 캔버스 상 좌표 계산
+              const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
+              const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
+              
+              console.log('팬 시작:', {
+                mouseX,
+                mouseY,
+                scrollLeft: gridRef.current.scrollLeft,
+                scrollTop: gridRef.current.scrollTop,
+                clickPointX,
+                clickPointY,
+                zoom,
+                isSpacePressed: panState.isSpacePressed
+              })
+              
+              setPanState(prev => ({
+                ...prev,
+                isPanning: true,
+                startX: e.clientX,
+                startY: e.clientY,
+                startScrollX: gridRef.current!.scrollLeft,
+                startScrollY: gridRef.current!.scrollTop,
+                clickPointX,
+                clickPointY
+              }))
+              
+              if (gridRef.current) {
+                gridRef.current.style.cursor = 'grabbing'
+              }
+              return
+            } else {
+              console.log('팬 조건 불만족: 메모 위를 클릭함')
             }
-            return
           } else {
             console.log('팬 조건 불만족:', {
               isSpacePressed: panState.isSpacePressed,
-              targetMatches: e.target === e.currentTarget,
               hasGridRef: !!gridRef.current
             })
           }
