@@ -29,7 +29,6 @@ interface Memo {
   position_y: number
   width: number
   height: number
-  is_expanded: boolean
   page_id?: string
   tags?: string[]
   tagged_todos?: string[]
@@ -346,7 +345,6 @@ export default function AdvancedMemoGrid() {
           position_y: newY,
           width: DEFAULT_WIDTH,
           height: DEFAULT_HEIGHT,
-          is_expanded: false,
           page_id: currentPageId,
           tags: [],
           tagged_todos: []
@@ -840,7 +838,7 @@ export default function AdvancedMemoGrid() {
 
   // 뷰 상태 계산
   useEffect(() => {
-    const expandedCount = memos.filter(m => m.is_expanded || hoveredMemo === m.id).length
+    const expandedCount = memos.filter(m => hoveredMemo === m.id).length
     const totalCount = memos.length
     
     if (expandedCount === 0) {
@@ -1128,7 +1126,7 @@ export default function AdvancedMemoGrid() {
         {filteredMemos.map((memo) => {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
           const isDragging = dragState.memoId === memo.id
-          const isExpanded = memo.is_expanded || isHovered || viewState === 'expanded'
+          const isExpanded = isHovered || viewState === 'expanded'
           const isNewlyCreated = newlyCreatedMemoId === memo.id
           
           return (
