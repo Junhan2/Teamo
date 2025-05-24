@@ -1284,47 +1284,59 @@ export default function AdvancedMemoGrid() {
         .memo-drag-area:active {
           cursor: grabbing;
         }
+        
+        /* 메모 필드 스크롤바 숨기기 */
+        .memo-grid-container {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .memo-grid-container::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
+        }
       `}</style>
       
-      {/* 메모 컨트롤 패널 - 메모 필드 우측 상단 배치 */}
+      {/* 메모 컨트롤 패널 - 최적화된 크기 */}
       <div className="absolute top-4 right-4 z-20">
-        <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
+        <div className="flex items-center gap-2 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-2">
           <Button
             onClick={addMemo}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg"
+            size="sm"
+            className="flex items-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg px-3 py-1.5 text-sm"
           >
-            <PlusCircle className="h-4 w-4" />
+            <PlusCircle className="h-3.5 w-3.5" />
             ADD MEMO
           </Button>
           
           <Button
             variant={showFilters ? 'default' : 'outline'}
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2"
+            size="sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm"
           >
-            <Filter className="h-4 w-4" />
+            <Filter className="h-3.5 w-3.5" />
             Filter
           </Button>
           
-          <div className="h-6 w-px bg-gray-300" />
+          <div className="h-4 w-px bg-gray-300" />
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-              className="p-2"
+              className="p-1.5 h-8 w-8"
             >
-              <ZoomOut className="h-4 w-4" />
+              <ZoomOut className="h-3.5 w-3.5" />
             </Button>
-            <span className="text-sm font-medium px-2 min-w-[50px] text-center">{Math.round(zoom * 100)}%</span>
+            <span className="text-xs font-medium px-1 min-w-[40px] text-center">{Math.round(zoom * 100)}%</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setZoom(Math.min(2, zoom + 0.1))}
-              className="p-2"
+              className="p-1.5 h-8 w-8"
             >
-              <ZoomIn className="h-4 w-4" />
+              <ZoomIn className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
@@ -1334,14 +1346,48 @@ export default function AdvancedMemoGrid() {
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4">
         {/* 페이지 선택기 - 개선된 UI */}
         <div className="flex items-center bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-200">
-          {/* 현재 페이지 타이틀 */}
-          <div className="px-4 py-2 flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* 현재 페이지 타이틀 - 더블클릭 편집 가능 */}
+          <div className="px-4 py-2 flex items-center gap-2 min-w-[180px]">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span className="font-medium">
-              {pages.find(p => p.id === currentPageId)?.title || 'Select Page'}
-            </span>
+            {editingPageId === currentPageId ? (
+              <Input
+                value={editingPageTitle}
+                onChange={(e) => setEditingPageTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    updatePageTitle(currentPageId!, editingPageTitle)
+                  } else if (e.key === 'Escape') {
+                    setEditingPageId(null)
+                    setEditingPageTitle('')
+                  }
+                }}
+                onBlur={() => {
+                  if (editingPageTitle.trim()) {
+                    updatePageTitle(currentPageId!, editingPageTitle)
+                  } else {
+                    setEditingPageId(null)
+                    setEditingPageTitle('')
+                  }
+                }}
+                className="h-6 text-sm border-0 p-0 font-medium"
+                autoFocus
+              />
+            ) : (
+              <span 
+                className="font-medium cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
+                onDoubleClick={() => {
+                  const currentPage = pages.find(p => p.id === currentPageId)
+                  if (currentPage) {
+                    setEditingPageId(currentPage.id)
+                    setEditingPageTitle(currentPage.title)
+                  }
+                }}
+              >
+                {pages.find(p => p.id === currentPageId)?.title || 'Select Page'}
+              </span>
+            )}
           </div>
           
           {/* 페이지 메뉴 버튼 */}
@@ -1433,8 +1479,10 @@ export default function AdvancedMemoGrid() {
                         }}
                         className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-gray-200 transition-opacity"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <circle cx="5" cy="12" r="2"/>
+                          <circle cx="12" cy="12" r="2"/>
+                          <circle cx="19" cy="12" r="2"/>
                         </svg>
                       </Button>
                     </>
@@ -1448,7 +1496,7 @@ export default function AdvancedMemoGrid() {
 
       {/* 필터 패널 */}
       {showFilters && (
-        <div className="absolute top-20 right-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-gray-200 p-4 w-80">
+        <div className="absolute top-16 right-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-gray-200 p-4 w-80">
           <h3 className="text-sm font-semibold mb-3 text-gray-700">Filter Memos</h3>
           
           <div className="space-y-3">
@@ -1508,7 +1556,7 @@ export default function AdvancedMemoGrid() {
       {/* 그리드 캔버스 */}
       <div 
         ref={gridRef}
-        className="w-full h-full relative overflow-auto"
+        className="w-full h-full relative overflow-auto memo-grid-container"
         style={{
           cursor: panState.isPanning ? 'grabbing' : panState.isSpacePressed ? 'grab' : dragState.isDragging ? 'grabbing' : 'default'
         }}
