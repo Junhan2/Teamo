@@ -210,7 +210,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       {/* ADD TASK button */}
       <Button 
         type="submit" 
-        className="w-full h-12 bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-2"
+        className="w-full h-12 add-task-button text-sm font-semibold uppercase tracking-wide rounded-md transition-all duration-200 flex items-center justify-center gap-2"
         disabled={loading}
       >
         {loading ? (

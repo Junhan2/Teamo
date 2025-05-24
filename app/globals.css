@@ -195,3 +195,131 @@ body {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+
+/* Responsive Container Classes */
+.container-responsive {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* 1920px viewport - content width 1440px */
+@media (min-width: 1920px) {
+  .container-responsive {
+    max-width: 1440px;
+  }
+}
+
+/* 1440px viewport - content width 1320px */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .container-responsive {
+    max-width: 1320px;
+  }
+}
+
+/* Smaller viewports */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .container-responsive {
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .container-responsive {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container-responsive {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container-responsive {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Calendar Layout Responsive Grid */
+.calendar-layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+/* Desktop layout - side by side */
+@media (min-width: 1024px) {
+  .calendar-layout {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Tablet layout - stack vertically */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .calendar-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Task grid responsive */
+.task-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .task-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Add Task Button Styles */
+.add-task-button {
+  background: linear-gradient(135deg, #5D6A97 0%, #4A5578 100%);
+  border: 2px solid #4A5578;
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(74, 85, 120, 0.2);
+}
+
+.add-task-button:hover {
+  background: linear-gradient(135deg, #6B78A5 0%, #5D6A97 100%);
+  border-color: #5D6A97;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 85, 120, 0.3);
+}
+
+.add-task-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(74, 85, 120, 0.2);
+}
+
+/* Calendar responsive text sizes */
+@media (max-width: 640px) {
+  .calendar-day-number {
+    font-size: 0.875rem;
+  }
+  
+  .calendar-task-count {
+    font-size: 0.75rem;
+  }
+}
+
+/* Navbar responsive adjustments */
+@media (max-width: 768px) {
+  .navbar-logo {
+    height: 1.75rem;
+  }
+  
+  .navbar-avatar {
+    height: 2rem;
+    width: 2rem;
+  }
+}

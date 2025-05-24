@@ -39,17 +39,15 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-gray-cool-25/90 border-b border-gray-cool-200">
-      <div className="container mx-auto px-4 max-w-6xl">
+      <div className="container-responsive">
         <div className="flex justify-between items-center h-16">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
               src="/logo.png"
               alt="Teamo Logo"
-              className="h-8 w-auto"
+              className="h-8 w-auto navbar-logo"
             />
           </Link>
-
-
 
           <div className="flex items-center gap-4">
             {/* 플로팅 버튼으로 이동됨 */}
@@ -58,7 +56,7 @@ export default function Navbar({ user }: NavbarProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-10 w-10 rounded-full p-0 hover:bg-gray-cool-100 transition-all duration-200">
-                    <Avatar className="h-10 w-10 ring-2 ring-gray-cool-200 ring-offset-2 ring-offset-gray-cool-25">
+                    <Avatar className="h-10 w-10 ring-2 ring-gray-cool-200 ring-offset-2 ring-offset-gray-cool-25 navbar-avatar">
                       {user.avatar_url ? (
                         <AvatarImage src={user.avatar_url} alt={user.full_name || user.email} />
                       ) : (
