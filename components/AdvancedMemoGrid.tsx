@@ -1544,6 +1544,7 @@ export default function AdvancedMemoGrid() {
             </div>
           )
         })}
+        </div>
       </div>
 
       {/* 컨텍스트 메뉴 */}
