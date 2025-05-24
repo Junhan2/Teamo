@@ -369,55 +369,6 @@ export default function AdvancedMemoGrid() {
       })
     }
   }
-          newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
-          newX = Math.max(0, newX)
-          newY = Math.max(0, newY)
-          attempts++
-        }
-
-        const { data: insertedMemo, error } = await supabase
-          .from('advanced_memos')
-          .insert({
-            title: newMemo.title,
-            content: newMemo.content,
-            user_id: userData.user.id,
-            color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
-            position_x: newX,
-            position_y: newY,
-            width: DEFAULT_WIDTH,
-            height: DEFAULT_HEIGHT,
-            is_expanded: false,
-            page_id: currentPageId
-          })
-          .select()
-          .single()
-
-        if (error) throw error
-        
-        // 새로 생성된 메모 ID 저장
-        if (insertedMemo) {
-          setNewlyCreatedMemoId(insertedMemo.id)
-          // 클릭하기 전까지는 하이라이트 유지 (타이머 제거)
-        }
-      }
-
-      setNewMemo({ title: '', content: '' })
-      setShowForm(false)
-      fetchMemos()
-      
-      toast({
-        title: "성공!",
-        description: "메모가 추가되었습니다.",
-      })
-    } catch (error) {
-      console.error('Error adding memo:', error)
-      toast({
-        title: "오류",
-        description: "메모 추가에 실패했습니다.",
-        variant: "destructive",
-      })
-    }
-  }
   // 메모 위치 업데이트
   const updateMemoPosition = async (memoId: string, newX: number, newY: number) => {
     try {
@@ -1245,9 +1196,8 @@ export default function AdvancedMemoGrid() {
                 onClick={() => {
                   const memo = memos.find(m => m.id === contextMenu.memoId)
                   if (memo) {
-                    setNewMemo({ title: memo.title, content: memo.content })
-                    setShowForm(true)
-                    // TODO: 수정 모드 구현
+                    setSidebarMemo(memo)
+                    setIsSidebarOpen(true)
                   }
                   setContextMenu(null)
                 }}
