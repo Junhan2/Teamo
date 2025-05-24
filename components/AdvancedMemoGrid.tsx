@@ -474,7 +474,7 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 및 리사이즈 중 마우스 이동
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    // 리사이즈 처리 (즉각적인 반응)
+    // 리사이즈 처리 (그리드 기반 즉각 반응)
     if (resizeState.isResizing && resizeState.memoId) {
       const deltaX = e.clientX - resizeState.startX
       const deltaY = e.clientY - resizeState.startY
@@ -488,25 +488,25 @@ export default function AdvancedMemoGrid() {
         let newPosX = resizeState.startPosX
         let newPosY = resizeState.startPosY
         
-        // 핸들에 따른 리사이즈 처리 (즉시 반영)
+        // 핸들에 따른 리사이즈 처리 (그리드 단위로 즉시 스냅)
         if (handle?.includes('e')) {
-          newWidth = Math.max(MIN_WIDTH, resizeState.startWidth + deltaX)
+          newWidth = Math.max(MIN_WIDTH, snapToGrid(resizeState.startWidth + deltaX))
         }
         if (handle?.includes('w')) {
-          const widthChange = deltaX
+          const widthChange = snapToGrid(deltaX)
           newWidth = Math.max(MIN_WIDTH, resizeState.startWidth - widthChange)
-          if (newWidth !== resizeState.startWidth) {
-            newPosX = resizeState.startPosX + widthChange
+          if (widthChange !== 0) {
+            newPosX = snapToGrid(resizeState.startPosX + widthChange)
           }
         }
         if (handle?.includes('s')) {
-          newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight + deltaY)
+          newHeight = Math.max(MIN_HEIGHT, snapToGrid(resizeState.startHeight + deltaY))
         }
         if (handle?.includes('n')) {
-          const heightChange = deltaY
+          const heightChange = snapToGrid(deltaY)
           newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight - heightChange)
-          if (newHeight !== resizeState.startHeight) {
-            newPosY = resizeState.startPosY + heightChange
+          if (heightChange !== 0) {
+            newPosY = snapToGrid(resizeState.startPosY + heightChange)
           }
         }
         
@@ -563,23 +563,16 @@ export default function AdvancedMemoGrid() {
     if (resizeState.isResizing && resizeState.memoId) {
       const memo = memos.find(m => m.id === resizeState.memoId)
       if (memo) {
-        // 최종 위치와 크기에 snapToGrid 적용
-        const snappedMemo = {
-          position_x: snapToGrid(memo.position_x),
-          position_y: snapToGrid(memo.position_y),
-          width: snapToGrid(memo.width),
-          height: snapToGrid(memo.height)
-        }
-        
-        // 상태 업데이트
-        setMemos(prev => prev.map(m => 
-          m.id === resizeState.memoId ? { ...m, ...snappedMemo } : m
-        ))
-        
+        // 이미 스냅된 위치와 크기를 그대로 저장
         try {
           const { error } = await supabase
             .from('advanced_memos')
-            .update(snappedMemo)
+            .update({
+              position_x: memo.position_x,
+              position_y: memo.position_y,
+              width: memo.width,
+              height: memo.height
+            })
             .eq('id', memo.id)
             
           if (error) throw error
@@ -618,16 +611,19 @@ export default function AdvancedMemoGrid() {
         }
       }
 
-      setDragState({
-        isDragging: false,
-        isReady: false,
-        hasMoved: false,
-        memoId: null,
-        startX: 0,
-        startY: 0,
-        offsetX: 0,
-        offsetY: 0
-      })
+      // 드래그 상태 초기화 (지연 시켜서 클릭 이벤트 차단)
+      setTimeout(() => {
+        setDragState({
+          isDragging: false,
+          isReady: false,
+          hasMoved: false,
+          memoId: null,
+          startX: 0,
+          startY: 0,
+          offsetX: 0,
+          offsetY: 0
+        })
+      }, 100) // 100ms 지연으로 클릭 이벤트보다 늦게 초기화
       return
     }
   }, [dragState, resizeState, memos, updateMemoPosition, supabase, toast])
@@ -747,10 +743,10 @@ export default function AdvancedMemoGrid() {
       if (e.metaKey || e.ctrlKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault()
-          handleZoom(0.05) // 0.1에서 0.05로 속도 절반으로 감소
+          handleZoom(0.025) // 0.05에서 0.025로 더 세밀하게
         } else if (e.key === '-') {
           e.preventDefault()
-          handleZoom(-0.05) // 0.1에서 0.05로 속도 절반으로 감소
+          handleZoom(-0.025) // 0.05에서 0.025로 더 세밀하게
         }
       }
     }
@@ -758,7 +754,7 @@ export default function AdvancedMemoGrid() {
     const handleWheel = (e: WheelEvent) => {
       if (e.metaKey || e.ctrlKey) {
         e.preventDefault()
-        handleZoom(e.deltaY > 0 ? -0.05 : 0.05) // 0.1에서 0.05로 속도 절반으로 감소
+        handleZoom(e.deltaY > 0 ? -0.025 : 0.025) // 0.05에서 0.025로 더 세밀하게
       }
     }
 
