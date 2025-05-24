@@ -421,8 +421,18 @@ export default function AdvancedMemoGrid() {
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return // 좌클릭만 처리
     
-    // 리사이즈 핸들 클릭시 드래그 방지
-    if ((e.target as HTMLElement).classList.contains('resize-handle')) return
+    // 리사이즈 핸들, 버튼, 입력 요소 클릭시 드래그 방지
+    const target = e.target as HTMLElement
+    if (
+      target.classList.contains('resize-handle') ||
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('textarea') ||
+      target.closest('.tag-input') ||
+      target.closest('.todo-search')
+    ) {
+      return
+    }
     
     const memo = memos.find(m => m.id === memoId)
     if (!memo) return
@@ -1072,8 +1082,8 @@ export default function AdvancedMemoGrid() {
         }
       `}</style>
       
-      {/* 메모 컨트롤 패널 - 중앙 배치 */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-20">
+      {/* 메모 컨트롤 패널 - 헤더 아래 중앙 배치 */}
+      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-20">
         <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
           <Button
             onClick={addMemo}
@@ -1451,7 +1461,7 @@ export default function AdvancedMemoGrid() {
       {/* 할일 검색 모달 */}
       {showTodoSearch && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col">
+          <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-md max-h-[80vh] overflow-hidden flex flex-col todo-search">
             <h3 className="font-semibold mb-3">할일 태그하기</h3>
             <Input
               placeholder="할일 검색..."
