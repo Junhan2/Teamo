@@ -509,6 +509,16 @@ export default function AdvancedMemoGrid() {
       const targetScrollX = (panState.clickPointX * zoom) - currentMouseX
       const targetScrollY = (panState.clickPointY * zoom) - currentMouseY
       
+      console.log('팬 진행중:', {
+        clickPointX: panState.clickPointX,
+        clickPointY: panState.clickPointY,
+        currentMouseX,
+        currentMouseY,
+        targetScrollX,
+        targetScrollY,
+        zoom
+      })
+      
       // 즉각적이고 자연스러운 이동
       gridRef.current.scrollLeft = Math.max(0, targetScrollX)
       gridRef.current.scrollTop = Math.max(0, targetScrollY)
@@ -1437,6 +1447,17 @@ export default function AdvancedMemoGrid() {
             // 클릭한 위치의 캔버스 상 좌표 계산
             const clickPointX = (gridRef.current.scrollLeft + mouseX) / zoom
             const clickPointY = (gridRef.current.scrollTop + mouseY) / zoom
+            
+            console.log('팬 시작:', {
+              mouseX,
+              mouseY,
+              scrollLeft: gridRef.current.scrollLeft,
+              scrollTop: gridRef.current.scrollTop,
+              clickPointX,
+              clickPointY,
+              zoom,
+              isSpacePressed: panState.isSpacePressed
+            })
             
             setPanState(prev => ({
               ...prev,
