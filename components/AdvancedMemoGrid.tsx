@@ -404,60 +404,68 @@ export default function AdvancedMemoGrid() {
         // 기존 메모와 겹치는지 확인
         const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y, w: m.width, h: m.height }))
         
-        // 중앙이 비어있으면 중앙 사용
-        const isCenterFree = !existingPositions.some(pos => 
-          targetX < pos.x + pos.w && targetX + DEFAULT_WIDTH > pos.x &&
-          targetY < pos.y + pos.h && targetY + DEFAULT_HEIGHT > pos.y
-        )
+        // 간격을 한 칸으로 설정
+        const gap = GRID_SIZE
         
-        if (isCenterFree) {
+        // 겹침 확인 함수 (간격 포함)
+        const checkOverlap = (x: number, y: number) => {
+          return existingPositions.some(pos => 
+            x < pos.x + pos.w + gap && x + DEFAULT_WIDTH + gap > pos.x &&
+            y < pos.y + pos.h + gap && y + DEFAULT_HEIGHT + gap > pos.y
+          )
+        }
+        
+        // 중앙이 비어있으면 중앙 사용
+        if (!checkOverlap(targetX, targetY)) {
           newX = targetX
           newY = targetY
         } else {
-          // 중앙과 가장 가까운 위치 찾기 (우측 우선)
-          const offset = GRID_SIZE * 2
-          let found = false
-          let attempts = 0
-          
-          // 나선형으로 위치 탐색 (우측 우선)
-          while (!found && attempts < 20) {
-            const directions = [
-              { x: 1, y: 0 },   // 우측
-              { x: 0, y: 1 },   // 아래
-              { x: -1, y: 0 },  // 좌측
-              { x: 0, y: -1 },  // 위
-              { x: 1, y: 1 },   // 우하
-              { x: -1, y: 1 },  // 좌하
-              { x: 1, y: -1 },  // 우상
-              { x: -1, y: -1 }  // 좌상
-            ]
+          // 우선순위: 우측 → 아래 → 위 → 좌측 순으로 배치
+          const searchPositions = [
+            // 1단계: 우측 우선
+            { x: targetX + DEFAULT_WIDTH + gap, y: targetY },
+            { x: targetX + (DEFAULT_WIDTH + gap) * 2, y: targetY },
+            { x: targetX + (DEFAULT_WIDTH + gap) * 3, y: targetY },
             
-            for (const dir of directions) {
-              const testX = targetX + dir.x * offset * (Math.floor(attempts / 4) + 1)
-              const testY = targetY + dir.y * offset * (Math.floor(attempts / 4) + 1)
+            // 2단계: 아래쪽
+            { x: targetX, y: targetY + DEFAULT_HEIGHT + gap },
+            { x: targetX + DEFAULT_WIDTH + gap, y: targetY + DEFAULT_HEIGHT + gap },
+            { x: targetX + (DEFAULT_WIDTH + gap) * 2, y: targetY + DEFAULT_HEIGHT + gap },
+            
+            // 3단계: 위쪽
+            { x: targetX, y: targetY - DEFAULT_HEIGHT - gap },
+            { x: targetX + DEFAULT_WIDTH + gap, y: targetY - DEFAULT_HEIGHT - gap },
+            { x: targetX + (DEFAULT_WIDTH + gap) * 2, y: targetY - DEFAULT_HEIGHT - gap },
+            
+            // 4단계: 좌측
+            { x: targetX - DEFAULT_WIDTH - gap, y: targetY },
+            { x: targetX - (DEFAULT_WIDTH + gap) * 2, y: targetY },
+            
+            // 5단계: 대각선 위치들
+            { x: targetX + DEFAULT_WIDTH + gap, y: targetY - DEFAULT_HEIGHT - gap },
+            { x: targetX - DEFAULT_WIDTH - gap, y: targetY + DEFAULT_HEIGHT + gap },
+            { x: targetX + DEFAULT_WIDTH + gap, y: targetY + (DEFAULT_HEIGHT + gap) * 2 },
+            { x: targetX - DEFAULT_WIDTH - gap, y: targetY - DEFAULT_HEIGHT - gap },
+          ]
+          
+          let found = false
+          
+          for (const pos of searchPositions) {
+            // 캔버스 범위 확인
+            if (pos.x >= 0 && pos.x + DEFAULT_WIDTH <= CANVAS_WIDTH &&
+                pos.y >= 0 && pos.y + DEFAULT_HEIGHT <= CANVAS_HEIGHT) {
               
-              // 캔버스 범위 확인
-              if (testX >= 0 && testX + DEFAULT_WIDTH <= CANVAS_WIDTH &&
-                  testY >= 0 && testY + DEFAULT_HEIGHT <= CANVAS_HEIGHT) {
-                
-                // 다른 메모와 겹치는지 확인
-                const isPositionFree = !existingPositions.some(pos => 
-                  testX < pos.x + pos.w && testX + DEFAULT_WIDTH > pos.x &&
-                  testY < pos.y + pos.h && testY + DEFAULT_HEIGHT > pos.y
-                )
-                
-                if (isPositionFree) {
-                  newX = snapToGrid(testX)
-                  newY = snapToGrid(testY)
-                  found = true
-                  break
-                }
+              // 겹침 확인
+              if (!checkOverlap(pos.x, pos.y)) {
+                newX = snapToGrid(pos.x)
+                newY = snapToGrid(pos.y)
+                found = true
+                break
               }
             }
-            attempts++
           }
           
-          // 적절한 위치를 찾지 못한 경우 중앙 사용
+          // 모든 위치가 차있다면 중앙에 겹쳐서 배치
           if (!found) {
             newX = targetX
             newY = targetY
@@ -828,15 +836,16 @@ export default function AdvancedMemoGrid() {
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
 
-      // 한 행당 메모 개수 계산 (뷰포트 너비 기준 최적화)
+      // 뷰포트 크기 기준으로 한 행당 메모 개수 계산
       const viewportWidth = rect.width / zoom
-      const memosPerRow = Math.max(2, Math.floor(viewportWidth / (DEFAULT_WIDTH + GRID_SIZE * 2)))
+      const memosPerRow = Math.max(2, Math.floor(viewportWidth / (DEFAULT_WIDTH + GRID_SIZE * 3)))
       
-      // 그리드 시작 위치 (뷰포트 중앙 기준)
+      // 그리드 시작 위치 (뷰포트 중앙 기준으로 배치)
       const totalRows = Math.ceil(sortedMemos.length / memosPerRow)
-      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE * 2) - GRID_SIZE * 2
-      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE * 2) - GRID_SIZE * 2
+      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE * 3) - GRID_SIZE * 3
+      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE * 3) - GRID_SIZE * 3
       
+      // 그리드 전체가 뷰포트 중앙에 오도록 시작점 계산
       const startX = Math.max(GRID_SIZE, viewportCenterX - totalWidth / 2)
       const startY = Math.max(GRID_SIZE, viewportCenterY - totalHeight / 2)
 
@@ -845,8 +854,8 @@ export default function AdvancedMemoGrid() {
         const row = Math.floor(index / memosPerRow)
         const col = index % memosPerRow
         
-        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE * 2))
-        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE * 2))
+        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE * 3))
+        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE * 3))
         
         return { id: memo.id, x: newX, y: newY }
       })
@@ -1992,10 +2001,10 @@ export default function AdvancedMemoGrid() {
           <div
             className="selection-area"
             style={{
-              left: Math.min(selectionStart.x, selectionEnd.x) * zoom,
-              top: Math.min(selectionStart.y, selectionEnd.y) * zoom,
-              width: Math.abs(selectionEnd.x - selectionStart.x) * zoom,
-              height: Math.abs(selectionEnd.y - selectionStart.y) * zoom,
+              left: Math.min(selectionStart.x, selectionEnd.x),
+              top: Math.min(selectionStart.y, selectionEnd.y),
+              width: Math.abs(selectionEnd.x - selectionStart.x),
+              height: Math.abs(selectionEnd.y - selectionStart.y),
             }}
           />
         )}
@@ -2240,6 +2249,10 @@ export default function AdvancedMemoGrid() {
         memo={sidebarMemo}
         onSave={handleSidebarSave}
         onRealtimeUpdate={handleRealtimeUpdate}
+        onCloseSidebar={() => {
+          // 사이드바가 닫힐 때 새로 생성된 메모의 하이라이트 제거
+          setNewlyCreatedMemoId(null)
+        }}
       />
     </div>
   )

@@ -41,9 +41,10 @@ interface MemoSidebarProps {
     tags: string[]
     tagged_todos: string[]
   }) => void
+  onCloseSidebar?: () => void // 사이드바 닫힐 때 호출할 함수 추가
 }
 
-export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeUpdate }: MemoSidebarProps) {
+export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeUpdate, onCloseSidebar }: MemoSidebarProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState<string[]>([])
@@ -174,6 +175,10 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
         onClose()
+        // 사이드바가 닫힐 때 추가 콜백 호출
+        if (onCloseSidebar) {
+          onCloseSidebar()
+        }
       }
     }
 
@@ -184,7 +189,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, onCloseSidebar])
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -232,7 +237,13 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
             <Button
               variant="ghost"
               size="icon"
-              onClick={onClose}
+              onClick={() => {
+                onClose()
+                // 사이드바가 닫힐 때 추가 콜백 호출
+                if (onCloseSidebar) {
+                  onCloseSidebar()
+                }
+              }}
               className="hover:bg-gray-100 rounded-full h-8 w-8"
             >
               <X className="h-4 w-4" />
