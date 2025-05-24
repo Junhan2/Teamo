@@ -43,7 +43,6 @@ interface MemoPage {
   position: number
 }
 
-type ViewState = 'expanded' | 'collapsed' | 'mixed'
 
 const GRID_SIZE = 20
 const MIN_WIDTH = 200
@@ -62,7 +61,6 @@ export default function AdvancedMemoGrid() {
   const [currentPageId, setCurrentPageId] = useState<string | null>(null)
   const [showPageMenu, setShowPageMenu] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [viewState, setViewState] = useState<ViewState>('collapsed')
   const [zoom, setZoom] = useState(1)
   const [newMemo, setNewMemo] = useState({ title: '', content: '' })
   const [hoveredMemo, setHoveredMemo] = useState<string | null>(null)
@@ -99,6 +97,30 @@ export default function AdvancedMemoGrid() {
     startY: 0,
     offsetX: 0,
     offsetY: 0
+  })
+  
+  // 리사이즈 상태 관리
+  const [resizeState, setResizeState] = useState<{
+    isResizing: boolean
+    memoId: string | null
+    handle: string | null
+    startX: number
+    startY: number
+    startWidth: number
+    startHeight: number
+    startPosX: number
+    startPosY: number
+  }>({
+    isResizing: false,
+    memoId: null,
+    handle: null,
+    startX: 0,
+    startY: 0,
+    startWidth: 0,
+    startHeight: 0,
+    startPosX: 0,
+    startPosY: 0
+  })
   })
   
   const gridRef = useRef<HTMLDivElement>(null)
@@ -402,6 +424,9 @@ export default function AdvancedMemoGrid() {
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return // 좌클릭만 처리
     
+    // 리사이즈 핸들 클릭시 드래그 방지
+    if ((e.target as HTMLElement).classList.contains('resize-handle')) return
+    
     const memo = memos.find(m => m.id === memoId)
     if (!memo) return
 
@@ -423,9 +448,78 @@ export default function AdvancedMemoGrid() {
     // 드래그 중 선택 방지
     e.preventDefault()
   }, [memos, zoom])
+  
+  // 리사이즈 시작
+  const handleResizeStart = useCallback((e: React.MouseEvent, memoId: string, handle: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    const memo = memos.find(m => m.id === memoId)
+    if (!memo) return
+    
+    setResizeState({
+      isResizing: true,
+      memoId,
+      handle,
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: memo.width,
+      startHeight: memo.height,
+      startPosX: memo.position_x,
+      startPosY: memo.position_y
+    })
+  }, [memos])
 
-  // 드래그 중
+  // 드래그 및 리사이즈 중 마우스 이동
   const handleMouseMove = useCallback((e: MouseEvent) => {
+    // 리사이즈 처리
+    if (resizeState.isResizing && resizeState.memoId) {
+      const deltaX = e.clientX - resizeState.startX
+      const deltaY = e.clientY - resizeState.startY
+      const handle = resizeState.handle
+      
+      setMemos(prev => prev.map(memo => {
+        if (memo.id !== resizeState.memoId) return memo
+        
+        let newWidth = resizeState.startWidth
+        let newHeight = resizeState.startHeight
+        let newPosX = resizeState.startPosX
+        let newPosY = resizeState.startPosY
+        
+        // 핸들에 따른 리사이즈 처리
+        if (handle?.includes('e')) {
+          newWidth = Math.max(MIN_WIDTH, snapToGrid(resizeState.startWidth + deltaX))
+        }
+        if (handle?.includes('w')) {
+          const widthChange = snapToGrid(deltaX)
+          newWidth = Math.max(MIN_WIDTH, resizeState.startWidth - widthChange)
+          if (newWidth !== resizeState.startWidth) {
+            newPosX = snapToGrid(resizeState.startPosX + widthChange)
+          }
+        }
+        if (handle?.includes('s')) {
+          newHeight = Math.max(MIN_HEIGHT, snapToGrid(resizeState.startHeight + deltaY))
+        }
+        if (handle?.includes('n')) {
+          const heightChange = snapToGrid(deltaY)
+          newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight - heightChange)
+          if (newHeight !== resizeState.startHeight) {
+            newPosY = snapToGrid(resizeState.startPosY + heightChange)
+          }
+        }
+        
+        return {
+          ...memo,
+          position_x: newPosX,
+          position_y: newPosY,
+          width: newWidth,
+          height: newHeight
+        }
+      }))
+      return
+    }
+    
+    // 드래그 처리
     if (!dragState.isDragging || !dragState.memoId) return
 
     const rect = gridRef.current?.getBoundingClientRect()
@@ -447,10 +541,51 @@ export default function AdvancedMemoGrid() {
         ? { ...memo, position_x: snappedX, position_y: snappedY }
         : memo
     ))
-  }, [dragState, zoom, snapToGrid])
+  }, [dragState, resizeState, zoom, snapToGrid])
 
-  // 드래그 종료
-  const handleMouseUp = useCallback(() => {
+  // 드래그 및 리사이즈 종료
+  const handleMouseUp = useCallback(async () => {
+    // 리사이즈 종료 처리
+    if (resizeState.isResizing && resizeState.memoId) {
+      const memo = memos.find(m => m.id === resizeState.memoId)
+      if (memo) {
+        try {
+          const { error } = await supabase
+            .from('advanced_memos')
+            .update({
+              position_x: memo.position_x,
+              position_y: memo.position_y,
+              width: memo.width,
+              height: memo.height
+            })
+            .eq('id', memo.id)
+            
+          if (error) throw error
+        } catch (error) {
+          console.error('Error updating memo size:', error)
+          toast({
+            title: "오류",
+            description: "메모 크기 저장에 실패했습니다.",
+            variant: "destructive"
+          })
+        }
+      }
+      
+      setResizeState({
+        isResizing: false,
+        memoId: null,
+        handle: null,
+        startX: 0,
+        startY: 0,
+        startWidth: 0,
+        startHeight: 0,
+        startPosX: 0,
+        startPosY: 0
+      })
+      return
+    }
+    
+    // 드래그 종료 처리
     if (!dragState.isDragging || !dragState.memoId) return
 
     const memo = memos.find(m => m.id === dragState.memoId)
@@ -467,7 +602,7 @@ export default function AdvancedMemoGrid() {
       offsetX: 0,
       offsetY: 0
     })
-  }, [dragState, memos, updateMemoPosition])
+  }, [dragState, resizeState, memos, updateMemoPosition, supabase, toast])
 
   // 메모 자동 정렬
   const autoAlignMemos = async () => {
@@ -825,30 +960,13 @@ export default function AdvancedMemoGrid() {
     }
   }
 
-  // 전체 뷰 상태 변경
-  const toggleViewState = () => {
-    const newState = viewState === 'collapsed' ? 'expanded' : 'collapsed'
-    setViewState(newState)
-  }
-
   // 초기 로드는 이미 위에서 처리됨
   // useEffect(() => {
   //   fetchMemos()
   // }, [])
 
   // 뷰 상태 계산
-  useEffect(() => {
-    const expandedCount = memos.filter(m => hoveredMemo === m.id).length
-    const totalCount = memos.length
-    
-    if (expandedCount === 0) {
-      setViewState('collapsed')
-    } else if (expandedCount === totalCount) {
-      setViewState('expanded')
-    } else {
-      setViewState('mixed')
-    }
-  }, [memos, hoveredMemo])
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -881,7 +999,125 @@ export default function AdvancedMemoGrid() {
           50% { opacity: 0.7; }
           100% { opacity: 1; }
         }
+        
+        .resize-handle {
+          position: absolute;
+          background: transparent;
+          transition: background-color 0.2s;
+        }
+        
+        .resize-handle:hover {
+          background-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .resize-handle-n {
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          cursor: ns-resize;
+        }
+        
+        .resize-handle-s {
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          cursor: ns-resize;
+        }
+        
+        .resize-handle-e {
+          top: 0;
+          bottom: 0;
+          right: 0;
+          width: 4px;
+          cursor: ew-resize;
+        }
+        
+        .resize-handle-w {
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 4px;
+          cursor: ew-resize;
+        }
+        
+        .resize-handle-ne {
+          top: 0;
+          right: 0;
+          width: 8px;
+          height: 8px;
+          cursor: nesw-resize;
+        }
+        
+        .resize-handle-nw {
+          top: 0;
+          left: 0;
+          width: 8px;
+          height: 8px;
+          cursor: nwse-resize;
+        }
+        
+        .resize-handle-se {
+          bottom: 0;
+          right: 0;
+          width: 8px;
+          height: 8px;
+          cursor: nwse-resize;
+        }
+        
+        .resize-handle-sw {
+          bottom: 0;
+          left: 0;
+          width: 8px;
+          height: 8px;
+          cursor: nesw-resize;
+        }
       `}</style>
+      
+      {/* 메모 컨트롤 패널 - 중앙 배치 */}
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-20">
+        <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
+          <Button
+            onClick={addMemo}
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg"
+          >
+            <PlusCircle className="h-4 w-4" />
+            ADD MEMO
+          </Button>
+          
+          <Button
+            variant={showFilters ? 'default' : 'outline'}
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Filter
+          </Button>
+          
+          <div className="h-6 w-px bg-gray-300" />
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+              className="p-2"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium px-2 min-w-[50px] text-center">{Math.round(zoom * 100)}%</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+              className="p-2"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
       
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4">
@@ -962,87 +1198,7 @@ export default function AdvancedMemoGrid() {
             </div>
           )}
         </div>
-        
-        {/* 기존 툴바 아이템들 */}
-        <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
-          <Button
-            onClick={addMemo}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg"
-          >
-            <PlusCircle className="h-4 w-4" />
-            ADD MEMO
-          </Button>
-          
-          <Button
-            variant={showFilters ? 'default' : 'outline'}
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2"
-          >
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant={viewState === 'expanded' ? 'default' : 'outline'}
-            size="sm"
-            onClick={toggleViewState}
-            className="flex items-center gap-1"
-          >
-            <Maximize2 className="h-3 w-3" />
-            펼침
-          </Button>
-          <Button
-            variant={viewState === 'collapsed' ? 'default' : 'outline'}
-            size="sm"
-            onClick={toggleViewState}
-            className="flex items-center gap-1"
-          >
-            <Minimize2 className="h-3 w-3" />
-            닫힘
-          </Button>
-          {viewState === 'mixed' && (
-            <span className="text-sm text-gray-500 px-2">Mixed</span>
-          )}
-        </div>
-        
-        <div className="h-6 w-px bg-gray-300"></div>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={autoAlignMemos}
-          className="flex items-center gap-2"
-          title="메모 자동 정렬"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-          정렬
-        </Button>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleZoom(-0.1)}
-            disabled={zoom <= 0.5}
-          >
-            <ZoomOut className="h-3 w-3" />
-          </Button>
-          <span className="text-sm text-gray-600 w-12 text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleZoom(0.1)}
-            disabled={zoom >= 2}
-          >
-            <ZoomIn className="h-3 w-3" />
-          </Button>
-        </div>
-        </div>
+
       </div>
 
       {/* 필터 패널 */}
@@ -1126,25 +1282,23 @@ export default function AdvancedMemoGrid() {
         {filteredMemos.map((memo) => {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
           const isDragging = dragState.memoId === memo.id
-          const isExpanded = isHovered || viewState === 'expanded'
+          const isResizing = resizeState.memoId === memo.id
           const isNewlyCreated = newlyCreatedMemoId === memo.id
           
           return (
             <div
               key={memo.id}
               className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
-                isDragging ? 'cursor-grabbing z-50 rotate-2 scale-105' : 'cursor-grab'
+                isDragging ? 'cursor-grabbing z-50' : isResizing ? 'cursor-default' : 'cursor-grab'
               } ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
                 width: memo.width,
-                height: isExpanded ? 'auto' : memo.height,
-                minHeight: memo.height,
+                height: memo.height,
                 backgroundColor: memo.color,
-                transform: isHovered && !isDragging ? 'translateY(-4px) scale(1.02)' : 
-                          isDragging ? 'rotate(2deg) scale(1.05)' : 'none',
-                zIndex: isDragging ? 50 : (isHovered ? 30 : 10),
+                transform: isHovered && !isDragging && !isResizing ? 'translateY(-2px)' : 'none',
+                zIndex: isDragging || isResizing ? 50 : (isHovered ? 30 : 10),
                 boxShadow: isDragging ? '0 20px 40px rgba(0,0,0,0.3)' : 
                           isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)',
                 outline: isNewlyCreated ? '3px solid #3B82F6' : 'none',
@@ -1156,103 +1310,68 @@ export default function AdvancedMemoGrid() {
               onContextMenu={(e) => handleContextMenu(e, memo.id)}
               onClick={() => handleMemoClick(memo)}
             >
-              <div className="p-3 h-full flex flex-col">
+              <div className="p-3 h-full flex flex-col overflow-hidden">
                 <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
                   {memo.title}
                 </h3>
-                <p className={`text-xs text-gray-700 flex-1 leading-relaxed ${
-                  isExpanded ? '' : 'line-clamp-3'
-                }`}>
+                <p className="text-xs text-gray-700 flex-1 line-clamp-3 overflow-hidden">
                   {memo.content}
                 </p>
                 
                 {/* 태그 영역 */}
-                <div className="mt-2 space-y-2">
+                <div className="mt-2 space-y-1">
                   {/* 일반 태그 */}
                   {memo.tags && memo.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {memo.tags.map((tag, index) => (
+                      {memo.tags.slice(0, 3).map((tag, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-700"
+                          className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-gray-200 text-gray-700"
                         >
                           #{tag}
-                          {isExpanded && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                removeTag(memo.id, tag)
-                              }}
-                              className="hover:text-red-600"
-                            >
-                              ×
-                            </button>
-                          )}
                         </span>
                       ))}
+                      {memo.tags.length > 3 && (
+                        <span className="text-[10px] text-gray-500">+{memo.tags.length - 3}</span>
+                      )}
                     </div>
                   )}
                   
                   {/* 할일 태그 */}
                   {memo.tagged_todos && memo.tagged_todos.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {memo.tagged_todos.map((todoId) => {
+                      {memo.tagged_todos.slice(0, 2).map((todoId) => {
                         const todo = todos.find(t => t.id === todoId)
                         if (!todo) return null
                         return (
                           <span
                             key={todoId}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-700"
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 truncate max-w-[100px]"
                           >
                             📌 {todo.title}
-                            {isExpanded && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  toggleTodoTag(memo.id, todoId)
-                                }}
-                                className="hover:text-red-600"
-                              >
-                                ×
-                              </button>
-                            )}
                           </span>
                         )
                       })}
+                      {memo.tagged_todos.length > 2 && (
+                        <span className="text-[10px] text-gray-500">+{memo.tagged_todos.length - 2}</span>
+                      )}
                     </div>
                   )}
-                  
-                  {/* 태그 추가 버튼 */}
-                  {isExpanded && (
-                    <div className="flex gap-1">
-                      {editingTags === memo.id ? (
-                        <Input
-                          value={tagInput}
-                          onChange={(e) => setTagInput(e.target.value)}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter' && tagInput.trim()) {
-                              addTag(memo.id, tagInput.trim())
-                              setTagInput('')
-                              setEditingTags(null)
-                            }
-                          }}
-                          onBlur={() => {
-                            setEditingTags(null)
-                            setTagInput('')
-                          }}
-                          placeholder="태그 입력..."
-                          className="h-6 text-xs"
-                          autoFocus
-                        />
-                      ) : (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setEditingTags(memo.id)
-                            }}
-                            className="px-2 py-0.5 rounded text-xs bg-gray-100 hover:bg-gray-200"
-                          >
+                </div>
+              </div>
+              
+              {/* 리사이즈 핸들들 */}
+              <div className="resize-handle resize-handle-n" onMouseDown={(e) => handleResizeStart(e, memo.id, 'n')} />
+              <div className="resize-handle resize-handle-s" onMouseDown={(e) => handleResizeStart(e, memo.id, 's')} />
+              <div className="resize-handle resize-handle-e" onMouseDown={(e) => handleResizeStart(e, memo.id, 'e')} />
+              <div className="resize-handle resize-handle-w" onMouseDown={(e) => handleResizeStart(e, memo.id, 'w')} />
+              <div className="resize-handle resize-handle-ne" onMouseDown={(e) => handleResizeStart(e, memo.id, 'ne')} />
+              <div className="resize-handle resize-handle-nw" onMouseDown={(e) => handleResizeStart(e, memo.id, 'nw')} />
+              <div className="resize-handle resize-handle-se" onMouseDown={(e) => handleResizeStart(e, memo.id, 'se')} />
+              <div className="resize-handle resize-handle-sw" onMouseDown={(e) => handleResizeStart(e, memo.id, 'sw')} />
+            </div>
+          )
+        })}
                             + 태그
                           </button>
                           <button
