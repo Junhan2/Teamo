@@ -82,6 +82,11 @@ export default function AdvancedMemoGrid() {
   const [todoSearchQuery, setTodoSearchQuery] = useState<string>('')
   const [editingPageId, setEditingPageId] = useState<string | null>(null)
   const [editingPageTitle, setEditingPageTitle] = useState('')
+  const [pageContextMenu, setPageContextMenu] = useState<{
+    pageId: string
+    x: number
+    y: number
+  } | null>(null)
   
   // 팬 상태 관리 (스페이스 + 드래그로 뷰포트 이동)
   const [panState, setPanState] = useState<{
@@ -1327,113 +1332,118 @@ export default function AdvancedMemoGrid() {
       
       {/* 툴바 */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-4">
-        {/* 페이지 선택기 */}
-        <div className="relative">
-          <Button
-            variant="outline"
-            onClick={() => setShowPageMenu(!showPageMenu)}
-            className="flex items-center gap-2 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-200 px-4 py-2 min-w-[200px] justify-between"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="font-medium">
-                {pages.find(p => p.id === currentPageId)?.title || 'Select Page'}
-              </span>
-            </div>
-            <svg className={`w-4 h-4 transition-transform ${showPageMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        {/* 페이지 선택기 - 개선된 UI */}
+        <div className="flex items-center bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-200">
+          {/* 현재 페이지 타이틀 */}
+          <div className="px-4 py-2 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-          </Button>
+            <span className="font-medium">
+              {pages.find(p => p.id === currentPageId)?.title || 'Select Page'}
+            </span>
+          </div>
           
-          {/* 페이지 드롭다운 메뉴 */}
-          {showPageMenu && (
-            <div className="absolute top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 p-2 min-w-[250px]">
-              <div className="flex items-center justify-between px-3 py-2 mb-2">
-                <span className="font-semibold text-gray-700">Pages</span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={createPage}
-                  className="h-6 w-6 p-0"
+          {/* 페이지 메뉴 버튼 */}
+          <div className="border-l border-gray-200">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPageMenu(!showPageMenu)}
+              className="h-full px-3 py-2 rounded-l-none hover:bg-gray-100"
+            >
+              <svg className={`w-4 h-4 transition-transform ${showPageMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </Button>
+          </div>
+        </div>
+        
+        {/* 페이지 드롭다운 메뉴 - 개선된 UI */}
+        {showPageMenu && (
+          <div className="absolute top-full mt-2 left-0 bg-white rounded-lg shadow-xl border border-gray-200 p-2 min-w-[280px]">
+            <div className="flex items-center justify-between px-3 py-2 mb-2 border-b border-gray-100">
+              <span className="font-semibold text-gray-700">Pages</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={createPage}
+                className="h-6 w-6 p-0 hover:bg-gray-100"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </Button>
+            </div>
+            
+            <div className="space-y-1 max-h-[400px] overflow-y-auto">
+              {pages.map((page) => (
+                <div
+                  key={page.id}
+                  className={`group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    page.id === currentPageId ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50'
+                  }`}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </Button>
-              </div>
-              
-              <div className="space-y-1 max-h-[300px] overflow-y-auto">
-                {pages.map((page) => (
-                  <div
-                    key={page.id}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                      page.id === currentPageId ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    {editingPageId === page.id ? (
-                      <Input
-                        value={editingPageTitle}
-                        onChange={(e) => setEditingPageTitle(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            updatePageTitle(page.id, editingPageTitle)
-                          } else if (e.key === 'Escape') {
-                            setEditingPageId(null)
-                            setEditingPageTitle('')
-                          }
-                        }}
-                        onBlur={() => {
-                          if (editingPageTitle.trim()) {
-                            updatePageTitle(page.id, editingPageTitle)
-                          } else {
-                            setEditingPageId(null)
-                            setEditingPageTitle('')
-                          }
-                        }}
-                        className="h-8 text-sm"
-                        autoFocus
-                      />
-                    ) : (
+                  {editingPageId === page.id ? (
+                    <Input
+                      value={editingPageTitle}
+                      onChange={(e) => setEditingPageTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          updatePageTitle(page.id, editingPageTitle)
+                        } else if (e.key === 'Escape') {
+                          setEditingPageId(null)
+                          setEditingPageTitle('')
+                        }
+                      }}
+                      onBlur={() => {
+                        if (editingPageTitle.trim()) {
+                          updatePageTitle(page.id, editingPageTitle)
+                        } else {
+                          setEditingPageId(null)
+                          setEditingPageTitle('')
+                        }
+                      }}
+                      className="h-8 text-sm flex-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <>
                       <span
                         onClick={() => {
                           setCurrentPageId(page.id)
                           setShowPageMenu(false)
                         }}
-                        onDoubleClick={() => {
-                          setEditingPageId(page.id)
-                          setEditingPageTitle(page.title)
-                        }}
-                        className="flex-1"
+                        className="flex-1 truncate"
                       >
                         {page.title}
                       </span>
-                    )}
-                    {pages.length > 1 && editingPageId !== page.id && (
+                      
+                      {/* 콘텍스트 메뉴 버튼 */}
                       <Button
-                        size="sm"
                         variant="ghost"
+                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation()
-                          if (confirm(`"${page.title}" 페이지를 삭제하시겠습니까?\n이 페이지의 모든 메모가 삭제됩니다.`)) {
-                            deletePage(page.id)
-                          }
+                          setPageContextMenu({
+                            pageId: page.id,
+                            x: e.clientX,
+                            y: e.clientY
+                          })
                         }}
-                        className="h-6 w-6 p-0 hover:bg-red-100 hover:text-red-600"
+                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-gray-200 transition-opacity"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                         </svg>
                       </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-
+          </div>
+        )}
       </div>
 
       {/* 필터 패널 */}
@@ -1692,6 +1702,65 @@ export default function AdvancedMemoGrid() {
         </div>
       </div>
 
+      {/* 페이지 콘텍스트 메뉴 */}
+      {pageContextMenu && (
+        <div
+          className="fixed z-40 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px]"
+          style={{ left: pageContextMenu.x, top: pageContextMenu.y }}
+        >
+          <button
+            onClick={() => {
+              const page = pages.find(p => p.id === pageContextMenu.pageId)
+              if (page) {
+                setEditingPageId(page.id)
+                setEditingPageTitle(page.title)
+              }
+              setPageContextMenu(null)
+            }}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Rename page
+          </button>
+          
+          <button
+            onClick={() => {
+              // TODO: 페이지 복제 기능 추가 가능
+              setPageContextMenu(null)
+            }}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
+            disabled
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            Duplicate page
+          </button>
+          
+          <hr className="my-1 border-gray-200" />
+          
+          {pages.length > 1 && (
+            <button
+              onClick={() => {
+                const page = pages.find(p => p.id === pageContextMenu.pageId)
+                if (page && confirm(`"${page.title}" 페이지를 삭제하시겠습니까?\n이 페이지의 모든 메모가 삭제됩니다.`)) {
+                  deletePage(pageContextMenu.pageId)
+                }
+                setPageContextMenu(null)
+              }}
+              className="w-full text-left px-4 py-2 hover:bg-red-50 hover:text-red-600 flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete page
+            </button>
+          )}
+        </div>
+      )}
+
       {/* 컨텍스트 메뉴 */}
       {contextMenu && (
         <div
@@ -1757,14 +1826,15 @@ export default function AdvancedMemoGrid() {
         </div>
       )}
 
-      {/* 배경 클릭시 컨텍스트 메뉴와 페이지 메뉴 닫기 */}
-      {(contextMenu || showPageMenu || showTodoSearch) && (
+      {/* 배경 클릭시 메뉴들 닫기 */}
+      {(contextMenu || showPageMenu || showTodoSearch || pageContextMenu) && (
         <div
           className="fixed inset-0 z-25"
           onClick={() => {
             setContextMenu(null)
             setShowPageMenu(false)
             setShowTodoSearch(null)
+            setPageContextMenu(null)
           }}
         />
       )}
