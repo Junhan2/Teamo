@@ -854,10 +854,10 @@ export default function AdvancedMemoGrid() {
       if (e.metaKey || e.ctrlKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault()
-          handleZoom(0.03) // 키보드 줌은 중앙 기준
+          handleZoom(0.04) // 0.03에서 0.04로 더 빠르게
         } else if (e.key === '-') {
           e.preventDefault()
-          handleZoom(-0.03) // 키보드 줌은 중앙 기준
+          handleZoom(-0.04) // 0.03에서 0.04로 더 빠르게
         }
       }
     }
@@ -887,7 +887,7 @@ export default function AdvancedMemoGrid() {
       if (e.metaKey || e.ctrlKey) {
         e.preventDefault()
         // 마우스 휠은 마우스 위치 기준
-        handleZoom(e.deltaY > 0 ? -0.03 : 0.03, e.clientX, e.clientY)
+        handleZoom(e.deltaY > 0 ? -0.04 : 0.04, e.clientX, e.clientY)
       }
     }
 
@@ -1254,8 +1254,8 @@ export default function AdvancedMemoGrid() {
         }
       `}</style>
       
-      {/* 메모 컨트롤 패널 - 헤더 아래 중앙 배치 */}
-      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-20">
+      {/* 메모 컨트롤 패널 - 오른쪽 상단 배치 */}
+      <div className="fixed top-4 right-4 z-20">
         <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
           <Button
             onClick={addMemo}
@@ -1382,7 +1382,7 @@ export default function AdvancedMemoGrid() {
 
       {/* 필터 패널 */}
       {showFilters && (
-        <div className="absolute top-20 left-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-gray-200 p-4 w-80">
+        <div className="absolute top-20 right-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-gray-200 p-4 w-80">
           <h3 className="text-sm font-semibold mb-3 text-gray-700">Filter Memos</h3>
           
           <div className="space-y-3">
