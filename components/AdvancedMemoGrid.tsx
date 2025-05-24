@@ -89,6 +89,13 @@ export default function AdvancedMemoGrid() {
     y: number
   } | null>(null)
   
+  // 메모 선택 관련 상태
+  const [selectedMemos, setSelectedMemos] = useState<string[]>([])
+  const [isSelecting, setIsSelecting] = useState(false)
+  const [selectionStart, setSelectionStart] = useState<{ x: number, y: number } | null>(null)
+  const [selectionEnd, setSelectionEnd] = useState<{ x: number, y: number } | null>(null)
+  const [showAlignDropdown, setShowAlignDropdown] = useState(false)
+  
   // 팬 상태 관리 (스페이스 + 드래그로 뷰포트 이동)
   const [panState, setPanState] = useState<{
     isPanning: boolean
@@ -372,66 +379,89 @@ export default function AdvancedMemoGrid() {
         return
       }
 
-      // 뷰포트 중앙 계산 (36% 지점으로 조정)
+      // 사용자가 보는 화면 기준 중앙에 메모 생성
       const gridElement = gridRef.current
-      let newX = CANVAS_WIDTH * 0.36  // 캔버스 가로의 36% 지점
-      let newY = CANVAS_HEIGHT * 0.36 // 캔버스 세로의 36% 지점
+      let newX = CANVAS_WIDTH * 0.36  // 기본값
+      let newY = CANVAS_HEIGHT * 0.36
       
       if (gridElement) {
         const rect = gridElement.getBoundingClientRect()
         const scrollLeft = gridElement.scrollLeft
         const scrollTop = gridElement.scrollTop
         
-        // 현재 뷰포트에 36% 지점이 보이는지 확인
-        const viewportCenterX = scrollLeft + rect.width / 2
-        const viewportCenterY = scrollTop + rect.height / 2
+        // 현재 뷰포트의 실제 중앙 좌표 계산
+        const viewportCenterX = (scrollLeft + rect.width / 2) / zoom
+        const viewportCenterY = (scrollTop + rect.height / 2) / zoom
         
-        // 뷰포트 중앙 주변에 있다면 뷰포트 중앙 사용, 아니면 36% 지점 사용
-        const canvas36X = CANVAS_WIDTH * 0.36 / zoom
-        const canvas36Y = CANVAS_HEIGHT * 0.36 / zoom
-        const viewportCenterXInCanvas = viewportCenterX / zoom
-        const viewportCenterYInCanvas = viewportCenterY / zoom
+        // 뷰포트 중앙에 메모 배치 시도
+        let targetX = snapToGrid(viewportCenterX - DEFAULT_WIDTH / 2)
+        let targetY = snapToGrid(viewportCenterY - DEFAULT_HEIGHT / 2)
         
-        // 뷰포트 중앙이 36% 지점 근처(±500px)에 있으면 뷰포트 중앙 사용
-        const useViewportCenter = Math.abs(viewportCenterXInCanvas - canvas36X) < 500 && 
-                                 Math.abs(viewportCenterYInCanvas - canvas36Y) < 500
+        // 캔버스 범위 내로 제한
+        targetX = Math.max(0, Math.min(CANVAS_WIDTH - DEFAULT_WIDTH, targetX))
+        targetY = Math.max(0, Math.min(CANVAS_HEIGHT - DEFAULT_HEIGHT, targetY))
         
-        if (useViewportCenter) {
-          // 뷰포트 중앙 좌표 계산 (스크롤 위치 고려)
-          const centerX = scrollLeft + rect.width / 2 - DEFAULT_WIDTH / 2
-          const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
-          
-          // 그리드에 맞춰 정렬
-          newX = snapToGrid(centerX / zoom)
-          newY = snapToGrid(centerY / zoom)
+        // 기존 메모와 겹치는지 확인
+        const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y, w: m.width, h: m.height }))
+        
+        // 중앙이 비어있으면 중앙 사용
+        const isCenterFree = !existingPositions.some(pos => 
+          targetX < pos.x + pos.w && targetX + DEFAULT_WIDTH > pos.x &&
+          targetY < pos.y + pos.h && targetY + DEFAULT_HEIGHT > pos.y
+        )
+        
+        if (isCenterFree) {
+          newX = targetX
+          newY = targetY
         } else {
-          // 36% 지점 사용
-          newX = snapToGrid(canvas36X)
-          newY = snapToGrid(canvas36Y)
-        }
-        
-        // 최소값 보장
-        newX = Math.max(0, newX)
-        newY = Math.max(0, newY)
-        
-        // 기존 메모와 겹치지 않도록 조정
-        const existingPositions = memos.map(m => ({ x: m.position_x, y: m.position_y }))
-        const offset = GRID_SIZE * 2
-        let attempts = 0
-        
-        while (existingPositions.some(pos => 
-          Math.abs(pos.x - newX) < DEFAULT_WIDTH && 
-          Math.abs(pos.y - newY) < DEFAULT_HEIGHT
-        ) && attempts < 10) {
-          const angle = attempts * Math.PI / 4
-          const baseX = useViewportCenter ? (scrollLeft + rect.width / 2) / zoom : canvas36X
-          const baseY = useViewportCenter ? (scrollTop + rect.height / 2) / zoom : canvas36Y
+          // 중앙과 가장 가까운 위치 찾기 (우측 우선)
+          const offset = GRID_SIZE * 2
+          let found = false
+          let attempts = 0
           
-          newX = snapToGrid(baseX + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
-          newY = snapToGrid(baseY + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
-          newX = Math.max(0, newX)
-          newY = Math.max(0, newY)
-          attempts++
+          // 나선형으로 위치 탐색 (우측 우선)
+          while (!found && attempts < 20) {
+            const directions = [
+              { x: 1, y: 0 },   // 우측
+              { x: 0, y: 1 },   // 아래
+              { x: -1, y: 0 },  // 좌측
+              { x: 0, y: -1 },  // 위
+              { x: 1, y: 1 },   // 우하
+              { x: -1, y: 1 },  // 좌하
+              { x: 1, y: -1 },  // 우상
+              { x: -1, y: -1 }  // 좌상
+            ]
+            
+            for (const dir of directions) {
+              const testX = targetX + dir.x * offset * (Math.floor(attempts / 4) + 1)
+              const testY = targetY + dir.y * offset * (Math.floor(attempts / 4) + 1)
+              
+              // 캔버스 범위 확인
+              if (testX >= 0 && testX + DEFAULT_WIDTH <= CANVAS_WIDTH &&
+                  testY >= 0 && testY + DEFAULT_HEIGHT <= CANVAS_HEIGHT) {
+                
+                // 다른 메모와 겹치는지 확인
+                const isPositionFree = !existingPositions.some(pos => 
+                  testX < pos.x + pos.w && testX + DEFAULT_WIDTH > pos.x &&
+                  testY < pos.y + pos.h && testY + DEFAULT_HEIGHT > pos.y
+                )
+                
+                if (isPositionFree) {
+                  newX = snapToGrid(testX)
+                  newY = snapToGrid(testY)
+                  found = true
+                  break
+                }
+              }
+            }
+            attempts++
+          }
+          
+          // 적절한 위치를 찾지 못한 경우 중앙 사용
+          if (!found) {
+            newX = targetX
+            newY = targetY
+          }
         }
       }
 
@@ -749,67 +779,139 @@ export default function AdvancedMemoGrid() {
     }
   }, [dragState, resizeState, memos, updateMemoPosition, supabase, toast])
 
-  // 메모 자동 정렬
-  const autoAlignMemos = async () => {
+  // 전체 메모 정렬 (All Grid)
+  const alignAllMemos = async () => {
     try {
-      const sortedMemos = [...memos].sort((a, b) => {
-        if (a.position_y === b.position_y) {
-          return a.position_x - b.position_x;
-        }
-        return a.position_y - b.position_y;
-      });
+      if (!gridRef.current) return
 
-      let currentX = GRID_SIZE;
-      let currentY = GRID_SIZE;
-      let rowHeight = 0;
-      const maxWidth = 1200; // 최대 너비
+      const rect = gridRef.current.getBoundingClientRect()
+      const scrollLeft = gridRef.current.scrollLeft
+      const scrollTop = gridRef.current.scrollTop
+      
+      // 현재 뷰포트 중앙 계산
+      const viewportCenterX = (scrollLeft + rect.width / 2) / zoom
+      const viewportCenterY = (scrollTop + rect.height / 2) / zoom
 
-      const updates = sortedMemos.map((memo) => {
-        // 현재 행에 메모가 들어갈 공간이 없으면 다음 행으로
-        if (currentX + memo.width > maxWidth) {
-          currentX = GRID_SIZE;
-          currentY += rowHeight + GRID_SIZE;
-          rowHeight = 0;
-        }
+      // 생성 순서로 정렬
+      const sortedMemos = [...memos].sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
 
-        const newPosition = {
-          id: memo.id,
-          x: currentX,
-          y: currentY
-        };
+      // 한 행당 메모 개수 계산 (뷰포트 너비 기준 최적화)
+      const viewportWidth = rect.width / zoom
+      const memosPerRow = Math.max(2, Math.floor(viewportWidth / (DEFAULT_WIDTH + GRID_SIZE * 2)))
+      
+      // 그리드 시작 위치 (뷰포트 중앙 기준)
+      const totalRows = Math.ceil(sortedMemos.length / memosPerRow)
+      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE * 2) - GRID_SIZE * 2
+      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE * 2) - GRID_SIZE * 2
+      
+      const startX = Math.max(GRID_SIZE, viewportCenterX - totalWidth / 2)
+      const startY = Math.max(GRID_SIZE, viewportCenterY - totalHeight / 2)
 
-        // 다음 메모 위치 계산
-        currentX += memo.width + GRID_SIZE;
-        rowHeight = Math.max(rowHeight, memo.height);
-
-        return newPosition;
-      });
+      // 각 메모 위치 계산 및 업데이트
+      const updates = sortedMemos.map((memo, index) => {
+        const row = Math.floor(index / memosPerRow)
+        const col = index % memosPerRow
+        
+        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE * 2))
+        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE * 2))
+        
+        return { id: memo.id, x: newX, y: newY }
+      })
 
       // 로컬 상태 업데이트
       setMemos(prev => prev.map(memo => {
-        const update = updates.find(u => u.id === memo.id);
-        if (update) {
-          return { ...memo, position_x: update.x, position_y: update.y };
-        }
-        return memo;
-      }));
+        const update = updates.find(u => u.id === memo.id)
+        return update ? { ...memo, position_x: update.x, position_y: update.y } : memo
+      }))
 
       // DB 업데이트
       for (const update of updates) {
-        await updateMemoPosition(update.id, update.x, update.y);
+        await updateMemoPosition(update.id, update.x, update.y)
       }
 
       toast({
         title: "정렬 완료",
-        description: "메모가 자동으로 정렬되었습니다."
-      });
+        description: `${sortedMemos.length}개 메모가 생성 순서로 정렬되었습니다.`
+      })
     } catch (error) {
-      console.error('Error auto-aligning memos:', error);
+      console.error('Error aligning all memos:', error)
       toast({
         title: "오류",
         description: "메모 정렬에 실패했습니다.",
         variant: "destructive"
-      });
+      })
+    }
+  }
+
+  // 선택된 메모만 정렬 (Selection Grid)
+  const alignSelectedMemos = async () => {
+    try {
+      if (selectedMemos.length === 0) {
+        toast({
+          title: "선택된 메모 없음",
+          description: "정렬할 메모를 먼저 선택해주세요.",
+          variant: "destructive"
+        })
+        return
+      }
+
+      const selectedMemoObjects = memos.filter(memo => selectedMemos.includes(memo.id))
+      
+      // 선택된 메모들의 중심점 계산
+      const centerX = selectedMemoObjects.reduce((sum, memo) => sum + memo.position_x, 0) / selectedMemoObjects.length
+      const centerY = selectedMemoObjects.reduce((sum, memo) => sum + memo.position_y, 0) / selectedMemoObjects.length
+
+      // 생성 순서로 정렬
+      const sortedSelected = selectedMemoObjects.sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
+
+      // 컴팩트한 그리드 계산
+      const memosPerRow = Math.ceil(Math.sqrt(sortedSelected.length))
+      const totalRows = Math.ceil(sortedSelected.length / memosPerRow)
+      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE) - GRID_SIZE
+      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE) - GRID_SIZE
+      
+      const startX = Math.max(GRID_SIZE, centerX - totalWidth / 2)
+      const startY = Math.max(GRID_SIZE, centerY - totalHeight / 2)
+
+      const updates = sortedSelected.map((memo, index) => {
+        const row = Math.floor(index / memosPerRow)
+        const col = index % memosPerRow
+        
+        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE))
+        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE))
+        
+        return { id: memo.id, x: newX, y: newY }
+      })
+
+      // 로컬 상태 업데이트
+      setMemos(prev => prev.map(memo => {
+        const update = updates.find(u => u.id === memo.id)
+        return update ? { ...memo, position_x: update.x, position_y: update.y } : memo
+      }))
+
+      // DB 업데이트
+      for (const update of updates) {
+        await updateMemoPosition(update.id, update.x, update.y)
+      }
+
+      // 선택 해제
+      setSelectedMemos([])
+
+      toast({
+        title: "정렬 완료",
+        description: `선택된 ${sortedSelected.length}개 메모가 정렬되었습니다.`
+      })
+    } catch (error) {
+      console.error('Error aligning selected memos:', error)
+      toast({
+        title: "오류",
+        description: "선택된 메모 정렬에 실패했습니다.",
+        variant: "destructive"
+      })
     }
   }
 
@@ -1318,6 +1420,21 @@ export default function AdvancedMemoGrid() {
         .memo-grid-container::-webkit-scrollbar {
           display: none; /* Chrome, Safari, Opera */
         }
+        
+        /* 선택 영역 스타일 */
+        .selection-area {
+          position: absolute;
+          border: 2px dashed #3B82F6;
+          background-color: rgba(59, 130, 246, 0.1);
+          pointer-events: none;
+          z-index: 100;
+        }
+        
+        /* 선택된 메모 스타일 */
+        .memo-selected {
+          outline: 2px solid #3B82F6;
+          outline-offset: 2px;
+        }
       `}</style>
       
       {/* 메모 컨트롤 패널 - 최적화된 크기 */}
@@ -1342,16 +1459,52 @@ export default function AdvancedMemoGrid() {
             Filter
           </Button>
           
-          <Button
-            variant="outline"
-            onClick={autoAlignMemos}
-            size="sm"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm"
-            title="Auto-align memos"
-          >
-            <Grid3x3 className="h-3.5 w-3.5" />
-            Align
-          </Button>
+          <div className="relative">
+            <Button
+              variant="outline"
+              onClick={() => setShowAlignDropdown(!showAlignDropdown)}
+              size="sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm"
+              title="Align memos"
+            >
+              <Grid3x3 className="h-3.5 w-3.5" />
+              Align
+              <svg className={`w-3 h-3 transition-transform ${showAlignDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </Button>
+            
+            {/* 정렬 드롭다운 메뉴 */}
+            {showAlignDropdown && (
+              <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px] z-30">
+                <button
+                  onClick={() => {
+                    alignAllMemos()
+                    setShowAlignDropdown(false)
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                  All Grid
+                </button>
+                
+                <button
+                  onClick={() => {
+                    alignSelectedMemos()
+                    setShowAlignDropdown(false)
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Selection Grid
+                </button>
+              </div>
+            )}
+          </div>
           
           <div className="h-4 w-px bg-gray-300" />
           
