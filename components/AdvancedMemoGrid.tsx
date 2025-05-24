@@ -708,8 +708,6 @@ export default function AdvancedMemoGrid() {
     tags: string[]
     tagged_todos: string[]
   }) => {
-    console.log('AdvancedMemoGrid - handleRealtimeUpdate received:', updatedMemo)
-    
     // 로컬 상태 즉시 업데이트
     setMemos(prev => prev.map(memo => 
       memo.id === updatedMemo.id 

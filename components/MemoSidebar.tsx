@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { X, Hash, CheckSquare, Search, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -90,26 +90,35 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
     fetchLinkedTodos()
   }, [taggedTodos])
 
-  // 실시간 업데이트
-  const handleRealtimeUpdate = () => {
+  // 태그와 할일 변경 시 즉시 업데이트
+  useEffect(() => {
+    if (memo && onRealtimeUpdate) {
+      onRealtimeUpdate({
+        id: memo.id,
+        title,
+        content,
+        tags,
+        tagged_todos: taggedTodos
+      })
+    }
+  }, [tags, taggedTodos])
+
+  // 타이틀과 내용 변경 시 디바운스 업데이트
+  useEffect(() => {
     if (!memo || !onRealtimeUpdate) return
     
-    console.log('MemoSidebar - handleRealtimeUpdate called:', {
-      id: memo.id,
-      title,
-      content,
-      tags,
-      tagged_todos: taggedTodos
-    })
-    
-    onRealtimeUpdate({
-      id: memo.id,
-      title,
-      content,
-      tags,
-      tagged_todos: taggedTodos
-    })
-  }
+    const timer = setTimeout(() => {
+      onRealtimeUpdate({
+        id: memo.id,
+        title,
+        content,
+        tags,
+        tagged_todos: taggedTodos
+      })
+    }, 300) // 300ms 디바운스
+
+    return () => clearTimeout(timer)
+  }, [title, content, memo, onRealtimeUpdate, tags, taggedTodos])
 
   // 할일 검색
   const searchTodos = async () => {
@@ -182,14 +191,12 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
       const newTags = [...tags, tagInput.trim()]
       setTags(newTags)
       setTagInput('')
-      handleRealtimeUpdate()
     }
   }
 
   const removeTag = (tagToRemove: string) => {
     const newTags = tags.filter(tag => tag !== tagToRemove)
     setTags(newTags)
-    handleRealtimeUpdate()
   }
 
   const addTodo = (todo: Todo) => {
@@ -199,7 +206,6 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
       setLinkedTodos([...linkedTodos, todo])
       setTodoSearch('')
       setShowTodoSearch(false)
-      handleRealtimeUpdate()
     }
   }
 
@@ -207,7 +213,6 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
     const newTodos = taggedTodos.filter(id => id !== todoId)
     setTaggedTodos(newTodos)
     setLinkedTodos(linkedTodos.filter(todo => todo.id !== todoId))
-    handleRealtimeUpdate()
   }
 
   return (
@@ -244,10 +249,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value)
-                  handleRealtimeUpdate()
-                }}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter memo title"
                 className="w-full"
               />
@@ -261,10 +263,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
               <Textarea
                 id="content"
                 value={content}
-                onChange={(e) => {
-                  setContent(e.target.value)
-                  handleRealtimeUpdate()
-                }}
+                onChange={(e) => setContent(e.target.value)}
                 placeholder="Write your memo content..."
                 className="w-full min-h-[200px] resize-none"
               />
