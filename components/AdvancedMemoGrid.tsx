@@ -125,7 +125,6 @@ export default function AdvancedMemoGrid() {
   })
   
   const gridRef = useRef<HTMLDivElement>(null)
-  const animationFrameRef = useRef<number | null>(null)
   const { toast } = useToast()
   const supabase = createClient()
 
@@ -475,58 +474,50 @@ export default function AdvancedMemoGrid() {
 
   // 드래그 및 리사이즈 중 마우스 이동
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    // 리사이즈 처리 (requestAnimationFrame으로 성능 최적화)
+    // 리사이즈 처리 (즉각적인 반응)
     if (resizeState.isResizing && resizeState.memoId) {
-      // 이전 애니메이션 프레임 취소
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
+      const deltaX = e.clientX - resizeState.startX
+      const deltaY = e.clientY - resizeState.startY
+      const handle = resizeState.handle
       
-      // 새 애니메이션 프레임 요청
-      animationFrameRef.current = requestAnimationFrame(() => {
-        const deltaX = e.clientX - resizeState.startX
-        const deltaY = e.clientY - resizeState.startY
-        const handle = resizeState.handle
+      setMemos(prev => prev.map(memo => {
+        if (memo.id !== resizeState.memoId) return memo
         
-        setMemos(prev => prev.map(memo => {
-          if (memo.id !== resizeState.memoId) return memo
-          
-          let newWidth = resizeState.startWidth
-          let newHeight = resizeState.startHeight
-          let newPosX = resizeState.startPosX
-          let newPosY = resizeState.startPosY
-          
-          // 핸들에 따른 리사이즈 처리 (실시간에서는 snapToGrid 제거)
-          if (handle?.includes('e')) {
-            newWidth = Math.max(MIN_WIDTH, resizeState.startWidth + deltaX)
+        let newWidth = resizeState.startWidth
+        let newHeight = resizeState.startHeight
+        let newPosX = resizeState.startPosX
+        let newPosY = resizeState.startPosY
+        
+        // 핸들에 따른 리사이즈 처리 (즉시 반영)
+        if (handle?.includes('e')) {
+          newWidth = Math.max(MIN_WIDTH, resizeState.startWidth + deltaX)
+        }
+        if (handle?.includes('w')) {
+          const widthChange = deltaX
+          newWidth = Math.max(MIN_WIDTH, resizeState.startWidth - widthChange)
+          if (newWidth !== resizeState.startWidth) {
+            newPosX = resizeState.startPosX + widthChange
           }
-          if (handle?.includes('w')) {
-            const widthChange = deltaX
-            newWidth = Math.max(MIN_WIDTH, resizeState.startWidth - widthChange)
-            if (newWidth !== resizeState.startWidth) {
-              newPosX = resizeState.startPosX + widthChange
-            }
+        }
+        if (handle?.includes('s')) {
+          newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight + deltaY)
+        }
+        if (handle?.includes('n')) {
+          const heightChange = deltaY
+          newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight - heightChange)
+          if (newHeight !== resizeState.startHeight) {
+            newPosY = resizeState.startPosY + heightChange
           }
-          if (handle?.includes('s')) {
-            newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight + deltaY)
-          }
-          if (handle?.includes('n')) {
-            const heightChange = deltaY
-            newHeight = Math.max(MIN_HEIGHT, resizeState.startHeight - heightChange)
-            if (newHeight !== resizeState.startHeight) {
-              newPosY = resizeState.startPosY + heightChange
-            }
-          }
-          
-          return {
-            ...memo,
-            position_x: newPosX,
-            position_y: newPosY,
-            width: newWidth,
-            height: newHeight
-          }
-        }))
-      })
+        }
+        
+        return {
+          ...memo,
+          position_x: newPosX,
+          position_y: newPosY,
+          width: newWidth,
+          height: newHeight
+        }
+      }))
       return
     }
     
@@ -551,14 +542,10 @@ export default function AdvancedMemoGrid() {
         const newX = Math.max(0, currentX - dragState.offsetX)
         const newY = Math.max(0, currentY - dragState.offsetY)
 
-        // 실시간 위치 업데이트 (스냅 적용)
-        const snappedX = snapToGrid(newX)
-        const snappedY = snapToGrid(newY)
-
-        // 로컬 상태만 즉시 업데이트 (부드러운 드래그)
+        // 즉시 위치 업데이트 (snapToGrid는 완료 시에만)
         setMemos(prev => prev.map(memo => 
           memo.id === dragState.memoId 
-            ? { ...memo, position_x: snappedX, position_y: snappedY }
+            ? { ...memo, position_x: newX, position_y: newY }
             : memo
         ))
       }
@@ -570,12 +557,6 @@ export default function AdvancedMemoGrid() {
   const handleMouseUp = useCallback(async () => {
     // 리사이즈 종료 처리
     if (resizeState.isResizing && resizeState.memoId) {
-      // 애니메이션 프레임 취소
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-        animationFrameRef.current = null
-      }
-      
       const memo = memos.find(m => m.id === resizeState.memoId)
       if (memo) {
         // 최종 위치와 크기에 snapToGrid 적용
@@ -628,8 +609,19 @@ export default function AdvancedMemoGrid() {
       if (dragState.isDragging) {
         const memo = memos.find(m => m.id === dragState.memoId)
         if (memo) {
+          // 최종 위치에 snapToGrid 적용
+          const snappedX = snapToGrid(memo.position_x)
+          const snappedY = snapToGrid(memo.position_y)
+          
+          // 상태 업데이트
+          setMemos(prev => prev.map(m => 
+            m.id === dragState.memoId 
+              ? { ...m, position_x: snappedX, position_y: snappedY }
+              : m
+          ))
+          
           // 데이터베이스에 최종 위치 저장
-          updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
+          updateMemoPosition(dragState.memoId, snappedX, snappedY)
         }
       }
 
@@ -1373,7 +1365,15 @@ export default function AdvancedMemoGrid() {
               <div 
                 className="memo-drag-area"
                 onMouseDown={(e) => handleMouseDown(e, memo.id)}
-                onClick={() => handleMemoClick(memo)}
+                onClick={(e) => {
+                  // hasMoved가 true면 클릭 이벤트 무시
+                  if (dragState.hasMoved) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    return
+                  }
+                  handleMemoClick(memo)
+                }}
               >
                 <div className="p-3 h-full flex flex-col overflow-hidden pointer-events-none">
                   <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
