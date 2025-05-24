@@ -421,19 +421,6 @@ export default function AdvancedMemoGrid() {
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return // 좌클릭만 처리
     
-    // 리사이즈 핸들, 버튼, 입력 요소 클릭시 드래그 방지
-    const target = e.target as HTMLElement
-    if (
-      target.classList.contains('resize-handle') ||
-      target.closest('button') ||
-      target.closest('input') ||
-      target.closest('textarea') ||
-      target.closest('.tag-input') ||
-      target.closest('.todo-search')
-    ) {
-      return
-    }
-    
     const memo = memos.find(m => m.id === memoId)
     if (!memo) return
 
@@ -454,6 +441,7 @@ export default function AdvancedMemoGrid() {
 
     // 드래그 중 선택 방지
     e.preventDefault()
+    e.stopPropagation()
   }, [memos, zoom])
   
   // 리사이즈 시작
@@ -1011,6 +999,7 @@ export default function AdvancedMemoGrid() {
           position: absolute;
           background: transparent;
           transition: background-color 0.2s;
+          z-index: 10;
         }
         
         .resize-handle:hover {
@@ -1018,67 +1007,80 @@ export default function AdvancedMemoGrid() {
         }
         
         .resize-handle-n {
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
+          top: -2px;
+          left: 8px;
+          right: 8px;
+          height: 8px;
           cursor: ns-resize;
         }
         
         .resize-handle-s {
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
+          bottom: -2px;
+          left: 8px;
+          right: 8px;
+          height: 8px;
           cursor: ns-resize;
         }
         
         .resize-handle-e {
-          top: 0;
-          bottom: 0;
-          right: 0;
-          width: 4px;
+          top: 8px;
+          bottom: 8px;
+          right: -2px;
+          width: 8px;
           cursor: ew-resize;
         }
         
         .resize-handle-w {
-          top: 0;
-          bottom: 0;
-          left: 0;
-          width: 4px;
+          top: 8px;
+          bottom: 8px;
+          left: -2px;
+          width: 8px;
           cursor: ew-resize;
         }
         
         .resize-handle-ne {
-          top: 0;
-          right: 0;
-          width: 8px;
-          height: 8px;
+          top: -2px;
+          right: -2px;
+          width: 12px;
+          height: 12px;
           cursor: nesw-resize;
         }
         
         .resize-handle-nw {
-          top: 0;
-          left: 0;
-          width: 8px;
-          height: 8px;
+          top: -2px;
+          left: -2px;
+          width: 12px;
+          height: 12px;
           cursor: nwse-resize;
         }
         
         .resize-handle-se {
-          bottom: 0;
-          right: 0;
-          width: 8px;
-          height: 8px;
+          bottom: -2px;
+          right: -2px;
+          width: 12px;
+          height: 12px;
           cursor: nwse-resize;
         }
         
         .resize-handle-sw {
-          bottom: 0;
-          left: 0;
-          width: 8px;
-          height: 8px;
+          bottom: -2px;
+          left: -2px;
+          width: 12px;
+          height: 12px;
           cursor: nesw-resize;
+        }
+        
+        .memo-drag-area {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          bottom: 8px;
+          cursor: grab;
+        }
+        
+        .memo-drag-area:active {
+          cursor: grabbing;
         }
       `}</style>
       
@@ -1295,9 +1297,7 @@ export default function AdvancedMemoGrid() {
           return (
             <div
               key={memo.id}
-              className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${
-                isDragging ? 'cursor-grabbing z-50' : isResizing ? 'cursor-default' : 'cursor-grab'
-              } ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
+              className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
               style={{
                 left: memo.position_x,
                 top: memo.position_y,
@@ -1311,59 +1311,64 @@ export default function AdvancedMemoGrid() {
                 outline: isNewlyCreated ? '3px solid #3B82F6' : 'none',
                 outlineOffset: isNewlyCreated ? '2px' : '0'
               }}
-              onMouseDown={(e) => handleMouseDown(e, memo.id)}
               onMouseEnter={() => handleMemoHover(memo.id, true)}
               onMouseLeave={() => handleMemoHover(memo.id, false)}
               onContextMenu={(e) => handleContextMenu(e, memo.id)}
-              onClick={() => handleMemoClick(memo)}
             >
-              <div className="p-3 h-full flex flex-col overflow-hidden">
-                <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
-                  {memo.title}
-                </h3>
-                <p className="text-xs text-gray-700 flex-1 line-clamp-3 overflow-hidden">
-                  {memo.content}
-                </p>
-                
-                {/* 태그 영역 */}
-                <div className="mt-2 space-y-1">
-                  {/* 일반 태그 */}
-                  {memo.tags && memo.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {memo.tags.slice(0, 3).map((tag, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-gray-200 text-gray-700"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                      {memo.tags.length > 3 && (
-                        <span className="text-[10px] text-gray-500">+{memo.tags.length - 3}</span>
-                      )}
-                    </div>
-                  )}
+              {/* 드래그 영역 - 메모 내부 */}
+              <div 
+                className="memo-drag-area"
+                onMouseDown={(e) => handleMouseDown(e, memo.id)}
+                onClick={() => handleMemoClick(memo)}
+              >
+                <div className="p-3 h-full flex flex-col overflow-hidden pointer-events-none">
+                  <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
+                    {memo.title}
+                  </h3>
+                  <p className="text-xs text-gray-700 flex-1 line-clamp-3 overflow-hidden">
+                    {memo.content}
+                  </p>
                   
-                  {/* 할일 태그 */}
-                  {memo.tagged_todos && memo.tagged_todos.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {memo.tagged_todos.slice(0, 2).map((todoId) => {
-                        const todo = todos.find(t => t.id === todoId)
-                        if (!todo) return null
-                        return (
+                  {/* 태그 영역 */}
+                  <div className="mt-2 space-y-1">
+                    {/* 일반 태그 */}
+                    {memo.tags && memo.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {memo.tags.slice(0, 3).map((tag, index) => (
                           <span
-                            key={todoId}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 truncate max-w-[100px]"
+                            key={index}
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-gray-200 text-gray-700"
                           >
-                            📌 {todo.title}
+                            #{tag}
                           </span>
-                        )
-                      })}
-                      {memo.tagged_todos.length > 2 && (
-                        <span className="text-[10px] text-gray-500">+{memo.tagged_todos.length - 2}</span>
-                      )}
-                    </div>
-                  )}
+                        ))}
+                        {memo.tags.length > 3 && (
+                          <span className="text-[10px] text-gray-500">+{memo.tags.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* 할일 태그 */}
+                    {memo.tagged_todos && memo.tagged_todos.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {memo.tagged_todos.slice(0, 2).map((todoId) => {
+                          const todo = todos.find(t => t.id === todoId)
+                          if (!todo) return null
+                          return (
+                            <span
+                              key={todoId}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 truncate max-w-[100px]"
+                            >
+                              📌 {todo.title}
+                            </span>
+                          )
+                        })}
+                        {memo.tagged_todos.length > 2 && (
+                          <span className="text-[10px] text-gray-500">+{memo.tagged_todos.length - 2}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               
