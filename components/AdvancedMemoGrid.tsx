@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import MemoSidebar from "@/components/MemoSidebar"
 import { 
   PlusCircle, 
   Maximize2, 
@@ -62,10 +63,11 @@ export default function AdvancedMemoGrid() {
   const [isLoading, setIsLoading] = useState(true)
   const [viewState, setViewState] = useState<ViewState>('collapsed')
   const [zoom, setZoom] = useState(1)
-  const [showForm, setShowForm] = useState(false)
   const [newMemo, setNewMemo] = useState({ title: '', content: '' })
   const [hoveredMemo, setHoveredMemo] = useState<string | null>(null)
   const [newlyCreatedMemoId, setNewlyCreatedMemoId] = useState<string | null>(null)
+  const [sidebarMemo, setSidebarMemo] = useState<Memo | null>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [contextMenu, setContextMenu] = useState<{
     memoId: string
     x: number
@@ -271,17 +273,8 @@ export default function AdvancedMemoGrid() {
     }
   }, [currentPageId])
 
-  // 새 메모 추가 (인증 체크 강화)
+  // 새 메모 추가 (빈 메모 즉시 생성)
   const addMemo = async () => {
-    if (!newMemo.title || !newMemo.content) {
-      toast({
-        title: "입력 오류",
-        description: "제목과 내용을 모두 입력해주세요.",
-        variant: "destructive",
-      })
-      return
-    }
-
     try {
       // 세션 확인
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -294,49 +287,12 @@ export default function AdvancedMemoGrid() {
         return
       }
 
-      // 사용자 정보 가져오기
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      if (userError || !userData.user) {
-        toast({
-          title: "사용자 오류",
-          description: "사용자 정보를 가져올 수 없습니다.",
-          variant: "destructive",
-        })
-        return
-      }
-
       // 뷰포트 중앙 계산
       const gridElement = gridRef.current
-      if (!gridElement) {
-        // fallback to random position if grid ref not available
-        let newX = snapToGrid(Math.floor(Math.random() * 5) * (DEFAULT_WIDTH + GRID_SIZE))
-        let newY = snapToGrid(Math.floor(Math.random() * 3) * (DEFAULT_HEIGHT + GRID_SIZE))
-        
-        const { data: insertedMemo, error } = await supabase
-          .from('advanced_memos')
-          .insert({
-            title: newMemo.title,
-            content: newMemo.content,
-            user_id: userData.user.id,
-            color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
-            position_x: newX,
-            position_y: newY,
-            width: DEFAULT_WIDTH,
-            height: DEFAULT_HEIGHT,
-            is_expanded: false,
-            page_id: currentPageId
-          })
-          .select()
-          .single()
-
-        if (error) throw error
-        
-        // 새로 생성된 메모 ID 저장
-        if (insertedMemo) {
-          setNewlyCreatedMemoId(insertedMemo.id)
-          // 클릭하기 전까지는 하이라이트 유지 (타이머 제거)
-        }
-      } else {
+      let newX = 100
+      let newY = 100
+      
+      if (gridElement) {
         const rect = gridElement.getBoundingClientRect()
         const scrollLeft = gridElement.scrollLeft
         const scrollTop = gridElement.scrollTop
@@ -346,8 +302,8 @@ export default function AdvancedMemoGrid() {
         const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
         
         // 그리드에 맞춰 정렬
-        let newX = snapToGrid(centerX / zoom)
-        let newY = snapToGrid(centerY / zoom)
+        newX = snapToGrid(centerX / zoom)
+        newY = snapToGrid(centerY / zoom)
         
         // 최소값 보장
         newX = Math.max(0, newX)
@@ -362,9 +318,57 @@ export default function AdvancedMemoGrid() {
           Math.abs(pos.x - newX) < DEFAULT_WIDTH && 
           Math.abs(pos.y - newY) < DEFAULT_HEIGHT
         ) && attempts < 10) {
-          // 나선형으로 위치 조정
           const angle = attempts * Math.PI / 4
           newX = snapToGrid(centerX / zoom + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newX = Math.max(0, newX)
+          newY = Math.max(0, newY)
+          attempts++
+        }
+      }
+
+      // 빈 메모 생성
+      const { data: insertedMemo, error } = await supabase
+        .from('advanced_memos')
+        .insert({
+          title: '',
+          content: '',
+          user_id: session.user.id,
+          color: MEMO_COLORS[Math.floor(Math.random() * MEMO_COLORS.length)],
+          position_x: newX,
+          position_y: newY,
+          width: DEFAULT_WIDTH,
+          height: DEFAULT_HEIGHT,
+          is_expanded: false,
+          page_id: currentPageId,
+          tags: [],
+          tagged_todos: []
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      
+      if (insertedMemo) {
+        // 메모 목록에 추가
+        setMemos(prev => [...prev, insertedMemo])
+        
+        // 사이드바 열기
+        setSidebarMemo(insertedMemo)
+        setIsSidebarOpen(true)
+        
+        // 새로 생성된 메모 하이라이트
+        setNewlyCreatedMemoId(insertedMemo.id)
+      }
+    } catch (error) {
+      console.error('Error creating memo:', error)
+      toast({
+        title: "오류",
+        description: "메모 생성에 실패했습니다.",
+        variant: "destructive",
+      })
+    }
+  }
           newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
           newX = Math.max(0, newX)
           newY = Math.max(0, newY)
@@ -674,6 +678,72 @@ export default function AdvancedMemoGrid() {
     })
   }
 
+  // 메모 클릭 핸들러
+  const handleMemoClick = (memo: Memo) => {
+    // 새로 생성된 메모 하이라이트 제거
+    if (newlyCreatedMemoId === memo.id) {
+      setNewlyCreatedMemoId(null)
+    }
+    
+    // 사이드바 열기
+    setSidebarMemo(memo)
+    setIsSidebarOpen(true)
+  }
+
+  // 사이드바에서 메모 저장
+  const handleSidebarSave = async (updatedMemo: {
+    id: string
+    title: string
+    content: string
+    tags: string[]
+    tagged_todos: string[]
+  }) => {
+    try {
+      const { error } = await supabase
+        .from('advanced_memos')
+        .update({
+          title: updatedMemo.title,
+          content: updatedMemo.content,
+          tags: updatedMemo.tags,
+          tagged_todos: updatedMemo.tagged_todos
+        })
+        .eq('id', updatedMemo.id)
+
+      if (error) throw error
+
+      // 로컬 상태 업데이트
+      setMemos(prev => prev.map(memo => 
+        memo.id === updatedMemo.id 
+          ? { 
+              ...memo, 
+              title: updatedMemo.title,
+              content: updatedMemo.content,
+              tags: updatedMemo.tags,
+              tagged_todos: updatedMemo.tagged_todos
+            } 
+          : memo
+      ))
+
+      // 사이드바 메모도 업데이트
+      if (sidebarMemo?.id === updatedMemo.id) {
+        setSidebarMemo(prev => prev ? {
+          ...prev,
+          title: updatedMemo.title,
+          content: updatedMemo.content,
+          tags: updatedMemo.tags,
+          tagged_todos: updatedMemo.tagged_todos
+        } : null)
+      }
+    } catch (error) {
+      console.error('Error saving memo:', error)
+      toast({
+        title: "저장 실패",
+        description: "메모 저장에 실패했습니다.",
+        variant: "destructive",
+      })
+    }
+  }
+
   // 색상 변경
   const changeColor = async (memoId: string, color: string) => {
     try {
@@ -892,7 +962,7 @@ export default function AdvancedMemoGrid() {
         {/* 기존 툴바 아이템들 */}
         <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
           <Button
-            onClick={() => setShowForm(!showForm)}
+            onClick={addMemo}
             className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-600 shadow-lg"
           >
             <PlusCircle className="h-4 w-4" />
@@ -962,36 +1032,6 @@ export default function AdvancedMemoGrid() {
         </div>
       </div>
 
-      {/* 메모 추가 폼 */}
-      {showForm && (
-        <div className="absolute top-20 left-4 z-20 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-4 w-80">
-          <div className="space-y-3">
-            <Input
-              placeholder="메모 제목"
-              value={newMemo.title}
-              onChange={(e) => setNewMemo(prev => ({ ...prev, title: e.target.value }))}
-            />
-            <Textarea
-              placeholder="메모 내용"
-              value={newMemo.content}
-              onChange={(e) => setNewMemo(prev => ({ ...prev, content: e.target.value }))}
-              rows={3}
-            />
-            <div className="flex gap-2">
-              <Button onClick={addMemo} size="sm" className="bg-blue-500 hover:bg-blue-600">
-                추가
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowForm(false)}
-                size="sm"
-              >
-                취소
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* 그리드 캔버스 */}
       <div 
         ref={gridRef}
@@ -1042,6 +1082,7 @@ export default function AdvancedMemoGrid() {
               onMouseEnter={() => handleMemoHover(memo.id, true)}
               onMouseLeave={() => handleMemoHover(memo.id, false)}
               onContextMenu={(e) => handleContextMenu(e, memo.id)}
+              onClick={() => handleMemoClick(memo)}
             >
               <div className="p-3 h-full flex flex-col">
                 <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
@@ -1299,6 +1340,14 @@ export default function AdvancedMemoGrid() {
           </div>
         </div>
       )}
+
+      {/* 메모 사이드바 */}
+      <MemoSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        memo={sidebarMemo}
+        onSave={handleSidebarSave}
+      />
     </div>
   )
 }
