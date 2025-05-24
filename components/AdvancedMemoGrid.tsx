@@ -82,6 +82,8 @@ export default function AdvancedMemoGrid() {
   const [filterTag, setFilterTag] = useState<string>('')
   const [filterTodo, setFilterTodo] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
+  const [todoSearchQuery, setTodoSearchQuery] = useState<string>('')
+  const [selectedTodoIndex, setSelectedTodoIndex] = useState<number>(0)
   
   // 드래그 상태 관리
   const [dragState, setDragState] = useState<{
@@ -1259,6 +1261,8 @@ export default function AdvancedMemoGrid() {
                             onClick={(e) => {
                               e.stopPropagation()
                               setShowTodoSearch(memo.id)
+                              setTodoSearchQuery('')
+                              setSelectedTodoIndex(0)
                             }}
                             className="px-2 py-0.5 rounded text-xs bg-blue-100 hover:bg-blue-200"
                           >
@@ -1370,19 +1374,57 @@ export default function AdvancedMemoGrid() {
               placeholder="할일 검색..."
               className="mb-3"
               autoFocus
+              value={todoSearchQuery}
+              onChange={(e) => {
+                setTodoSearchQuery(e.target.value)
+                setSelectedTodoIndex(0)
+              }}
+              onKeyDown={(e) => {
+                const filteredTodos = todos.filter(todo => 
+                  todo.title.toLowerCase().includes(todoSearchQuery.toLowerCase())
+                )
+                
+                if (e.key === 'ArrowDown') {
+                  e.preventDefault()
+                  setSelectedTodoIndex(prev => 
+                    prev < filteredTodos.length - 1 ? prev + 1 : prev
+                  )
+                } else if (e.key === 'ArrowUp') {
+                  e.preventDefault()
+                  setSelectedTodoIndex(prev => prev > 0 ? prev - 1 : 0)
+                } else if (e.key === 'Enter' && filteredTodos.length > 0) {
+                  e.preventDefault()
+                  const selectedTodo = filteredTodos[selectedTodoIndex]
+                  if (selectedTodo) {
+                    toggleTodoTag(showTodoSearch, selectedTodo.id)
+                  }
+                } else if (e.key === 'Escape') {
+                  setShowTodoSearch(null)
+                  setTodoSearchQuery('')
+                  setSelectedTodoIndex(0)
+                }
+              }}
             />
             <div className="flex-1 overflow-y-auto space-y-2">
-              {todos.map((todo) => {
+              {todos
+                .filter(todo => 
+                  todo.title.toLowerCase().includes(todoSearchQuery.toLowerCase())
+                )
+                .map((todo, index) => {
                 const memo = memos.find(m => m.id === showTodoSearch)
                 const isTagged = memo?.tagged_todos?.includes(todo.id)
+                const isSelected = index === selectedTodoIndex
                 
                 return (
                   <div
                     key={todo.id}
                     onClick={() => toggleTodoTag(showTodoSearch, todo.id)}
+                    onMouseEnter={() => setSelectedTodoIndex(index)}
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
                       isTagged 
                         ? 'bg-blue-100 border-2 border-blue-300' 
+                        : isSelected
+                        ? 'bg-gray-100 border-2 border-gray-300'
                         : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                     }`}
                   >
@@ -1402,7 +1444,11 @@ export default function AdvancedMemoGrid() {
               })}
             </div>
             <Button
-              onClick={() => setShowTodoSearch(null)}
+              onClick={() => {
+                setShowTodoSearch(null)
+                setTodoSearchQuery('')
+                setSelectedTodoIndex(0)
+              }}
               className="mt-3"
               variant="outline"
             >
