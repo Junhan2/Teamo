@@ -47,6 +47,8 @@ const MIN_WIDTH = 200
 const MIN_HEIGHT = 160
 const DEFAULT_WIDTH = 240
 const DEFAULT_HEIGHT = 200
+const CANVAS_WIDTH = 5000  // 고정된 캔버스 크기
+const CANVAS_HEIGHT = 5000
 
 const MEMO_COLORS = [
   '#F8BBD9', '#E8D5B7', '#B2F2BB', '#A5B4FC', '#FED7AA',
@@ -344,12 +346,12 @@ export default function AdvancedMemoGrid() {
         const scrollTop = gridElement.scrollTop
         
         // 뷰포트 중앙 좌표 계산 (스크롤 위치 고려)
-        const centerX = (scrollLeft + rect.width / 2 - DEFAULT_WIDTH * zoom / 2) / zoom
-        const centerY = (scrollTop + rect.height / 2 - DEFAULT_HEIGHT * zoom / 2) / zoom
+        const centerX = scrollLeft + rect.width / 2 - DEFAULT_WIDTH / 2
+        const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
         
         // 그리드에 맞춰 정렬
-        newX = snapToGrid(centerX)
-        newY = snapToGrid(centerY)
+        newX = snapToGrid(centerX / zoom)
+        newY = snapToGrid(centerY / zoom)
         
         // 최소값 보장
         newX = Math.max(0, newX)
@@ -365,8 +367,8 @@ export default function AdvancedMemoGrid() {
           Math.abs(pos.y - newY) < DEFAULT_HEIGHT
         ) && attempts < 10) {
           const angle = attempts * Math.PI / 4
-          newX = snapToGrid(centerX + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
-          newY = snapToGrid(centerY + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newX = snapToGrid(centerX / zoom + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
           newX = Math.max(0, newX)
           newY = Math.max(0, newY)
           attempts++
@@ -448,8 +450,8 @@ export default function AdvancedMemoGrid() {
     const rect = gridRef.current?.getBoundingClientRect()
     if (!rect) return
 
-    const startX = e.clientX - rect.left
-    const startY = e.clientY - rect.top
+    const startX = (e.clientX - rect.left) / zoom
+    const startY = (e.clientY - rect.top) / zoom
 
     // 드래그 준비 상태만 설정 (실제 드래그는 mousemove에서)
     setDragState({
@@ -459,8 +461,8 @@ export default function AdvancedMemoGrid() {
       memoId,
       startX,
       startY,
-      offsetX: startX - memo.position_x * zoom,
-      offsetY: startY - memo.position_y * zoom
+      offsetX: startX - memo.position_x,
+      offsetY: startY - memo.position_y
     })
 
     // 기본 동작 방지
@@ -553,8 +555,8 @@ export default function AdvancedMemoGrid() {
       const rect = gridRef.current?.getBoundingClientRect()
       if (!rect) return
 
-      const currentX = e.clientX - rect.left
-      const currentY = e.clientY - rect.top
+      const currentX = (e.clientX - rect.left) / zoom
+      const currentY = (e.clientY - rect.top) / zoom
 
       // 마우스가 실제로 움직였는지 확인 (최소 5px 이동)
       const deltaX = Math.abs(currentX - dragState.startX)
@@ -566,8 +568,8 @@ export default function AdvancedMemoGrid() {
       }
       
       if (dragState.isDragging) {
-        const newX = Math.max(0, (currentX - dragState.offsetX) / zoom)
-        const newY = Math.max(0, (currentY - dragState.offsetY) / zoom)
+        const newX = Math.max(0, currentX - dragState.offsetX)
+        const newY = Math.max(0, currentY - dragState.offsetY)
 
         // 그리드 단위로 즉시 스냅하여 부드러운 격자 이동
         const snappedX = snapToGrid(newX)
@@ -768,10 +770,40 @@ export default function AdvancedMemoGrid() {
     }
   }
 
-  // 줌 컨트롤
-  const handleZoom = useCallback((delta: number) => {
-    setZoom(prev => Math.max(0.5, Math.min(2, prev + delta)))
-  }, [])
+  // 줌 컨트롤 (마우스 커서 중심)
+  const handleZoom = useCallback((delta: number, clientX?: number, clientY?: number) => {
+    const gridElement = gridRef.current
+    if (!gridElement) return
+
+    const rect = gridElement.getBoundingClientRect()
+    
+    // 마우스 위치 (없으면 중앙 사용)
+    const mouseX = clientX !== undefined ? clientX - rect.left : rect.width / 2
+    const mouseY = clientY !== undefined ? clientY - rect.top : rect.height / 2
+
+    // 현재 스크롤 위치
+    const scrollLeft = gridElement.scrollLeft
+    const scrollTop = gridElement.scrollTop
+
+    // 줌 전 마우스 위치의 캔버스 좌표
+    const canvasX = (scrollLeft + mouseX) / zoom
+    const canvasY = (scrollTop + mouseY) / zoom
+
+    // 새로운 줌 레벨
+    const newZoom = Math.max(0.5, Math.min(2, zoom + delta))
+    
+    // 줌 후 마우스 위치가 같은 캔버스 좌표를 가리키도록 스크롤 조정
+    const newScrollLeft = canvasX * newZoom - mouseX
+    const newScrollTop = canvasY * newZoom - mouseY
+
+    setZoom(newZoom)
+    
+    // 스크롤 위치 조정 (다음 프레임에)
+    requestAnimationFrame(() => {
+      gridElement.scrollLeft = Math.max(0, newScrollLeft)
+      gridElement.scrollTop = Math.max(0, newScrollTop)
+    })
+  }, [zoom])
 
   // 키보드 이벤트 처리
   useEffect(() => {
@@ -789,10 +821,10 @@ export default function AdvancedMemoGrid() {
       if (e.metaKey || e.ctrlKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault()
-          handleZoom(0.03) // 0.025에서 0.03으로 빠르게
+          handleZoom(0.03) // 키보드 줌은 중앙 기준
         } else if (e.key === '-') {
           e.preventDefault()
-          handleZoom(-0.03) // 0.025에서 0.03으로 빠르게
+          handleZoom(-0.03) // 키보드 줌은 중앙 기준
         }
       }
     }
@@ -810,7 +842,8 @@ export default function AdvancedMemoGrid() {
     const handleWheel = (e: WheelEvent) => {
       if (e.metaKey || e.ctrlKey) {
         e.preventDefault()
-        handleZoom(e.deltaY > 0 ? -0.03 : 0.03) // 0.025에서 0.03으로 빠르게
+        // 마우스 휠은 마우스 위치 기준
+        handleZoom(e.deltaY > 0 ? -0.03 : 0.03, e.clientX, e.clientY)
       }
     }
 
@@ -1088,8 +1121,92 @@ export default function AdvancedMemoGrid() {
           100% { opacity: 1; }
         }
         
+        .resize-handle {
+          position: absolute;
+          background: transparent;
+          transition: background-color 0.2s;
+          z-index: 10;
+        }
+        
         .resize-handle:hover {
-          background-color: rgba(59, 130, 246, 0.3) !important;
+          background-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .resize-handle-n {
+          top: -2px;
+          left: 8px;
+          right: 8px;
+          height: 8px;
+          cursor: ns-resize;
+        }
+        
+        .resize-handle-s {
+          bottom: -2px;
+          left: 8px;
+          right: 8px;
+          height: 8px;
+          cursor: ns-resize;
+        }
+        
+        .resize-handle-e {
+          top: 8px;
+          bottom: 8px;
+          right: -2px;
+          width: 8px;
+          cursor: ew-resize;
+        }
+        
+        .resize-handle-w {
+          top: 8px;
+          bottom: 8px;
+          left: -2px;
+          width: 8px;
+          cursor: ew-resize;
+        }
+        
+        .resize-handle-ne {
+          top: -2px;
+          right: -2px;
+          width: 12px;
+          height: 12px;
+          cursor: nesw-resize;
+        }
+        
+        .resize-handle-nw {
+          top: -2px;
+          left: -2px;
+          width: 12px;
+          height: 12px;
+          cursor: nwse-resize;
+        }
+        
+        .resize-handle-se {
+          bottom: -2px;
+          right: -2px;
+          width: 12px;
+          height: 12px;
+          cursor: nwse-resize;
+        }
+        
+        .resize-handle-sw {
+          bottom: -2px;
+          left: -2px;
+          width: 12px;
+          height: 12px;
+          cursor: nesw-resize;
+        }
+        
+        .memo-drag-area {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          bottom: 8px;
+          cursor: grab;
+        }
+        
+        .memo-drag-area:active {
+          cursor: grabbing;
         }
       `}</style>
       
@@ -1283,8 +1400,6 @@ export default function AdvancedMemoGrid() {
         ref={gridRef}
         className="w-full h-full relative overflow-auto"
         style={{
-          backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
-          backgroundSize: `${GRID_SIZE * zoom}px ${GRID_SIZE * zoom}px`,
           cursor: panState.isPanning ? 'grabbing' : panState.isSpacePressed ? 'grab' : dragState.isDragging ? 'grabbing' : 'default'
         }}
         onMouseDown={(e) => {
@@ -1312,6 +1427,18 @@ export default function AdvancedMemoGrid() {
           }
         }}
       >
+        {/* 고정 크기 캔버스 */}
+        <div
+          className="relative"
+          style={{
+            width: CANVAS_WIDTH,
+            height: CANVAS_HEIGHT,
+            transform: `scale(${zoom})`,
+            transformOrigin: 'top left',
+            backgroundImage: `radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+            backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`
+          }}
+        >
         {/* 메모들 */}
         {filteredMemos.map((memo) => {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
@@ -1324,10 +1451,10 @@ export default function AdvancedMemoGrid() {
               key={memo.id}
               className={`absolute select-none transition-all duration-200 rounded-lg shadow-lg hover:shadow-xl ${isNewlyCreated ? 'animate-[highlight_1s_ease-in-out]' : ''}`}
               style={{
-                left: memo.position_x * zoom,
-                top: memo.position_y * zoom,
-                width: memo.width * zoom,
-                height: memo.height * zoom,
+                left: memo.position_x,
+                top: memo.position_y,
+                width: memo.width,
+                height: memo.height,
                 backgroundColor: memo.color,
                 transform: isHovered && !isDragging && !isResizing ? 'translateY(-2px)' : 'none',
                 zIndex: isDragging || isResizing ? 50 : (isHovered ? 30 : 10),
@@ -1343,14 +1470,6 @@ export default function AdvancedMemoGrid() {
               {/* 드래그 영역 - 메모 내부 */}
               <div 
                 className="memo-drag-area"
-                style={{
-                  position: 'absolute',
-                  top: 8 * zoom,
-                  left: 8 * zoom,
-                  right: 8 * zoom,
-                  bottom: 8 * zoom,
-                  cursor: 'grab'
-                }}
                 onMouseDown={(e) => handleMouseDown(e, memo.id)}
                 onDoubleClick={(e) => {
                   // 드래그 관련 상태가 하나라도 활성화되어 있으면 더블클릭 무시
@@ -1362,59 +1481,50 @@ export default function AdvancedMemoGrid() {
                   handleMemoDoubleClick(memo)
                 }}
               >
-                <div className="h-full flex flex-col overflow-hidden pointer-events-none" style={{ padding: 3 * zoom }}>
-                  <h3 className="font-semibold mb-2 text-gray-800 truncate" style={{ fontSize: 14 * zoom, marginBottom: 2 * zoom }}>
+                <div className="p-3 h-full flex flex-col overflow-hidden pointer-events-none">
+                  <h3 className="font-semibold text-sm mb-2 text-gray-800 truncate">
                     {memo.title}
                   </h3>
-                  <p className="text-gray-700 flex-1 line-clamp-3 overflow-hidden" style={{ fontSize: 12 * zoom }}>
+                  <p className="text-xs text-gray-700 flex-1 line-clamp-3 overflow-hidden">
                     {memo.content}
                   </p>
                   
                   {/* 태그 영역 */}
-                  <div style={{ marginTop: 2 * zoom }}>
+                  <div className="mt-2 space-y-1">
                     {/* 일반 태그 */}
                     {memo.tags && memo.tags.length > 0 && (
-                      <div className="flex flex-wrap" style={{ gap: 1 * zoom }}>
+                      <div className="flex flex-wrap gap-1">
                         {memo.tags.slice(0, 3).map((tag, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center rounded bg-gray-200 text-gray-700"
-                            style={{ 
-                              padding: `${0.5 * zoom}px ${1.5 * zoom}px`,
-                              fontSize: 10 * zoom
-                            }}
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-gray-200 text-gray-700"
                           >
                             #{tag}
                           </span>
                         ))}
                         {memo.tags.length > 3 && (
-                          <span className="text-gray-500" style={{ fontSize: 10 * zoom }}>+{memo.tags.length - 3}</span>
+                          <span className="text-[10px] text-gray-500">+{memo.tags.length - 3}</span>
                         )}
                       </div>
                     )}
                     
                     {/* 할일 태그 */}
                     {memo.tagged_todos && memo.tagged_todos.length > 0 && (
-                      <div className="flex flex-wrap" style={{ gap: 1 * zoom, marginTop: 1 * zoom }}>
+                      <div className="flex flex-wrap gap-1">
                         {memo.tagged_todos.slice(0, 2).map((todoId) => {
                           const todo = todos.find(t => t.id === todoId)
                           if (!todo) return null
                           return (
                             <span
                               key={todoId}
-                              className="inline-flex items-center rounded bg-blue-100 text-blue-700 truncate"
-                              style={{ 
-                                padding: `${0.5 * zoom}px ${1.5 * zoom}px`,
-                                fontSize: 10 * zoom,
-                                maxWidth: 100 * zoom
-                              }}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 truncate max-w-[100px]"
                             >
                               📌 {todo.title}
                             </span>
                           )
                         })}
                         {memo.tagged_todos.length > 2 && (
-                          <span className="text-gray-500" style={{ fontSize: 10 * zoom }}>+{memo.tagged_todos.length - 2}</span>
+                          <span className="text-[10px] text-gray-500">+{memo.tagged_todos.length - 2}</span>
                         )}
                       </div>
                     )}
@@ -1423,118 +1533,14 @@ export default function AdvancedMemoGrid() {
               </div>
               
               {/* 리사이즈 핸들들 */}
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  top: -2 * zoom,
-                  left: 8 * zoom,
-                  right: 8 * zoom,
-                  height: 8 * zoom,
-                  cursor: 'ns-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'n')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  bottom: -2 * zoom,
-                  left: 8 * zoom,
-                  right: 8 * zoom,
-                  height: 8 * zoom,
-                  cursor: 'ns-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 's')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  top: 8 * zoom,
-                  bottom: 8 * zoom,
-                  right: -2 * zoom,
-                  width: 8 * zoom,
-                  cursor: 'ew-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'e')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  top: 8 * zoom,
-                  bottom: 8 * zoom,
-                  left: -2 * zoom,
-                  width: 8 * zoom,
-                  cursor: 'ew-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'w')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  top: -2 * zoom,
-                  right: -2 * zoom,
-                  width: 12 * zoom,
-                  height: 12 * zoom,
-                  cursor: 'nesw-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'ne')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  top: -2 * zoom,
-                  left: -2 * zoom,
-                  width: 12 * zoom,
-                  height: 12 * zoom,
-                  cursor: 'nwse-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'nw')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  bottom: -2 * zoom,
-                  right: -2 * zoom,
-                  width: 12 * zoom,
-                  height: 12 * zoom,
-                  cursor: 'nwse-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'se')} 
-              />
-              <div 
-                className="resize-handle" 
-                style={{
-                  position: 'absolute',
-                  bottom: -2 * zoom,
-                  left: -2 * zoom,
-                  width: 12 * zoom,
-                  height: 12 * zoom,
-                  cursor: 'nesw-resize',
-                  background: 'transparent',
-                  zIndex: 10
-                }}
-                onMouseDown={(e) => handleResizeStart(e, memo.id, 'sw')} 
-              />
+              <div className="resize-handle resize-handle-n" onMouseDown={(e) => handleResizeStart(e, memo.id, 'n')} />
+              <div className="resize-handle resize-handle-s" onMouseDown={(e) => handleResizeStart(e, memo.id, 's')} />
+              <div className="resize-handle resize-handle-e" onMouseDown={(e) => handleResizeStart(e, memo.id, 'e')} />
+              <div className="resize-handle resize-handle-w" onMouseDown={(e) => handleResizeStart(e, memo.id, 'w')} />
+              <div className="resize-handle resize-handle-ne" onMouseDown={(e) => handleResizeStart(e, memo.id, 'ne')} />
+              <div className="resize-handle resize-handle-nw" onMouseDown={(e) => handleResizeStart(e, memo.id, 'nw')} />
+              <div className="resize-handle resize-handle-se" onMouseDown={(e) => handleResizeStart(e, memo.id, 'se')} />
+              <div className="resize-handle resize-handle-sw" onMouseDown={(e) => handleResizeStart(e, memo.id, 'sw')} />
             </div>
           )
         })}
