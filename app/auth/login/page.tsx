@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { DotsLoader } from "@/components/ui/loading"
+import { InlineSpinner } from "@/components/ui/loading"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -137,8 +137,9 @@ export default function LoginPage() {
                 </svg>
                 <span style={{ fontFamily: "var(--font-dm-sans)" }}>
                   {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <DotsLoader /> Signing in...
+                    <span className="flex items-center justify-center gap-2">
+                      <InlineSpinner size="sm" />
+                      <span>Signing in...</span>
                     </span>
                   ) : (
                     "Sign in with Google"

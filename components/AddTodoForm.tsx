@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns"
 import { CalendarIcon, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { DotsLoader } from "@/components/ui/loading"
+import { InlineSpinner } from "@/components/ui/loading"
 
 interface AddTodoFormProps {
   userId: string
@@ -210,14 +210,17 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       {/* ADD TASK button */}
       <Button 
         type="submit" 
-        className="w-full h-12 bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200"
+        className="w-full h-12 bg-[#EFF1F5] text-[#404968] hover:bg-[#DCDFEA] text-sm font-normal uppercase tracking-wide outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-2"
         disabled={loading}
       >
         {loading ? (
-          <DotsLoader className="justify-center" />
+          <>
+            <InlineSpinner size="sm" />
+            <span>ADDING...</span>
+          </>
         ) : (
           <>
-            <Plus className="w-5 h-5 mr-1" />
+            <Plus className="w-5 h-5" />
             <span>ADD TASK</span>
           </>
         )}

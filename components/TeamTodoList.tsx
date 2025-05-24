@@ -8,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { MinimalSpinner } from "@/components/ui/loading"
 import { 
   CheckCircle, 
   Clock, 
@@ -558,11 +559,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-8 text-gray-cool-700">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-t-2 border-b-2 border-light-accent rounded-full animate-spin mb-2"></div>
-          <p className="text-lg font-medium">Loading Tasks...</p>
-        </div>
+      <div className="flex justify-center items-center p-12">
+        <MinimalSpinner size="lg" text="Loading Tasks..." />
       </div>
     )
   }
