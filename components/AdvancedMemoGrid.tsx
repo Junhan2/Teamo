@@ -123,19 +123,23 @@ export default function AdvancedMemoGrid() {
     isReady: boolean  // 드래그 준비 상태 추가
     hasMoved: boolean  // 실제로 마우스가 움직였는지 추적
     memoId: string | null
+    draggedMemos: string[]  // 드래그되는 메모들 ID 목록
     startX: number
     startY: number
     offsetX: number
     offsetY: number
+    initialPositions: { [key: string]: { x: number, y: number } }  // 각 메모의 초기 위치
   }>({
     isDragging: false,
     isReady: false,
     hasMoved: false,
     memoId: null,
+    draggedMemos: [],
     startX: 0,
     startY: 0,
     offsetX: 0,
-    offsetY: 0
+    offsetY: 0,
+    initialPositions: {}
   })
   
   // 리사이즈 상태 관리
@@ -551,22 +555,42 @@ export default function AdvancedMemoGrid() {
     const startX = (e.clientX - rect.left) / zoom
     const startY = (e.clientY - rect.top) / zoom
 
+    // 선택된 메모들 결정 (클릭된 메모가 선택되어 있으면 모든 선택된 메모 드래그, 아니면 해당 메모만)
+    let memosToaDrag: string[]
+    if (selectedMemos.includes(memoId)) {
+      memosToaDrag = selectedMemos
+    } else {
+      memosToaDrag = [memoId]
+      setSelectedMemos([memoId]) // 선택 상태 업데이트
+    }
+
+    // 각 메모의 초기 위치 저장
+    const initialPositions: { [key: string]: { x: number, y: number } } = {}
+    memosToaDrag.forEach(id => {
+      const targetMemo = memos.find(m => m.id === id)
+      if (targetMemo) {
+        initialPositions[id] = { x: targetMemo.position_x, y: targetMemo.position_y }
+      }
+    })
+
     // 드래그 준비 상태만 설정 (실제 드래그는 mousemove에서)
     setDragState({
       isDragging: false,
       isReady: true,
       hasMoved: false,
       memoId,
+      draggedMemos: memosToaDrag,
       startX,
       startY,
       offsetX: startX - memo.position_x,
-      offsetY: startY - memo.position_y
+      offsetY: startY - memo.position_y,
+      initialPositions
     })
 
     // 기본 동작 방지
     e.preventDefault()
     e.stopPropagation()
-  }, [memos, zoom])
+  }, [memos, zoom, selectedMemos])
   
   // 리사이즈 시작
   const handleResizeStart = useCallback((e: React.MouseEvent, memoId: string, handle: string) => {
@@ -714,12 +738,26 @@ export default function AdvancedMemoGrid() {
         const snappedX = snapToGrid(newX)
         const snappedY = snapToGrid(newY)
 
-        // 즉시 위치 업데이트 (그리드 기반)
-        setMemos(prev => prev.map(memo => 
-          memo.id === dragState.memoId 
-            ? { ...memo, position_x: snappedX, position_y: snappedY }
-            : memo
-        ))
+        // 기준 메모의 이동 거리 계산
+        const primaryMemo = memos.find(m => m.id === dragState.memoId)
+        if (primaryMemo) {
+          const deltaX = snappedX - primaryMemo.position_x
+          const deltaY = snappedY - primaryMemo.position_y
+
+          // 모든 드래그 대상 메모 위치 업데이트
+          setMemos(prev => prev.map(memo => {
+            if (dragState.draggedMemos.includes(memo.id)) {
+              const newPosX = Math.max(0, Math.min(CANVAS_WIDTH - memo.width, memo.position_x + deltaX))
+              const newPosY = Math.max(0, Math.min(CANVAS_HEIGHT - memo.height, memo.position_y + deltaY))
+              return { 
+                ...memo, 
+                position_x: snapToGrid(newPosX), 
+                position_y: snapToGrid(newPosY) 
+              }
+            }
+            return memo
+          }))
+        }
       }
       return
     }
@@ -792,12 +830,30 @@ export default function AdvancedMemoGrid() {
     
     // 드래그 종료 처리
     if ((dragState.isDragging || dragState.isReady) && dragState.memoId) {
-      // 실제로 드래그가 발생했다면 DB에 저장
-      if (dragState.isDragging) {
-        const memo = memos.find(m => m.id === dragState.memoId)
-        if (memo) {
-          // 이미 스냅된 위치를 그대로 저장
-          updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
+      // 실제로 드래그가 발생했다면 모든 드래그된 메모의 위치를 DB에 저장
+      if (dragState.isDragging && dragState.draggedMemos.length > 0) {
+        try {
+          // 모든 드래그된 메모의 위치 업데이트
+          for (const memoId of dragState.draggedMemos) {
+            const memo = memos.find(m => m.id === memoId)
+            if (memo) {
+              await updateMemoPosition(memoId, memo.position_x, memo.position_y)
+            }
+          }
+          
+          if (dragState.draggedMemos.length > 1) {
+            toast({
+              title: "이동 완료",
+              description: `${dragState.draggedMemos.length}개 메모가 이동되었습니다.`
+            })
+          }
+        } catch (error) {
+          console.error('Error updating memo positions:', error)
+          toast({
+            title: "오류",
+            description: "메모 위치 저장에 실패했습니다.",
+            variant: "destructive"
+          })
         }
       }
 
@@ -808,10 +864,12 @@ export default function AdvancedMemoGrid() {
           isReady: false,
           hasMoved: false,
           memoId: null,
+          draggedMemos: [],
           startX: 0,
           startY: 0,
           offsetX: 0,
-          offsetY: 0
+          offsetY: 0,
+          initialPositions: {}
         })
       }, 100) // 100ms 지연으로 클릭 이벤트보다 늦게 초기화
       return
@@ -897,32 +955,40 @@ export default function AdvancedMemoGrid() {
         return
       }
 
+      if (!gridRef.current) return
+
+      const rect = gridRef.current.getBoundingClientRect()
+      const scrollLeft = gridRef.current.scrollLeft
+      const scrollTop = gridRef.current.scrollTop
+      
+      // 현재 뷰포트 중앙 계산
+      const viewportCenterX = (scrollLeft + rect.width / 2) / zoom
+      const viewportCenterY = (scrollTop + rect.height / 2) / zoom
+
       const selectedMemoObjects = memos.filter(memo => selectedMemos.includes(memo.id))
       
-      // 선택된 메모들의 중심점 계산
-      const centerX = selectedMemoObjects.reduce((sum, memo) => sum + memo.position_x, 0) / selectedMemoObjects.length
-      const centerY = selectedMemoObjects.reduce((sum, memo) => sum + memo.position_y, 0) / selectedMemoObjects.length
-
       // 생성 순서로 정렬
       const sortedSelected = selectedMemoObjects.sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
 
-      // 컴팩트한 그리드 계산
-      const memosPerRow = Math.ceil(Math.sqrt(sortedSelected.length))
+      // 컴팩트한 그리드 계산 (뷰포트 기준)
+      const viewportWidth = rect.width / zoom
+      const memosPerRow = Math.max(2, Math.min(sortedSelected.length, Math.floor(viewportWidth / (DEFAULT_WIDTH + GRID_SIZE * 2))))
       const totalRows = Math.ceil(sortedSelected.length / memosPerRow)
-      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE) - GRID_SIZE
-      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE) - GRID_SIZE
+      const totalWidth = memosPerRow * (DEFAULT_WIDTH + GRID_SIZE * 2) - GRID_SIZE * 2
+      const totalHeight = totalRows * (DEFAULT_HEIGHT + GRID_SIZE * 2) - GRID_SIZE * 2
       
-      const startX = Math.max(GRID_SIZE, centerX - totalWidth / 2)
-      const startY = Math.max(GRID_SIZE, centerY - totalHeight / 2)
+      // 뷰포트 중앙을 기준으로 그리드 시작점 계산
+      const startX = Math.max(GRID_SIZE, viewportCenterX - totalWidth / 2)
+      const startY = Math.max(GRID_SIZE, viewportCenterY - totalHeight / 2)
 
       const updates = sortedSelected.map((memo, index) => {
         const row = Math.floor(index / memosPerRow)
         const col = index % memosPerRow
         
-        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE))
-        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE))
+        const newX = snapToGrid(startX + col * (DEFAULT_WIDTH + GRID_SIZE * 2))
+        const newY = snapToGrid(startY + row * (DEFAULT_HEIGHT + GRID_SIZE * 2))
         
         return { id: memo.id, x: newX, y: newY }
       })
@@ -938,12 +1004,9 @@ export default function AdvancedMemoGrid() {
         await updateMemoPosition(update.id, update.x, update.y)
       }
 
-      // 선택 해제
-      setSelectedMemos([])
-
       toast({
         title: "정렬 완료",
-        description: `선택된 ${sortedSelected.length}개 메모가 정렬되었습니다.`
+        description: `선택된 ${sortedSelected.length}개 메모가 현재 화면 중앙에 정렬되었습니다.`
       })
     } catch (error) {
       console.error('Error aligning selected memos:', error)
@@ -1138,6 +1201,9 @@ export default function AdvancedMemoGrid() {
     if (newlyCreatedMemoId === memo.id) {
       setNewlyCreatedMemoId(null)
     }
+    
+    // 해당 메모를 선택 상태로 설정
+    setSelectedMemos([memo.id])
     
     // 사이드바 열기
     setSidebarMemo(memo)
@@ -1882,7 +1948,7 @@ export default function AdvancedMemoGrid() {
         {/* 메모들 */}
         {filteredMemos.map((memo) => {
           const isHovered = hoveredMemo === memo.id && !dragState.isDragging
-          const isDragging = dragState.memoId === memo.id
+          const isDragging = dragState.draggedMemos.includes(memo.id) && dragState.isDragging
           const isResizing = resizeState.memoId === memo.id
           const isNewlyCreated = newlyCreatedMemoId === memo.id
           const isSelected = selectedMemos.includes(memo.id)
@@ -1904,7 +1970,8 @@ export default function AdvancedMemoGrid() {
                 boxShadow: isDragging ? '0 20px 40px rgba(0,0,0,0.3)' : 
                           isHovered ? '0 12px 28px rgba(0,0,0,0.15)' : '0 4px 12px rgba(0,0,0,0.1)',
                 outline: isNewlyCreated ? '3px solid #3B82F6' : 'none',
-                outlineOffset: isNewlyCreated ? '2px' : '0'
+                outlineOffset: isNewlyCreated ? '2px' : '0',
+                opacity: isDragging ? 0.8 : 1 // 드래그 중인 메모들은 약간 투명하게
               }}
               onMouseEnter={() => handleMemoHover(memo.id, true)}
               onMouseLeave={() => handleMemoHover(memo.id, false)}
