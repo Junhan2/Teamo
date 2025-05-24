@@ -521,7 +521,7 @@ export default function AdvancedMemoGrid() {
       return
     }
     
-    // 드래그 처리
+    // 드래그 처리 (그리드 기반 스냅 이동)
     if (dragState.isReady && dragState.memoId) {
       const rect = gridRef.current?.getBoundingClientRect()
       if (!rect) return
@@ -542,10 +542,14 @@ export default function AdvancedMemoGrid() {
         const newX = Math.max(0, currentX - dragState.offsetX)
         const newY = Math.max(0, currentY - dragState.offsetY)
 
-        // 즉시 위치 업데이트 (snapToGrid는 완료 시에만)
+        // 그리드 단위로 즉시 스냅하여 부드러운 격자 이동
+        const snappedX = snapToGrid(newX)
+        const snappedY = snapToGrid(newY)
+
+        // 즉시 위치 업데이트 (그리드 기반)
         setMemos(prev => prev.map(memo => 
           memo.id === dragState.memoId 
-            ? { ...memo, position_x: newX, position_y: newY }
+            ? { ...memo, position_x: snappedX, position_y: snappedY }
             : memo
         ))
       }
@@ -609,19 +613,8 @@ export default function AdvancedMemoGrid() {
       if (dragState.isDragging) {
         const memo = memos.find(m => m.id === dragState.memoId)
         if (memo) {
-          // 최종 위치에 snapToGrid 적용
-          const snappedX = snapToGrid(memo.position_x)
-          const snappedY = snapToGrid(memo.position_y)
-          
-          // 상태 업데이트
-          setMemos(prev => prev.map(m => 
-            m.id === dragState.memoId 
-              ? { ...m, position_x: snappedX, position_y: snappedY }
-              : m
-          ))
-          
-          // 데이터베이스에 최종 위치 저장
-          updateMemoPosition(dragState.memoId, snappedX, snappedY)
+          // 이미 스냅된 위치를 그대로 저장
+          updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
         }
       }
 
@@ -754,10 +747,10 @@ export default function AdvancedMemoGrid() {
       if (e.metaKey || e.ctrlKey) {
         if (e.key === '=' || e.key === '+') {
           e.preventDefault()
-          handleZoom(0.1)
+          handleZoom(0.05) // 0.1에서 0.05로 속도 절반으로 감소
         } else if (e.key === '-') {
           e.preventDefault()
-          handleZoom(-0.1)
+          handleZoom(-0.05) // 0.1에서 0.05로 속도 절반으로 감소
         }
       }
     }
@@ -765,7 +758,7 @@ export default function AdvancedMemoGrid() {
     const handleWheel = (e: WheelEvent) => {
       if (e.metaKey || e.ctrlKey) {
         e.preventDefault()
-        handleZoom(e.deltaY > 0 ? -0.1 : 0.1)
+        handleZoom(e.deltaY > 0 ? -0.05 : 0.05) // 0.1에서 0.05로 속도 절반으로 감소
       }
     }
 
@@ -807,8 +800,8 @@ export default function AdvancedMemoGrid() {
 
   // 메모 클릭 핸들러
   const handleMemoClick = (memo: Memo) => {
-    // 드래그가 발생했다면 사이드바를 열지 않음
-    if (dragState.hasMoved) {
+    // 드래그 상태가 하나라도 활성화되어 있으면 사이드바 열지 않음
+    if (dragState.hasMoved || dragState.isDragging || dragState.isReady) {
       return
     }
     
@@ -1366,8 +1359,8 @@ export default function AdvancedMemoGrid() {
                 className="memo-drag-area"
                 onMouseDown={(e) => handleMouseDown(e, memo.id)}
                 onClick={(e) => {
-                  // hasMoved가 true면 클릭 이벤트 무시
-                  if (dragState.hasMoved) {
+                  // 드래그 관련 상태가 하나라도 활성화되어 있으면 클릭 무시
+                  if (dragState.hasMoved || dragState.isDragging || dragState.isReady) {
                     e.preventDefault()
                     e.stopPropagation()
                     return
