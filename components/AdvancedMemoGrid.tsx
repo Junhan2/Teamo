@@ -80,7 +80,8 @@ export default function AdvancedMemoGrid() {
   const [filterTodo, setFilterTodo] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [todoSearchQuery, setTodoSearchQuery] = useState<string>('')
-  const [selectedTodoIndex, setSelectedTodoIndex] = useState<number>(0)
+  const [editingPageId, setEditingPageId] = useState<string | null>(null)
+  const [editingPageTitle, setEditingPageTitle] = useState('')
   
   // 팬 상태 관리 (스페이스 + 드래그로 뷰포트 이동)
   const [panState, setPanState] = useState<{
@@ -271,6 +272,32 @@ export default function AdvancedMemoGrid() {
       toast({
         title: "오류",
         description: "페이지 생성에 실패했습니다.",
+        variant: "destructive"
+      })
+    }
+  }
+
+  // 페이지 타이틀 업데이트
+  const updatePageTitle = async (pageId: string, newTitle: string) => {
+    try {
+      const { error } = await supabase
+        .from('memo_pages')
+        .update({ title: newTitle })
+        .eq('id', pageId)
+
+      if (error) throw error
+
+      setPages(prev => prev.map(page => 
+        page.id === pageId ? { ...page, title: newTitle } : page
+      ))
+      
+      setEditingPageId(null)
+      setEditingPageTitle('')
+    } catch (error) {
+      console.error('Error updating page title:', error)
+      toast({
+        title: "오류",
+        description: "페이지 제목 수정에 실패했습니다.",
         variant: "destructive"
       })
     }
@@ -1254,8 +1281,8 @@ export default function AdvancedMemoGrid() {
         }
       `}</style>
       
-      {/* 메모 컨트롤 패널 - 오른쪽 상단 배치 */}
-      <div className="fixed top-4 right-4 z-20">
+      {/* 메모 컨트롤 패널 - 메모 필드 우측 상단 배치 */}
+      <div className="absolute top-4 right-4 z-20">
         <div className="flex items-center gap-4 bg-white/90 backdrop-blur-lg rounded-lg shadow-lg border border-white/20 p-3">
           <Button
             onClick={addMemo}
@@ -1345,16 +1372,45 @@ export default function AdvancedMemoGrid() {
                       page.id === currentPageId ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-100'
                     }`}
                   >
-                    <span
-                      onClick={() => {
-                        setCurrentPageId(page.id)
-                        setShowPageMenu(false)
-                      }}
-                      className="flex-1"
-                    >
-                      {page.title}
-                    </span>
-                    {pages.length > 1 && (
+                    {editingPageId === page.id ? (
+                      <Input
+                        value={editingPageTitle}
+                        onChange={(e) => setEditingPageTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            updatePageTitle(page.id, editingPageTitle)
+                          } else if (e.key === 'Escape') {
+                            setEditingPageId(null)
+                            setEditingPageTitle('')
+                          }
+                        }}
+                        onBlur={() => {
+                          if (editingPageTitle.trim()) {
+                            updatePageTitle(page.id, editingPageTitle)
+                          } else {
+                            setEditingPageId(null)
+                            setEditingPageTitle('')
+                          }
+                        }}
+                        className="h-8 text-sm"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        onClick={() => {
+                          setCurrentPageId(page.id)
+                          setShowPageMenu(false)
+                        }}
+                        onDoubleClick={() => {
+                          setEditingPageId(page.id)
+                          setEditingPageTitle(page.title)
+                        }}
+                        className="flex-1"
+                      >
+                        {page.title}
+                      </span>
+                    )}
+                    {pages.length > 1 && editingPageId !== page.id && (
                       <Button
                         size="sm"
                         variant="ghost"
