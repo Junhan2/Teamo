@@ -1369,37 +1369,6 @@ export default function AdvancedMemoGrid() {
             </div>
           )
         })}
-                            + 태그
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setShowTodoSearch(memo.id)
-                              setTodoSearchQuery('')
-                              setSelectedTodoIndex(0)
-                            }}
-                            className="px-2 py-0.5 rounded text-xs bg-blue-100 hover:bg-blue-200"
-                          >
-                            + 할일
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-black/10">
-                  {new Date(memo.created_at).toLocaleDateString()}
-                </div>
-              </div>
-              
-              {/* 드래그 표시 */}
-              {isDragging && (
-                <div className="absolute inset-0 bg-black/5 rounded-lg pointer-events-none" />
-              )}
-            </div>
-          )
-        })}
       </div>
 
       {/* 컨텍스트 메뉴 */}
