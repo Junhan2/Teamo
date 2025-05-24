@@ -94,6 +94,14 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
   const handleRealtimeUpdate = () => {
     if (!memo || !onRealtimeUpdate) return
     
+    console.log('MemoSidebar - handleRealtimeUpdate called:', {
+      id: memo.id,
+      title,
+      content,
+      tags,
+      tagged_todos: taggedTodos
+    })
+    
     onRealtimeUpdate({
       id: memo.id,
       title,

@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import MemoSidebar from "@/components/MemoSidebar"
 import { 
   PlusCircle, 
@@ -707,6 +708,8 @@ export default function AdvancedMemoGrid() {
     tags: string[]
     tagged_todos: string[]
   }) => {
+    console.log('AdvancedMemoGrid - handleRealtimeUpdate received:', updatedMemo)
+    
     // 로컬 상태 즉시 업데이트
     setMemos(prev => prev.map(memo => 
       memo.id === updatedMemo.id 
