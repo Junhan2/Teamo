@@ -121,7 +121,6 @@ export default function AdvancedMemoGrid() {
     startPosX: 0,
     startPosY: 0
   })
-  })
   
   const gridRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast()
