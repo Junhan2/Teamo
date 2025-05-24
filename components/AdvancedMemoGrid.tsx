@@ -686,7 +686,8 @@ export default function AdvancedMemoGrid() {
 
   // 마우스 이벤트 리스너 등록
   useEffect(() => {
-    if (dragState.isDragging) {
+    // 드래그 또는 리사이즈가 준비되거나 진행 중일 때 전역 이벤트 리스너 등록
+    if (dragState.isReady || dragState.isDragging || resizeState.isResizing) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
       
@@ -695,7 +696,7 @@ export default function AdvancedMemoGrid() {
         document.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [dragState.isDragging, handleMouseMove, handleMouseUp])
+  }, [dragState.isReady, dragState.isDragging, resizeState.isResizing, handleMouseMove, handleMouseUp])
   // 메모 삭제
   const deleteMemo = async (memoId: string) => {
     try {
