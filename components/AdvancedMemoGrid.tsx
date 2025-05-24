@@ -83,6 +83,7 @@ export default function AdvancedMemoGrid() {
   // 드래그 상태 관리
   const [dragState, setDragState] = useState<{
     isDragging: boolean
+    isReady: boolean  // 드래그 준비 상태 추가
     memoId: string | null
     startX: number
     startY: number
@@ -90,6 +91,7 @@ export default function AdvancedMemoGrid() {
     offsetY: number
   }>({
     isDragging: false,
+    isReady: false,
     memoId: null,
     startX: 0,
     startY: 0,
@@ -417,7 +419,7 @@ export default function AdvancedMemoGrid() {
     }
   }
 
-  // 드래그 시작
+  // 드래그 시작 (드래그 준비만 하고 실제 드래그는 mousemove에서)
   const handleMouseDown = useCallback((e: React.MouseEvent, memoId: string) => {
     if (e.button !== 0) return // 좌클릭만 처리
     
@@ -430,8 +432,10 @@ export default function AdvancedMemoGrid() {
     const startX = (e.clientX - rect.left) / zoom
     const startY = (e.clientY - rect.top) / zoom
 
+    // 드래그 준비 상태만 설정 (실제 드래그는 mousemove에서)
     setDragState({
-      isDragging: true,
+      isDragging: false,
+      isReady: true,
       memoId,
       startX,
       startY,
@@ -439,7 +443,7 @@ export default function AdvancedMemoGrid() {
       offsetY: startY - memo.position_y
     })
 
-    // 드래그 중 선택 방지
+    // 기본 동작 방지
     e.preventDefault()
     e.stopPropagation()
   }, [memos, zoom])
@@ -515,27 +519,39 @@ export default function AdvancedMemoGrid() {
     }
     
     // 드래그 처리
-    if (!dragState.isDragging || !dragState.memoId) return
+    if (dragState.isReady && dragState.memoId) {
+      const rect = gridRef.current?.getBoundingClientRect()
+      if (!rect) return
 
-    const rect = gridRef.current?.getBoundingClientRect()
-    if (!rect) return
+      const currentX = (e.clientX - rect.left) / zoom
+      const currentY = (e.clientY - rect.top) / zoom
 
-    const currentX = (e.clientX - rect.left) / zoom
-    const currentY = (e.clientY - rect.top) / zoom
+      // 마우스가 실제로 움직였는지 확인 (최소 5px 이동)
+      const deltaX = Math.abs(currentX - dragState.startX)
+      const deltaY = Math.abs(currentY - dragState.startY)
+      
+      if (!dragState.isDragging && (deltaX > 5 || deltaY > 5)) {
+        // 실제 드래그 시작
+        setDragState(prev => ({ ...prev, isDragging: true }))
+      }
+      
+      if (dragState.isDragging) {
+        const newX = Math.max(0, currentX - dragState.offsetX)
+        const newY = Math.max(0, currentY - dragState.offsetY)
 
-    const newX = Math.max(0, currentX - dragState.offsetX)
-    const newY = Math.max(0, currentY - dragState.offsetY)
+        // 실시간 위치 업데이트 (스냅 적용)
+        const snappedX = snapToGrid(newX)
+        const snappedY = snapToGrid(newY)
 
-    // 실시간 위치 업데이트 (스냅 적용)
-    const snappedX = snapToGrid(newX)
-    const snappedY = snapToGrid(newY)
-
-    // 로컬 상태만 즉시 업데이트 (부드러운 드래그)
-    setMemos(prev => prev.map(memo => 
-      memo.id === dragState.memoId 
-        ? { ...memo, position_x: snappedX, position_y: snappedY }
-        : memo
-    ))
+        // 로컬 상태만 즉시 업데이트 (부드러운 드래그)
+        setMemos(prev => prev.map(memo => 
+          memo.id === dragState.memoId 
+            ? { ...memo, position_x: snappedX, position_y: snappedY }
+            : memo
+        ))
+      }
+      return
+    }
   }, [dragState, resizeState, zoom, snapToGrid])
 
   // 드래그 및 리사이즈 종료
@@ -581,22 +597,27 @@ export default function AdvancedMemoGrid() {
     }
     
     // 드래그 종료 처리
-    if (!dragState.isDragging || !dragState.memoId) return
+    if ((dragState.isDragging || dragState.isReady) && dragState.memoId) {
+      // 실제로 드래그가 발생했다면 DB에 저장
+      if (dragState.isDragging) {
+        const memo = memos.find(m => m.id === dragState.memoId)
+        if (memo) {
+          // 데이터베이스에 최종 위치 저장
+          updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
+        }
+      }
 
-    const memo = memos.find(m => m.id === dragState.memoId)
-    if (memo) {
-      // 데이터베이스에 최종 위치 저장
-      updateMemoPosition(dragState.memoId, memo.position_x, memo.position_y)
+      setDragState({
+        isDragging: false,
+        isReady: false,
+        memoId: null,
+        startX: 0,
+        startY: 0,
+        offsetX: 0,
+        offsetY: 0
+      })
+      return
     }
-
-    setDragState({
-      isDragging: false,
-      memoId: null,
-      startX: 0,
-      startY: 0,
-      offsetX: 0,
-      offsetY: 0
-    })
   }, [dragState, resizeState, memos, updateMemoPosition, supabase, toast])
 
   // 메모 자동 정렬
