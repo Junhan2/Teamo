@@ -324,7 +324,7 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
 
               {/* 연결된 할일 목록 */}
               <div className="space-y-2 mt-3">
-                {linkedTodos.length > 0 ? (
+                {linkedTodos.length > 0 && (
                   <div className="space-y-1">
                     {linkedTodos.map((todo) => (
                       <div key={todo.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -346,8 +346,6 @@ export default function MemoSidebar({ isOpen, onClose, memo, onSave, onRealtimeU
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="text-sm text-gray-500 text-center py-4">No connected tasks</div>
                 )}
               </div>
             </div>
