@@ -12,7 +12,8 @@ import {
   PlusCircle, 
   ZoomIn,
   ZoomOut,
-  Filter
+  Filter,
+  Grid3x3
 } from "lucide-react"
 
 interface Memo {
@@ -371,23 +372,43 @@ export default function AdvancedMemoGrid() {
         return
       }
 
-      // 뷰포트 중앙 계산
+      // 뷰포트 중앙 계산 (36% 지점으로 조정)
       const gridElement = gridRef.current
-      let newX = 100
-      let newY = 100
+      let newX = CANVAS_WIDTH * 0.36  // 캔버스 가로의 36% 지점
+      let newY = CANVAS_HEIGHT * 0.36 // 캔버스 세로의 36% 지점
       
       if (gridElement) {
         const rect = gridElement.getBoundingClientRect()
         const scrollLeft = gridElement.scrollLeft
         const scrollTop = gridElement.scrollTop
         
-        // 뷰포트 중앙 좌표 계산 (스크롤 위치 고려)
-        const centerX = scrollLeft + rect.width / 2 - DEFAULT_WIDTH / 2
-        const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
+        // 현재 뷰포트에 36% 지점이 보이는지 확인
+        const viewportCenterX = scrollLeft + rect.width / 2
+        const viewportCenterY = scrollTop + rect.height / 2
         
-        // 그리드에 맞춰 정렬
-        newX = snapToGrid(centerX / zoom)
-        newY = snapToGrid(centerY / zoom)
+        // 뷰포트 중앙 주변에 있다면 뷰포트 중앙 사용, 아니면 36% 지점 사용
+        const canvas36X = CANVAS_WIDTH * 0.36 / zoom
+        const canvas36Y = CANVAS_HEIGHT * 0.36 / zoom
+        const viewportCenterXInCanvas = viewportCenterX / zoom
+        const viewportCenterYInCanvas = viewportCenterY / zoom
+        
+        // 뷰포트 중앙이 36% 지점 근처(±500px)에 있으면 뷰포트 중앙 사용
+        const useViewportCenter = Math.abs(viewportCenterXInCanvas - canvas36X) < 500 && 
+                                 Math.abs(viewportCenterYInCanvas - canvas36Y) < 500
+        
+        if (useViewportCenter) {
+          // 뷰포트 중앙 좌표 계산 (스크롤 위치 고려)
+          const centerX = scrollLeft + rect.width / 2 - DEFAULT_WIDTH / 2
+          const centerY = scrollTop + rect.height / 2 - DEFAULT_HEIGHT / 2
+          
+          // 그리드에 맞춰 정렬
+          newX = snapToGrid(centerX / zoom)
+          newY = snapToGrid(centerY / zoom)
+        } else {
+          // 36% 지점 사용
+          newX = snapToGrid(canvas36X)
+          newY = snapToGrid(canvas36Y)
+        }
         
         // 최소값 보장
         newX = Math.max(0, newX)
@@ -403,8 +424,11 @@ export default function AdvancedMemoGrid() {
           Math.abs(pos.y - newY) < DEFAULT_HEIGHT
         ) && attempts < 10) {
           const angle = attempts * Math.PI / 4
-          newX = snapToGrid(centerX / zoom + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
-          newY = snapToGrid(centerY / zoom + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
+          const baseX = useViewportCenter ? (scrollLeft + rect.width / 2) / zoom : canvas36X
+          const baseY = useViewportCenter ? (scrollTop + rect.height / 2) / zoom : canvas36Y
+          
+          newX = snapToGrid(baseX + Math.cos(angle) * offset * (Math.floor(attempts / 8) + 1))
+          newY = snapToGrid(baseY + Math.sin(angle) * offset * (Math.floor(attempts / 8) + 1))
           newX = Math.max(0, newX)
           newY = Math.max(0, newY)
           attempts++
@@ -1316,6 +1340,17 @@ export default function AdvancedMemoGrid() {
           >
             <Filter className="h-3.5 w-3.5" />
             Filter
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={autoAlignMemos}
+            size="sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm"
+            title="Auto-align memos"
+          >
+            <Grid3x3 className="h-3.5 w-3.5" />
+            Align
           </Button>
           
           <div className="h-4 w-px bg-gray-300" />
