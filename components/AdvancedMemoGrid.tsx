@@ -838,9 +838,11 @@ export default function AdvancedMemoGrid() {
       // 스페이스 키 처리 (팬 모드)
       if (e.code === 'Space' && !panState.isSpacePressed) {
         e.preventDefault()
+        console.log('스페이스 키 눌림 - 팬 모드 활성화')
         setPanState(prev => ({ ...prev, isSpacePressed: true }))
         if (gridRef.current) {
           gridRef.current.style.cursor = 'grab'
+          console.log('커서가 grab으로 변경됨')
         }
         return
       }
@@ -859,6 +861,7 @@ export default function AdvancedMemoGrid() {
     const handleKeyUp = (e: KeyboardEvent) => {
       // 스페이스 키 해제
       if (e.code === 'Space') {
+        console.log('스페이스 키 해제 - 팬 모드 비활성화')
         setPanState(prev => ({ 
           ...prev, 
           isSpacePressed: false, 
@@ -868,6 +871,7 @@ export default function AdvancedMemoGrid() {
         }))
         if (gridRef.current) {
           gridRef.current.style.cursor = panState.isPanning ? 'grabbing' : 'default'
+          console.log('커서가 default로 변경됨')
         }
       }
     }
@@ -1436,8 +1440,16 @@ export default function AdvancedMemoGrid() {
           cursor: panState.isPanning ? 'grabbing' : panState.isSpacePressed ? 'grab' : dragState.isDragging ? 'grabbing' : 'default'
         }}
         onMouseDown={(e) => {
+          console.log('마우스 다운 이벤트:', {
+            target: e.target,
+            currentTarget: e.currentTarget,
+            isSpacePressed: panState.isSpacePressed,
+            targetIsCurrentTarget: e.target === e.currentTarget
+          })
+          
           // 팬 기능 - 스페이스가 눌려있고 빈 공간 클릭 시
           if (panState.isSpacePressed && e.target === e.currentTarget && gridRef.current) {
+            console.log('팬 조건 만족 - 팬 시작')
             e.preventDefault()
             
             const rect = gridRef.current.getBoundingClientRect()
@@ -1474,6 +1486,12 @@ export default function AdvancedMemoGrid() {
               gridRef.current.style.cursor = 'grabbing'
             }
             return
+          } else {
+            console.log('팬 조건 불만족:', {
+              isSpacePressed: panState.isSpacePressed,
+              targetMatches: e.target === e.currentTarget,
+              hasGridRef: !!gridRef.current
+            })
           }
         }}
         onClick={(e) => {
