@@ -498,6 +498,7 @@ export default function AdvancedMemoGrid() {
       const deltaX = e.clientX - panState.startX
       const deltaY = e.clientY - panState.startY
       
+      // 드래그 방향과 반대로 스크롤 이동 (자연스러운 팬 느낌)
       gridRef.current.scrollLeft = panState.startScrollX - deltaX
       gridRef.current.scrollTop = panState.startScrollY - deltaY
       return
