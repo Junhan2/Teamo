@@ -183,3 +183,5 @@ export const todosApi = {
     return data;
   },
 };
+
+export { todoAPI as todosClient };

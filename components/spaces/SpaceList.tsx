@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useSpace } from '@/contexts/SpaceContext';
 import { useSpacePermissions } from '@/hooks/spaces/useSpacePermissions';
-import { spacesApi } from '@/lib/api/spaces/client';
+import { spacesClient } from '@/lib/api/spaces/client';
 import { Database } from '@/types/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,7 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
   const handleSetDefault = async (spaceId: string) => {
     setIsLoading(spaceId);
     try {
-      await spacesApi.setDefaultSpace(spaceId);
+      await spacesClient.setDefaultSpace(spaceId);
       toast({
         title: 'Success',
         description: 'Default space updated',

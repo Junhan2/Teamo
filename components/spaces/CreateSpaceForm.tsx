@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { spacesApi } from '@/lib/api/spaces/client';
+import { spacesClient } from '@/lib/api/spaces/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,7 +37,7 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
 
     setIsLoading(true);
     try {
-      const space = await spacesApi.createSpace({
+      const space = await spacesClient.createSpace({
         name: formData.name.trim(),
         description: formData.description.trim() || null,
       });
