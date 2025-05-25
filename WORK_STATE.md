@@ -1,10 +1,8 @@
 # 작업 상태 - 2025-05-26
 
-## 현재 작업: Task 9 - 알림 시스템 구현 (진행중)
+## 완료된 작업:
 
-### 완료된 작업:
-
-#### Task 1-8: ✅ 완료
+### Task 1-8: ✅ 완료
 - Task 1: 데이터베이스 스키마 설계 및 구현
 - Task 2: 스페이스 백엔드 기능 구현
 - Task 3: 권한 시스템 구현
@@ -14,47 +12,42 @@
 - Task 7: 통합 대시보드 구현
 - Task 8: 초대 시스템 구현
 
-#### Task 9: 알림 시스템 구현 (진행중)
+### Task 9: 알림 시스템 구현 ✅ 완료
 
-### Task 9-1: 알림 데이터베이스 스키마 설계 ✅ 완료
-### Task 9-2: 알림 생성 트리거 구현 ✅ 완료
-### Task 9-3: 알림 API 및 실시간 구독 구현 ✅ 완료
-### Task 9-4: 알림 UI 컴포넌트 구현 ✅ 완료
+### Task 10: 이메일 알림 및 알림 고급 기능 구현 (진행중)
 
-1. ✅ NotificationBell 컴포넌트
-   - 헤더에 알림 아이콘 표시
-   - 읽지 않은 알림 카운트 뱃지
-   - 클릭시 드롭다운 표시
+#### Task 10-1 (task-14): 이메일 알림 시스템 구현 ✅ 완료
 
-2. ✅ NotificationList 컴포넌트
-   - 알림 목록 표시 (전체/읽지않음 필터)
-   - 스크롤 가능한 목록
-   - 모두 읽음 처리 기능
-   - 알림 페이지로 이동 링크
+1. ✅ 이메일 알림 설정 테이블 생성
+   - email_notification_settings: 사용자별 이메일 알림 설정
+   - email_logs: 이메일 발송 로그
+   - email_queue: 이메일 발송 대기열
 
-3. ✅ NotificationItem 컴포넌트
-   - 개별 알림 아이템 표시
-   - 알림 타입별 아이콘
-   - 시간 표시 (상대적 시간)
-   - 읽음/삭제 기능
+2. ✅ Supabase Edge Functions 구현
+   - send-email-notification: 실제 이메일 발송 (Resend API 사용)
+   - email-templates: 이메일 HTML 템플릿 생성
+   - process-email-queue: 이메일 큐 처리
+   - check-due-dates: 마감일 임박 알림 크론 작업
 
-4. ✅ 알림 페이지 (/notifications)
-   - 전체 알림 목록 표시
-   - 타입별 필터링 (할일/댓글/스페이스)
-   - 읽음 상태별 필터링
-   - 알림 설정 페이지 링크
+3. ✅ 이메일 발송 트리거 구현
+   - 알림 생성시 자동으로 이메일 큐에 추가
+   - 사용자 설정에 따른 필터링
 
-5. ✅ Navbar 컴포넌트 수정
-   - NotificationBell 컴포넌트 추가
-   - Space Selector 옆에 위치
+4. ✅ UI 구현
+   - 이메일 알림 설정 컴포넌트
+   - 알림 설정 페이지에 이메일 섹션 추가
 
 ### 구현된 파일:
-- /components/notifications/NotificationBell.tsx
-- /components/notifications/NotificationList.tsx
-- /components/notifications/NotificationItem.tsx
-- /app/(protected)/notifications/page.tsx
-- /lib/types/notifications.ts
-- /components/Navbar.tsx (수정)
+- /app/(protected)/notifications/settings/email-settings.tsx
+- Edge Functions: send-email-notification, email-templates, process-email-queue, check-due-dates
+- 데이터베이스 테이블: email_notification_settings, email_logs, email_queue
 
-### 다음 작업:
-- Task 9-5: 알림 설정 및 필터링 구현
+## 다음 작업:
+- Task 10-2 (task-15): 알림 일괄 관리 기능 구현
+- Task 10-3 (task-16): 알림 그룹화 기능 구현
+- Task 10-4 (task-17): 알림 사운드 및 브라우저 알림 구현
+
+## 추가 필요 작업:
+1. Resend API 키 설정 (Supabase Dashboard에서 환경변수 추가 필요)
+2. 이메일 큐 처리를 위한 정기적인 크론 작업 설정
+3. 마감일 체크를 위한 일일 크론 작업 설정

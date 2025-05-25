@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, ArrowLeft, Bell, Calendar, MessageSquare, Users, UserPlus, CheckCircle } from 'lucide-react';
 import { useNotificationPreferences } from '@/lib/hooks/useNotificationPreferences';
 import { toast } from 'sonner';
+import EmailSettings from './email-settings';
 
 const notificationTypes = [
   {
@@ -192,6 +193,11 @@ export default function NotificationSettingsPage() {
             '설정 저장'
           )}
         </Button>
+      </div>
+
+      {/* 이메일 알림 설정 섹션 추가 */}
+      <div className="mt-8">
+        <EmailSettings />
       </div>
     </div>
   );
