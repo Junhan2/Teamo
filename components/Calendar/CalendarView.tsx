@@ -453,7 +453,7 @@ const CalendarView = ({
                   className={`
                     min-h-[100px] p-1 border relative rounded-md cursor-pointer
                     ${isCurrentMonth ? 'border-gray-cool-200' : 'border-gray-cool-100 bg-gray-cool-50'} 
-                    ${isDaySelected ? 'ring-2 ring-emerald-500 border-emerald-500' : ''}
+                    ${isDaySelected ? 'ring-2 ring-gray-cool-400 border-gray-cool-400 bg-gray-cool-50' : ''}
                     ${isCurrentDay ? 'border-sky-500' : ''}
                     hover:border-gray-cool-300 transition-colors
                   `}
@@ -521,7 +521,7 @@ const CalendarView = ({
                   key={i}
                   className={`
                     min-h-[180px] sm:min-h-[200px] p-2 border rounded-lg cursor-pointer bg-white shadow-sm
-                    ${isDaySelected ? 'ring-2 ring-emerald-500 border-emerald-500' : 'border-gray-cool-200'}
+                    ${isDaySelected ? 'ring-2 ring-gray-cool-400 border-gray-cool-400 bg-gray-cool-50' : 'border-gray-cool-200'}
                     ${isCurrentDay ? 'border-sky-500 border-2' : ''}
                     hover:border-gray-cool-300 hover:shadow-md transition-all duration-200
                   `}
