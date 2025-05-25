@@ -5,7 +5,7 @@ import { notificationsClient } from '@/lib/api/notifications/client';
 import type { Notification, NotificationType } from '@/lib/types/notifications';
 import { useNotificationPreferences } from './useNotificationPreferences';
 import { handleNewNotification as playNotification } from '@/lib/utils/notification-sound';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 interface UseNotificationsOptions {
   autoSubscribe?: boolean;
@@ -118,6 +118,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     if (notificationIds.length === 0) return;
 
     try {
+      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 

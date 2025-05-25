@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/lib/auth/supabase';
+import { supabase } from '@/lib/auth/supabase';
 import { Database } from '@/types/supabase';
 
 type Todo = Database['public']['Tables']['todos']['Row'];
@@ -12,7 +12,6 @@ export const todosApi = {
     onlyShared?: boolean;
     teamId?: string;
   }) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -46,7 +45,6 @@ export const todosApi = {
 
   // Toggle todo sharing status
   async toggleTodoSharing(todoId: string, isShared: boolean) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -64,7 +62,6 @@ export const todosApi = {
 
   // Create todo with space context
   async createTodo(todo: Omit<TodoInsert, 'user_id'>) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -102,7 +99,6 @@ export const todosApi = {
     spaceId?: string;
     includeShared?: boolean;
   }) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -131,8 +127,6 @@ export const todosApi = {
 
   // Get shared todos for a team
   async getTeamTodos(teamId: string, spaceId: string) {
-    const supabase = await supabaseClient();
-    
     const { data, error } = await supabase
       .from('todos')
       .select(`
@@ -150,7 +144,6 @@ export const todosApi = {
 
   // Batch update sharing status
   async batchToggleSharing(todoIds: string[], isShared: boolean) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -167,7 +160,6 @@ export const todosApi = {
 
   // Update todo
   async updateTodo(todoId: string, updates: TodoUpdate) {
-    const supabase = await supabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
@@ -184,4 +176,4 @@ export const todosApi = {
   },
 };
 
-export { todoAPI as todosClient };
+export { todosApi as todosClient };
