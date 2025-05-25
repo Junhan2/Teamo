@@ -578,7 +578,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter(null)}
-                className={`${statusFilter === null ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
+                className={`${statusFilter === null ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#30374E] hover:text-white hover:border-[#30374E] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 All
               </Button>
@@ -586,7 +586,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("pending")}
-                className={`${statusFilter === "pending" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
+                className={`${statusFilter === "pending" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#30374E] hover:text-white hover:border-[#30374E] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Not yet
               </Button>
@@ -594,7 +594,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("in_progress")}
-                className={`${statusFilter === "in_progress" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
+                className={`${statusFilter === "in_progress" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#30374E] hover:text-white hover:border-[#30374E] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Doing
               </Button>
@@ -602,7 +602,7 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
                 variant="outline"
                 size="sm"
                 onClick={() => setStatusFilter("completed")}
-                className={`${statusFilter === "completed" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#EFF1F5] hover:border-[#7D89AF] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
+                className={`${statusFilter === "completed" ? 'bg-[#30374E] text-white border-[#111322]' : 'bg-[#F9F9FB] text-[#5D6A97] border-[#DCDFEA] hover:bg-[#30374E] hover:text-white hover:border-[#30374E] active:bg-[#DCDFEA]'} text-sm px-3 py-1 h-7 transition-all duration-200 font-medium rounded border`}
               >
                 Complete
               </Button>
