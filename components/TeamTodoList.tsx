@@ -236,9 +236,9 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         .from('todos')
         .select(`
           *,
-          user:profiles(full_name, email)
+          user:profiles!todos_user_id_fkey(full_name, email)
         `)
-        .order('due_date', { ascending: true, nullsLast: true })
+        .order('due_date', { ascending: true, nullsFirst: true })
       
       if (filter === "my" && userId) {
         query = query.eq('user_id', userId)
