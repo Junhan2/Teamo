@@ -53,12 +53,12 @@ export async function getSpaceGroupedTodos(userId: string): Promise<SpaceGrouped
   try {
     // 1. 사용자가 속한 모든 스페이스 가져오기
     const { data: memberSpaces, error: spacesError } = await supabase
-      .from('space_members')
+      .from('user_spaces')
       .select(`
+        *,
         space:spaces(*)
       `)
       .eq('user_id', userId)
-      .eq('is_active', true)
 
     if (spacesError) {
       console.error('Error fetching user spaces:', spacesError)
@@ -156,10 +156,9 @@ export async function getUnifiedStats(userId: string): Promise<UnifiedStats> {
   try {
     // 사용자가 속한 스페이스 수
     const { count: spacesCount } = await supabase
-      .from('space_members')
+      .from('user_spaces')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
-      .eq('is_active', true)
 
     // 모든 할일 가져오기
     const { data: todos, error } = await supabase
