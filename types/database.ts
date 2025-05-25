@@ -38,7 +38,8 @@ export type Database = {
           created_at?: string
           updated_at?: string
         }
-      }      teams: {
+      }
+      teams: {
         Row: {
           id: string
           name: string

@@ -9,13 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { MinimalSpinner } from "@/components/ui/loading"
-import { ShareToggle } from "@/components/todos/ShareToggle"
 import { 
   CheckCircle, 
   Clock, 
   Trash2, 
-  Share2,
-  Lock,
   CheckSquare, 
   ChevronDown, 
   ListTodo, 
@@ -54,8 +51,6 @@ interface Todo {
   priority: "high" | "medium" | "low" | null
   user_id: string
   team_id: string
-  space_id?: string | null
-  is_shared?: boolean | null
   created_at: string
   updated_at: string
   user: {
@@ -66,7 +61,6 @@ interface Todo {
 
 interface TeamTodoListProps {
   userId?: string
-  spaceId?: string
   filter: "my" | "team"
   refreshTrigger?: number
   onDelete?: () => void  // 할일 삭제 또는 상태 변경 시 호출할 콜백 (통계 업데이트용)
@@ -122,7 +116,7 @@ const getUserColor = (userId: string, currentUserId: string | undefined, type: '
   return colorSchemes[colorIndex][type]
 }
 
-const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, itemsPerPage = 5 }: TeamTodoListProps) => {
+const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage = 5 }: TeamTodoListProps) => {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
@@ -246,17 +240,8 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
         `)
         .order('due_date', { ascending: true, nullsFirst: true })
       
-      // spaceId 필터 추가
-      if (spaceId) {
-        query = query.eq('space_id', spaceId)
-      }
-      
       if (filter === "my" && userId) {
         query = query.eq('user_id', userId)
-      } else if (filter === "team" && userId) {
-        // 팀 뷰일 때는 공유된 할일만 표시 (자신의 할일 제외)
-        query = query.eq('is_shared', true)
-                     .neq('user_id', userId)
       }
       
       if (statusFilter) {
@@ -477,7 +462,7 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
     if (userId) {
       // 실시간 구독 설정 - todos 테이블의 변경사항 감지
       // 고유한 채널 이름 사용 (중복 문제 방지)
-      const todoListChannel = `todolist-${filter}-${userId || 'all'}-${spaceId || 'no-space'}-${Date.now()}`;
+      const todoListChannel = `todolist-${filter}-${userId || 'all'}-${Date.now()}`;
       const subscription = supabase
         .channel(todoListChannel)
         .on('postgres_changes', { 
@@ -491,8 +476,6 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
           // 변경 이벤트에 따라 처리
           if (payload.eventType === 'INSERT') {
             const newTodo = payload.new as Todo;
-            // spaceId 필터 확인
-            if (spaceId && newTodo.space_id !== spaceId) return;
             // 상태 필터가 있고, 새 항목이 필터와 일치하지 않으면 무시
             if (statusFilter && newTodo.status !== statusFilter) return;
               
@@ -500,12 +483,6 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
             fetchTodos();
           } else if (payload.eventType === 'UPDATE') {
             const updatedTodo = payload.new as Todo;
-            
-            // spaceId 필터 확인
-            if (spaceId && updatedTodo.space_id !== spaceId) {
-              setTodos(prevTodos => prevTodos.filter(todo => todo.id !== updatedTodo.id));
-              return;
-            }
             
             // 상태 필터가 있고, 업데이트된 항목이 필터와 일치하지 않으면 목록에서 제거
             if (statusFilter && updatedTodo.status !== statusFilter) {
@@ -539,7 +516,7 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
         console.error('TodoList 구독 해제 중 오류:', err);
       }
     };
-  }, [userId, spaceId, filter, statusFilter, dateFilter, refreshTrigger, supabase]);
+  }, [userId, filter, statusFilter, dateFilter, refreshTrigger, supabase]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -1031,7 +1008,99 @@ const TeamTodoList = ({ userId, spaceId, filter, refreshTrigger, onDelete, items
                   </div>
                 </div>
               </motion.div>
-            ))} => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
+            ))}
+          </AnimatePresence>
+          
+          {/* Pagination Controls */}
+          {todos.length > itemsPerPage && (
+            <div className="flex items-center mt-6 gap-2 justify-start">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="h-8 w-8 p-0 rounded-md bg-transparent text-gray-cool-700 hover:bg-gray-50 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              
+              {/* Page Numbers */}
+              {Array.from({ length: Math.min(Math.ceil(todos.length / itemsPerPage), 5) }, (_, i) => {
+                // Calculate page number logic
+                const totalPages = Math.ceil(todos.length / itemsPerPage);
+                let pageNum = i + 1;
+                
+                // For many pages, show something like 1 2 ... 9 10 when on page 1 or 2
+                // Or 1 2 ... 9 10 when on page 9 or 10
+                // Or 1 ... 5 6 7 ... 10 when on page 6
+                if (totalPages > 5) {
+                  if (currentPage <= 3) {
+                    // Near start
+                    if (i < 3) {
+                      pageNum = i + 1;
+                    } else if (i === 3) {
+                      return (
+                        <span key="ellipsis-1" className="text-gray-cool-400 mx-1">...</span>
+                      );
+                    } else {
+                      pageNum = totalPages;
+                    }
+                  } else if (currentPage >= totalPages - 2) {
+                    // Near end
+                    if (i === 0) {
+                      pageNum = 1;
+                    } else if (i === 1) {
+                      return (
+                        <span key="ellipsis-2" className="text-gray-cool-400 mx-1">...</span>
+                      );
+                    } else {
+                      pageNum = totalPages - (4 - i);
+                    }
+                  } else {
+                    // Middle
+                    if (i === 0) {
+                      pageNum = 1;
+                    } else if (i === 1) {
+                      return (
+                        <span key="ellipsis-3" className="text-gray-cool-400 mx-1">...</span>
+                      );
+                    } else if (i === 4) {
+                      return (
+                        <span key="ellipsis-4" className="text-gray-cool-400 mx-1">...</span>
+                      );
+                    } else if (i === 3) {
+                      pageNum = totalPages;
+                    } else {
+                      pageNum = currentPage;
+                    }
+                  }
+                } else {
+                  pageNum = i + 1;
+                }
+                
+                // Return button for this page number
+                return (
+                  <Button
+                    key={`page-${pageNum}`}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-8 w-8 p-0 rounded-md ${
+                      currentPage === pageNum 
+                        ? 'bg-[#525252] text-white' 
+                        : 'bg-transparent text-gray-cool-700 hover:bg-gray-50'
+                    } outline outline-1 outline-gray-cool-200 outline-offset-[-1px]`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={currentPage >= Math.ceil(todos.length / itemsPerPage)}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(todos.length / itemsPerPage)))}
                 className="h-8 w-8 p-0 rounded-md bg-transparent text-gray-cool-700 hover:bg-gray-50 outline outline-1 outline-gray-cool-200 outline-offset-[-1px]"
               >
                 <ChevronRight size={16} />
