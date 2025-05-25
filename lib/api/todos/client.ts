@@ -164,4 +164,22 @@ export const todosApi = {
     if (error) throw error;
     return data || [];
   },
+
+  // Update todo
+  async updateTodo(todoId: string, updates: TodoUpdate) {
+    const supabase = await supabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const { data, error } = await supabase
+      .from('todos')
+      .update(updates)
+      .eq('id', todoId)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
 };

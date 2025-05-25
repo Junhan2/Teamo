@@ -1,66 +1,58 @@
 # 작업 상태 - 2025-05-25
 
-## 현재 작업: Task 5 - 스페이스 선택 UI 구현
+## 현재 작업: Task 6 - 스페이스별 할일 관리 UI 개선
 
 ### 완료된 작업:
 
-#### Task 1: ✅ 데이터베이스 스키마 분석 및 설계 (승인됨)
+#### Task 1-5: ✅ (이전 태스크들 완료)
 
-#### Task 2: ✅ 스페이스 관리 백엔드 구현 (승인됨)
+#### Task 6: 스페이스별 할일 관리 UI 개선 (진행중)
+1. ✅ 공유 토글 버튼 컴포넌트
+   - `/components/todos/ShareToggle.tsx`
+   - 할일별 공유 상태 토글
+   - 컴팩트/전체 모드 지원
 
-#### Task 3: ✅ 인증 및 권한 시스템 개선 (승인됨)
+2. ✅ 스페이스 정보 표시 컴포넌트
+   - `/components/spaces/SpaceInfo.tsx`
+   - 현재 스페이스 표시 배지
 
-#### Task 4: ✅ 할일 공유 기능 구현 (승인됨)
+3. ✅ 새로운 SpaceTodoList 컴포넌트
+   - `/components/todos/SpaceTodoList.tsx`
+   - 스페이스 컨텍스트 기반 필터링
+   - 공유/개인 필터
+   - 상태별 필터
+   - 공유 토글 통합
 
-#### Task 5: 스페이스 선택 UI 구현 (진행중)
-1. ✅ 스페이스 선택 드롭다운 컴포넌트
-   - `/components/spaces/SpaceSelector.tsx`
-   - Navbar에 통합
+4. ✅ 공유 필터 컴포넌트
+   - `/components/todos/ShareFilter.tsx`
+   - All/Personal/Shared 토글 그룹
 
-2. ✅ 스페이스 생성 폼
-   - `/components/spaces/CreateSpaceForm.tsx`
-   - 이름, 설명 입력 폼
+5. ✅ API 업데이트
+   - updateTodo 메소드 추가
+   - 할일 상태 업데이트 지원
 
-3. ✅ 스페이스 목록 컴포넌트
-   - `/components/spaces/SpaceList.tsx`
-   - 스페이스 카드 형태로 표시
-   - 역할 표시, 기본 스페이스 설정
-
-4. ✅ 스페이스 관리 페이지
-   - `/app/(protected)/spaces/page.tsx` - 스페이스 목록 및 생성
-   - `/app/(protected)/spaces/new/page.tsx` - 새 스페이스 생성
-
-5. ✅ 스페이스 초기화 로직
-   - `/components/spaces/SpaceInitializer.tsx`
-   - 스페이스 없으면 생성 페이지로 리다이렉트
-   - 현재 스페이스 없으면 선택 페이지로 리다이렉트
-
-6. ✅ Layout 구성
-   - Protected 레이아웃에 SpaceProvider 추가
-   - SpaceInitializer로 초기 설정
-
-7. ✅ Navbar 업데이트
-   - SpaceSelector 컴포넌트 추가
-   - 현재 스페이스 표시 및 전환 기능
+6. ✅ 대시보드 업데이트
+   - `/app/(protected)/dashboard/space-dashboard.tsx`
+   - SpaceTodoList 사용
+   - 스페이스 정보 표시
+   - 통계 카드 추가
 
 ### 생성/수정된 파일:
-- `/components/spaces/SpaceSelector.tsx`
-- `/components/spaces/CreateSpaceForm.tsx`
-- `/components/spaces/SpaceList.tsx`
-- `/components/spaces/SpaceInitializer.tsx`
-- `/app/(protected)/spaces/page.tsx`
-- `/app/(protected)/spaces/new/page.tsx`
-- `/app/(protected)/layout.tsx`
-- `/components/Navbar.tsx` (SpaceSelector 추가)
+- `/components/todos/ShareToggle.tsx`
+- `/components/todos/SpaceTodoList.tsx`
+- `/components/todos/ShareFilter.tsx`
+- `/components/spaces/SpaceInfo.tsx`
+- `/app/(protected)/dashboard/space-dashboard.tsx`
+- `/lib/api/todos/client.ts` (updateTodo 추가)
 
 ### 핵심 구현 내용:
-1. **스페이스 선택 UI**: 드롭다운으로 빠른 스페이스 전환
-2. **스페이스 생성**: 직관적인 폼으로 새 스페이스 생성
-3. **스페이스 목록**: 카드 형태로 모든 스페이스 표시
-4. **자동 리다이렉트**: 스페이스 없으면 자동으로 안내
-5. **기본 스페이스**: 별 아이콘으로 기본 스페이스 표시
+1. **공유 토글**: 각 할일의 공유 상태를 쉽게 변경
+2. **스페이스 컨텍스트**: 현재 스페이스 기반 할일 필터링
+3. **필터링 옵션**: 공유/개인, 상태별 필터
+4. **시각적 구분**: 공유된 할일 아이콘 표시
+5. **스페이스 정보**: 현재 작업 중인 스페이스 표시
 
 ### 다음 단계:
-- 스페이스 설정 페이지 구현
-- 초대 받은 사용자 알림 UI
-- 모바일 반응형 최적화
+- 기존 TeamTodoList를 SpaceTodoList로 교체
+- 할일 생성 폼에 공유 옵션 추가
+- 팀 선택 UI 개선
