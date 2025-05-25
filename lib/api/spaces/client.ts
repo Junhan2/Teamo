@@ -29,7 +29,8 @@ export class SpacesClient {
       created_at: row.space_created_at,
       updated_at: row.space_updated_at,
       user_role: row.role,
-      is_default: row.is_default
+      is_default: row.is_default,
+      joined_at: row.joined_at
     }));
   }
 
