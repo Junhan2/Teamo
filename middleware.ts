@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { invitationsServerApi } from './lib/api/invitations/server'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -88,6 +89,23 @@ export async function middleware(request: NextRequest) {
       pathname,
       error: sessionError?.message 
     })
+
+    // Process pending invitations for newly signed up users
+    if (hasValidSession && session.user.email) {
+      // Check if this is a new signup by looking for the invitation_id in user metadata
+      const invitationId = session.user.user_metadata?.invitation_id;
+      if (invitationId) {
+        try {
+          await invitationsServerApi.processSignupInvitation(
+            session.user.id,
+            session.user.email
+          );
+          console.log('✅ Processed signup invitations for:', session.user.email);
+        } catch (error) {
+          console.error('Failed to process signup invitations:', error);
+        }
+      }
+    }
 
     // 인증된 유저가 인증 페이지에 접근하면 대시보드로 리다이렉트
     if (hasValidSession && isAuthRoute) {
