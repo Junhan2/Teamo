@@ -18,27 +18,36 @@
 
 ### Task 9-1: 알림 데이터베이스 스키마 설계 ✅ 완료
 ### Task 9-2: 알림 생성 트리거 구현 ✅ 완료
+### Task 9-3: 알림 API 및 실시간 구독 구현 ✅ 완료
 
-1. ✅ create_notification 헬퍼 함수 생성
-   - 사용자 알림 설정 확인
-   - 알림 타입별 on/off 체크
-   - 알림 생성 또는 건너뛰기
+1. ✅ NotificationsClient 클래스 구현
+   - 알림 목록 조회 (필터링, 페이지네이션 지원)
+   - 읽지 않은 알림 개수 조회
+   - 개별/전체 알림 읽음 처리
+   - 알림 삭제
+   - 알림 설정 조회/업데이트
 
-2. ✅ 스페이스 초대 트리거 구현
-   - handle_invitation_created 함수
-   - 초대받은 사용자에게 알림 생성
-   - 초대자 정보와 스페이스 정보 포함
+2. ✅ 실시간 알림 구독 기능
+   - Supabase Realtime 사용
+   - 새 알림 실시간 수신
+   - 자동 구독 해제 처리
 
-3. ✅ 스페이스 참여 트리거 구현
-   - handle_user_space_joined 함수
-   - 기존 멤버들에게 새 멤버 참여 알림
-   - 스페이스 생성자는 제외
+3. ✅ React Hooks 구현
+   - useNotifications: 알림 목록 관리
+   - useNotificationPreferences: 알림 설정 관리
+   - 로컬 상태 관리 및 동기화
 
-### 구현된 트리거:
-- on_invitation_created: 초대 생성 시 알림
-- on_user_space_joined: 스페이스 참여 시 알림
+4. ✅ 테스트 페이지 생성
+   - /notifications/test 경로
+   - 알림 목록 표시
+   - 읽음/삭제 기능 테스트
+
+### 구현된 파일:
+- /lib/api/notifications/client.ts
+- /lib/hooks/useNotifications.ts
+- /lib/hooks/useNotificationPreferences.ts
+- /app/(protected)/notifications/test/page.tsx
 
 ### 다음 작업:
-- Task 9-3: 알림 API 및 실시간 구독 구현
 - Task 9-4: 알림 UI 컴포넌트 구현
 - Task 9-5: 알림 설정 및 필터링 구현
