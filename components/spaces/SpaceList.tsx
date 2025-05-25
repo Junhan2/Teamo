@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
-import { Settings, Star, Users, Trash2, LogIn } from 'lucide-react';
+import { Star, Users, LogIn } from 'lucide-react';
 import Link from 'next/link';
 
 type Space = Database['public']['Tables']['spaces']['Row'];
@@ -131,20 +131,12 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                 )}
                 
                 {(role === 'owner' || role === 'admin') && (
-                  <>
-                    <Link href={`/spaces/${space.id}/members`}>
-                      <Button size="sm" variant="outline">
-                        <Users className="mr-2 h-4 w-4" />
-                        Members
-                      </Button>
-                    </Link>
-                    <Link href={`/spaces/${space.id}/settings`}>
-                      <Button size="sm" variant="outline">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
-                      </Button>
-                    </Link>
-                  </>
+                  <Link href={`/spaces/${space.id}/members`}>
+                    <Button size="sm" variant="outline">
+                      <Users className="mr-2 h-4 w-4" />
+                      Members
+                    </Button>
+                  </Link>
                 )}
               </div>
             </CardContent>
