@@ -83,7 +83,7 @@ export class SpacesClient {
   }
 
   // 스페이스 멤버 조회
-  async getSpaceMembers(spaceId: string) {
+  async getSpaceMembers(spaceId: string): Promise<any[]> {
     const response = await fetch(`/api/spaces/${spaceId}/members`);
     
     if (!response.ok) {
