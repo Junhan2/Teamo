@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
+import { SpaceSelector } from "@/components/spaces/SpaceSelector"
 
 interface UserProfile {
   id: string
@@ -50,6 +51,9 @@ export default function Navbar({ user }: NavbarProps) {
           </Link>
 
           <div className="flex items-center gap-4">
+            {/* Space Selector */}
+            {user && <SpaceSelector />}
+            
             {/* 플로팅 버튼으로 이동됨 */}
 
             {user && (

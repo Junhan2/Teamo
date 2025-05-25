@@ -4,6 +4,7 @@ import { DM_Sans, Fira_Mono } from "next/font/google"
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import ClientInitializer from './client-initializer'
+import { SpaceProvider } from '@/contexts/SpaceContext'
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
