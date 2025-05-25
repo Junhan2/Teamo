@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
@@ -17,12 +17,16 @@ import {
   Settings,
   CheckCheck,
   Trash2,
-  X
+  X,
+  Layers,
+  List
 } from 'lucide-react';
 import { useNotifications } from '@/lib/hooks/useNotifications';
 import NotificationItem from '@/components/notifications/NotificationItem';
+import NotificationGroupItem from '@/components/notifications/NotificationGroupItem';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { groupNotifications } from '@/lib/utils/notification-grouping';
 
 export default function NotificationsPage() {
   const router = useRouter();
@@ -49,6 +53,7 @@ export default function NotificationsPage() {
   // 선택 모드 상태
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [groupMode, setGroupMode] = useState(true); // 그룹화 모드 추가
 
   // URL 파라미터 업데이트
   useEffect(() => {
@@ -68,6 +73,12 @@ export default function NotificationsPage() {
     if (typeFilter === 'space' && !['space_invited', 'space_member_joined'].includes(notification.type)) return false;
     return true;
   });
+
+  // 그룹화된 알림
+  const notificationGroups = useMemo(() => {
+    if (!groupMode) return null;
+    return groupNotifications(filteredNotifications);
+  }, [filteredNotifications, groupMode]);
 
   // 선택 모드 토글
   const toggleSelectionMode = () => {
@@ -192,6 +203,15 @@ export default function NotificationsPage() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => setGroupMode(!groupMode)}
+                disabled={filteredNotifications.length === 0}
+              >
+                {groupMode ? <List className="h-4 w-4 mr-1" /> : <Layers className="h-4 w-4 mr-1" />}
+                {groupMode ? '목록' : '그룹'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={toggleSelectionMode}
                 disabled={filteredNotifications.length === 0}
               >
@@ -269,18 +289,34 @@ export default function NotificationsPage() {
                 {filter === 'unread' ? '읽지 않은 알림이 없습니다.' : '알림이 없습니다.'}
               </div>
             ) : (
-              <div className="divide-y">
-                {filteredNotifications.map((notification) => (
-                  <NotificationItem
-                    key={notification.id}
-                    notification={notification}
-                    onMarkAsRead={markAsRead}
-                    onDelete={deleteNotification}
-                    selectable={selectionMode}
-                    selected={selectedIds.has(notification.id)}
-                    onSelectChange={handleSelectChange}
-                  />
-                ))}
+              <div className={groupMode ? '' : 'divide-y'}>
+                {groupMode && notificationGroups ? (
+                  // 그룹화된 알림 표시
+                  notificationGroups.map((group) => (
+                    <NotificationGroupItem
+                      key={group.id}
+                      group={group}
+                      onMarkAsRead={markAsRead}
+                      onDelete={deleteNotification}
+                      selectable={selectionMode}
+                      selectedIds={selectedIds}
+                      onSelectChange={handleSelectChange}
+                    />
+                  ))
+                ) : (
+                  // 일반 목록 표시
+                  filteredNotifications.map((notification) => (
+                    <NotificationItem
+                      key={notification.id}
+                      notification={notification}
+                      onMarkAsRead={markAsRead}
+                      onDelete={deleteNotification}
+                      selectable={selectionMode}
+                      selected={selectedIds.has(notification.id)}
+                      onSelectChange={handleSelectChange}
+                    />
+                  ))
+                )}
               </div>
             )}
           </Card>
