@@ -10,134 +10,106 @@ export class SpacesClient {
     this.supabase = createClientComponentClient<Database>();
   }
 
-  // 사용자의 모든 스페이스 조회 (RPC 함수 사용)
+  // 사용자의 모든 스페이스 조회 - API 라우트 사용
   async getUserSpaces(): Promise<SpaceWithRole[]> {
-    const { data, error } = await this.supabase
-      .rpc('get_user_spaces_with_details');
-
-    if (error) throw error;
-    if (!data || data.length === 0) return [];
-
-    // RPC 결과를 SpaceWithRole 형식으로 변환
-    return data.map(row => ({
-      id: row.space_id,
-      name: row.space_name,
-      description: row.space_description,
-      type: 'team' as const, // 기본값으로 설정
-      slug: row.space_slug,
-      created_by: row.space_created_by,
-      created_at: row.space_created_at,
-      updated_at: row.space_updated_at,
-      user_role: row.role,
-      is_default: row.is_default,
-      joined_at: row.joined_at
-    }));
+    const response = await fetch('/api/spaces');
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch spaces');
+    }
+    
+    return response.json();
   }
 
-  // 스페이스 생성
+  // 스페이스 생성 - API 라우트 사용
   async createSpace(dto: CreateSpaceDto): Promise<Space> {
-    const user = (await this.supabase.auth.getUser()).data.user;
-    if (!user) throw new Error('Unauthorized');
+    const response = await fetch('/api/spaces', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dto),
+    });
 
-    // 스페이스 생성
-    const { data: space, error: spaceError } = await this.supabase
-      .from('spaces')
-      .insert({
-        name: dto.name,
-        description: dto.description,
-        slug: dto.slug || dto.name.toLowerCase().replace(/\s+/g, '-'),
-        created_by: user.id
-      })
-      .select()
-      .single();
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create space');
+    }
 
-    if (spaceError) throw spaceError;
-
-    // 생성자를 owner로 추가
-    const { error: memberError } = await this.supabase
-      .from('user_spaces')
-      .insert({
-        user_id: user.id,
-        space_id: space.id,
-        role: 'owner',
-        is_default: false
-      });
-
-    if (memberError) throw memberError;
-
-    return space;
+    return response.json();
   }
 
   // 스페이스 정보 조회
   async getSpace(spaceId: string): Promise<Space> {
-    const { data, error } = await this.supabase
-      .from('spaces')
-      .select('*')
-      .eq('id', spaceId)
-      .single();
-
-    if (error) throw error;
-    return data;
+    const response = await fetch(`/api/spaces/${spaceId}`);
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch space');
+    }
+    
+    return response.json();
   }
 
   // 스페이스 수정
   async updateSpace(spaceId: string, dto: UpdateSpaceDto): Promise<Space> {
-    const { data, error } = await this.supabase
-      .from('spaces')
-      .update({
-        ...dto,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', spaceId)
-      .select()
-      .single();
+    const response = await fetch(`/api/spaces/${spaceId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dto),
+    });
 
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to update space');
+    }
+
+    return response.json();
   }
 
   // 기본 스페이스 설정
   async setDefaultSpace(spaceId: string): Promise<void> {
-    const user = (await this.supabase.auth.getUser()).data.user;
-    if (!user) throw new Error('Unauthorized');
+    const response = await fetch(`/api/spaces/${spaceId}/default`, {
+      method: 'PUT',
+    });
 
-    // 모든 스페이스의 is_default를 false로
-    await this.supabase
-      .from('user_spaces')
-      .update({ is_default: false })
-      .eq('user_id', user.id);
-
-    // 선택한 스페이스를 기본으로
-    const { error } = await this.supabase
-      .from('user_spaces')
-      .update({ is_default: true })
-      .eq('user_id', user.id)
-      .eq('space_id', spaceId);
-
-    if (error) throw error;
-
-    // user_settings에도 업데이트
-    await this.supabase
-      .from('user_settings')
-      .upsert({
-        user_id: user.id,
-        default_space_id: spaceId,
-        updated_at: new Date().toISOString()
-      });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to set default space');
+    }
   }
 
   // 스페이스 멤버 조회
   async getSpaceMembers(spaceId: string) {
-    const { data, error } = await this.supabase
-      .from('user_spaces')
-      .select(`
-        *,
-        user:profiles(*)
-      `)
-      .eq('space_id', spaceId);
+    const response = await fetch(`/api/spaces/${spaceId}/members`);
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch members');
+    }
+    
+    return response.json();
+  }
 
-    if (error) throw error;
-    return data;
+  // 초대 링크 생성
+  async createInvitation(spaceId: string, role: 'member' | 'admin'): Promise<{ invitation_link: string }> {
+    const response = await fetch(`/api/spaces/${spaceId}/invitations`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ role }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create invitation');
+    }
+
+    return response.json();
   }
 }
 
