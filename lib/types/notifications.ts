@@ -29,12 +29,17 @@ export interface Notification {
 export interface NotificationPreferences {
   id: string;
   user_id: string;
-  todo_assigned: boolean;
-  todo_completed: boolean;
-  todo_updated: boolean;
-  comment_added: boolean;
+  task_created: boolean;
+  task_updated: boolean;
+  task_deleted: boolean;
+  task_assigned: boolean;
+  task_completed: boolean;
   space_invited: boolean;
-  space_member_joined: boolean;
+  space_joined: boolean;
+  comment_added: boolean;
+  comment_mentioned: boolean;
+  email_enabled: boolean;
+  push_enabled: boolean;
   sound_enabled: boolean;
   browser_enabled: boolean;
   sound_volume: number;

@@ -14,19 +14,19 @@ import EmailSettings from './email-settings';
 
 const notificationTypes = [
   {
-    key: 'todo_assigned',
+    key: 'task_assigned',
     label: '할일 할당',
     description: '새로운 할일이 나에게 할당되었을 때',
     icon: Calendar,
   },
   {
-    key: 'todo_completed',
+    key: 'task_completed',
     label: '할일 완료',
     description: '내가 할당한 할일이 완료되었을 때',
     icon: CheckCircle,
   },
   {
-    key: 'todo_updated',
+    key: 'task_updated',
     label: '할일 수정',
     description: '내가 참여한 할일이 수정되었을 때',
     icon: Calendar,
@@ -44,7 +44,7 @@ const notificationTypes = [
     icon: UserPlus,
   },
   {
-    key: 'space_member_joined',
+    key: 'space_joined',
     label: '멤버 참여',
     description: '내 스페이스에 새 멤버가 참여했을 때',
     icon: Users,
