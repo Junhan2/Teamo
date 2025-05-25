@@ -10,40 +10,27 @@ export class SpacesClient {
     this.supabase = createClientComponentClient<Database>();
   }
 
-  // 사용자의 모든 스페이스 조회
+  // 사용자의 모든 스페이스 조회 (RPC 함수 사용)
   async getUserSpaces(): Promise<SpaceWithRole[]> {
-    // 먼저 사용자의 멤버십 정보만 가져오기
-    const { data: userSpaces, error: userSpacesError } = await this.supabase
-      .from('user_spaces')
-      .select('*')
-      .eq('user_id', (await this.supabase.auth.getUser()).data.user?.id);
+    const { data, error } = await this.supabase
+      .rpc('get_user_spaces_with_details');
 
-    if (userSpacesError) throw userSpacesError;
-    if (!userSpaces || userSpaces.length === 0) return [];
+    if (error) throw error;
+    if (!data || data.length === 0) return [];
 
-    // 스페이스 ID 목록 추출
-    const spaceIds = userSpaces.map(us => us.space_id);
-
-    // 스페이스 정보 가져오기
-    const { data: spaces, error: spacesError } = await this.supabase
-      .from('spaces')
-      .select('*')
-      .in('id', spaceIds);
-
-    if (spacesError) throw spacesError;
-    if (!spaces) return [];
-
-    // 데이터 조합
-    return userSpaces.map(us => {
-      const space = spaces.find(s => s.id === us.space_id);
-      if (!space) throw new Error(`Space not found: ${us.space_id}`);
-      
-      return {
-        ...space,
-        user_role: us.role,
-        is_default: us.is_default
-      };
-    });
+    // RPC 결과를 SpaceWithRole 형식으로 변환
+    return data.map(row => ({
+      id: row.space_id,
+      name: row.space_name,
+      description: row.space_description,
+      type: row.space_type,
+      slug: row.space_slug,
+      created_by: row.space_created_by,
+      created_at: row.space_created_at,
+      updated_at: row.space_updated_at,
+      user_role: row.role,
+      is_default: row.is_default
+    }));
   }
 
   // 스페이스 생성
