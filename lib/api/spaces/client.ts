@@ -12,21 +12,38 @@ export class SpacesClient {
 
   // 사용자의 모든 스페이스 조회
   async getUserSpaces(): Promise<SpaceWithRole[]> {
-    const { data: userSpaces, error } = await this.supabase
+    // 먼저 사용자의 멤버십 정보만 가져오기
+    const { data: userSpaces, error: userSpacesError } = await this.supabase
       .from('user_spaces')
-      .select(`
-        *,
-        space:spaces(*)
-      `)
+      .select('*')
       .eq('user_id', (await this.supabase.auth.getUser()).data.user?.id);
 
-    if (error) throw error;
+    if (userSpacesError) throw userSpacesError;
+    if (!userSpaces || userSpaces.length === 0) return [];
 
-    return userSpaces?.map(us => ({
-      ...us.space,
-      user_role: us.role,
-      is_default: us.is_default
-    })) || [];
+    // 스페이스 ID 목록 추출
+    const spaceIds = userSpaces.map(us => us.space_id);
+
+    // 스페이스 정보 가져오기
+    const { data: spaces, error: spacesError } = await this.supabase
+      .from('spaces')
+      .select('*')
+      .in('id', spaceIds);
+
+    if (spacesError) throw spacesError;
+    if (!spaces) return [];
+
+    // 데이터 조합
+    return userSpaces.map(us => {
+      const space = spaces.find(s => s.id === us.space_id);
+      if (!space) throw new Error(`Space not found: ${us.space_id}`);
+      
+      return {
+        ...space,
+        user_role: us.role,
+        is_default: us.is_default
+      };
+    });
   }
 
   // 스페이스 생성
