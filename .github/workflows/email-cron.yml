@@ -1,0 +1,36 @@
+name: Email Notification Cron Jobs
+
+on:
+  schedule:
+    # 이메일 큐 처리 (5분마다)
+    - cron: '*/5 * * * *'
+    # 마감일 체크 (매일 오전 9시 KST = UTC 0시)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  process-email-queue:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Process Email Queue
+        run: |
+          curl -X POST https://zxjmtfyjxonkqhcpuimx.supabase.co/functions/v1/process-email-queue \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+  check-due-dates:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 0 * * *' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Check Due Dates
+        run: |
+          curl -X POST https://zxjmtfyjxonkqhcpuimx.supabase.co/functions/v1/check-due-dates \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
