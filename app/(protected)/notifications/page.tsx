@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,8 +20,16 @@ import NotificationItem from '@/components/notifications/NotificationItem';
 import Link from 'next/link';
 
 export default function NotificationsPage() {
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // URL 파라미터에서 초기값 가져오기
+  const [filter, setFilter] = useState<'all' | 'unread'>(
+    (searchParams.get('filter') as 'all' | 'unread') || 'all'
+  );
+  const [typeFilter, setTypeFilter] = useState<string>(
+    searchParams.get('type') || 'all'
+  );
   
   const {
     notifications,
@@ -30,6 +39,16 @@ export default function NotificationsPage() {
     markAllAsRead,
     deleteNotification,
   } = useNotifications();
+
+  // URL 파라미터 업데이트
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filter !== 'all') params.set('filter', filter);
+    if (typeFilter !== 'all') params.set('type', typeFilter);
+    
+    const newUrl = params.toString() ? `?${params.toString()}` : '/notifications';
+    router.replace(newUrl);
+  }, [filter, typeFilter, router]);
 
   // 필터링된 알림
   const filteredNotifications = notifications.filter(notification => {

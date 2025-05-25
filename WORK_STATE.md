@@ -19,35 +19,42 @@
 ### Task 9-1: 알림 데이터베이스 스키마 설계 ✅ 완료
 ### Task 9-2: 알림 생성 트리거 구현 ✅ 완료
 ### Task 9-3: 알림 API 및 실시간 구독 구현 ✅ 완료
+### Task 9-4: 알림 UI 컴포넌트 구현 ✅ 완료
 
-1. ✅ NotificationsClient 클래스 구현
-   - 알림 목록 조회 (필터링, 페이지네이션 지원)
-   - 읽지 않은 알림 개수 조회
-   - 개별/전체 알림 읽음 처리
-   - 알림 삭제
-   - 알림 설정 조회/업데이트
+1. ✅ NotificationBell 컴포넌트
+   - 헤더에 알림 아이콘 표시
+   - 읽지 않은 알림 카운트 뱃지
+   - 클릭시 드롭다운 표시
 
-2. ✅ 실시간 알림 구독 기능
-   - Supabase Realtime 사용
-   - 새 알림 실시간 수신
-   - 자동 구독 해제 처리
+2. ✅ NotificationList 컴포넌트
+   - 알림 목록 표시 (전체/읽지않음 필터)
+   - 스크롤 가능한 목록
+   - 모두 읽음 처리 기능
+   - 알림 페이지로 이동 링크
 
-3. ✅ React Hooks 구현
-   - useNotifications: 알림 목록 관리
-   - useNotificationPreferences: 알림 설정 관리
-   - 로컬 상태 관리 및 동기화
+3. ✅ NotificationItem 컴포넌트
+   - 개별 알림 아이템 표시
+   - 알림 타입별 아이콘
+   - 시간 표시 (상대적 시간)
+   - 읽음/삭제 기능
 
-4. ✅ 테스트 페이지 생성
-   - /notifications/test 경로
-   - 알림 목록 표시
-   - 읽음/삭제 기능 테스트
+4. ✅ 알림 페이지 (/notifications)
+   - 전체 알림 목록 표시
+   - 타입별 필터링 (할일/댓글/스페이스)
+   - 읽음 상태별 필터링
+   - 알림 설정 페이지 링크
+
+5. ✅ Navbar 컴포넌트 수정
+   - NotificationBell 컴포넌트 추가
+   - Space Selector 옆에 위치
 
 ### 구현된 파일:
-- /lib/api/notifications/client.ts
-- /lib/hooks/useNotifications.ts
-- /lib/hooks/useNotificationPreferences.ts
-- /app/(protected)/notifications/test/page.tsx
+- /components/notifications/NotificationBell.tsx
+- /components/notifications/NotificationList.tsx
+- /components/notifications/NotificationItem.tsx
+- /app/(protected)/notifications/page.tsx
+- /lib/types/notifications.ts
+- /components/Navbar.tsx (수정)
 
 ### 다음 작업:
-- Task 9-4: 알림 UI 컴포넌트 구현
 - Task 9-5: 알림 설정 및 필터링 구현

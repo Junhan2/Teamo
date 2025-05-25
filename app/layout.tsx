@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import ClientInitializer from './client-initializer'
 import { SpaceProvider } from '@/contexts/SpaceContext'
+import { Toaster } from 'sonner'
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default function RootLayout({
       <body className={dmSans.className}>
         <ClientInitializer />
         {children}
+        <Toaster position="top-center" />
         <Analytics />
         <SpeedInsights />
       </body>
