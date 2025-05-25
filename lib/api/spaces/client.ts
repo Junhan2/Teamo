@@ -69,6 +69,7 @@ export class SpacesClient {
 
     return response.json();
   }
+  
   // 기본 스페이스 설정
   async setDefaultSpace(spaceId: string): Promise<void> {
     const response = await fetch(`/api/spaces/${spaceId}/default`, {
@@ -79,7 +80,6 @@ export class SpacesClient {
       const error = await response.json();
       throw new Error(error.error || 'Failed to set default space');
     }
-  }
   }
 
   // 스페이스 멤버 조회
