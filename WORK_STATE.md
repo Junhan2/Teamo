@@ -17,26 +17,28 @@
 #### Task 9: 알림 시스템 구현 (진행중)
 
 ### Task 9-1: 알림 데이터베이스 스키마 설계 ✅ 완료
+### Task 9-2: 알림 생성 트리거 구현 ✅ 완료
 
-1. ✅ notifications 테이블 생성
-   - 알림 타입, 읽음 상태, 관련 엔티티 관리
-   - RLS 정책 설정
+1. ✅ create_notification 헬퍼 함수 생성
+   - 사용자 알림 설정 확인
+   - 알림 타입별 on/off 체크
+   - 알림 생성 또는 건너뛰기
 
-2. ✅ notification_preferences 테이블 생성
-   - 사용자별 알림 설정 관리
-   - 알림 타입별 on/off 설정
+2. ✅ 스페이스 초대 트리거 구현
+   - handle_invitation_created 함수
+   - 초대받은 사용자에게 알림 생성
+   - 초대자 정보와 스페이스 정보 포함
 
-3. ✅ 알림 관련 함수 생성
-   - mark_notification_read: 개별 알림 읽음 처리
-   - mark_all_notifications_read: 모든 알림 읽음 처리
-   - get_unread_notification_count: 읽지 않은 알림 수 조회
-   - cleanup_old_notifications: 오래된 알림 정리
+3. ✅ 스페이스 참여 트리거 구현
+   - handle_user_space_joined 함수
+   - 기존 멤버들에게 새 멤버 참여 알림
+   - 스페이스 생성자는 제외
 
-4. ✅ 타입 정의 완료
-   - `/lib/types/notifications.ts`
+### 구현된 트리거:
+- on_invitation_created: 초대 생성 시 알림
+- on_user_space_joined: 스페이스 참여 시 알림
 
 ### 다음 작업:
-- Task 9-2: 알림 생성 트리거 구현
 - Task 9-3: 알림 API 및 실시간 구독 구현
 - Task 9-4: 알림 UI 컴포넌트 구현
 - Task 9-5: 알림 설정 및 필터링 구현
