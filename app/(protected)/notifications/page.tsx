@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
   Check, 
   Archive, 
@@ -13,11 +14,15 @@ import {
   Calendar,
   MessageSquare,
   Users,
-  Settings
+  Settings,
+  CheckCheck,
+  Trash2,
+  X
 } from 'lucide-react';
 import { useNotifications } from '@/lib/hooks/useNotifications';
 import NotificationItem from '@/components/notifications/NotificationItem';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function NotificationsPage() {
   const router = useRouter();
@@ -38,7 +43,12 @@ export default function NotificationsPage() {
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    bulkAction,
   } = useNotifications();
+
+  // 선택 모드 상태
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // URL 파라미터 업데이트
   useEffect(() => {
@@ -53,116 +63,242 @@ export default function NotificationsPage() {
   // 필터링된 알림
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'unread' && notification.is_read) return false;
-    if (typeFilter !== 'all' && !notification.type.includes(typeFilter)) return false;
+    if (typeFilter === 'todo' && !['todo_assigned', 'todo_completed', 'todo_updated'].includes(notification.type)) return false;
+    if (typeFilter === 'comment' && notification.type !== 'comment_added') return false;
+    if (typeFilter === 'space' && !['space_invited', 'space_member_joined'].includes(notification.type)) return false;
     return true;
   });
 
-  const notificationTypes = [
-    { value: 'all', label: '전체', icon: null },
-    { value: 'todo', label: '할일', icon: Calendar },
-    { value: 'comment', label: '댓글', icon: MessageSquare },
-    { value: 'space', label: '스페이스', icon: Users },
-  ];
+  // 선택 모드 토글
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedIds(new Set());
+  };
+
+  // 개별 선택 처리
+  const handleSelectChange = (id: string, checked: boolean) => {
+    const newSelected = new Set(selectedIds);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  // 전체 선택
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = new Set(filteredNotifications.map(n => n.id));
+      setSelectedIds(allIds);
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  // 일괄 읽음 처리
+  const handleBulkMarkAsRead = async () => {
+    const ids = Array.from(selectedIds);
+    const result = await bulkAction(ids, 'read');
+    if (result?.success) {
+      toast.success(`${result.affectedCount}개의 알림을 읽음 처리했습니다.`);
+      setSelectedIds(new Set());
+    } else {
+      toast.error('읽음 처리에 실패했습니다.');
+    }
+  };
+
+  // 일괄 삭제
+  const handleBulkDelete = async () => {
+    if (!confirm(`선택한 ${selectedIds.size}개의 알림을 삭제하시겠습니까?`)) return;
+    
+    const ids = Array.from(selectedIds);
+    const result = await bulkAction(ids, 'delete');
+    if (result?.success) {
+      toast.success(`${result.affectedCount}개의 알림을 삭제했습니다.`);
+      setSelectedIds(new Set());
+      if (filteredNotifications.length === ids.length) {
+        setSelectionMode(false);
+      }
+    } else {
+      toast.error('삭제에 실패했습니다.');
+    }
+  };
+
+  const notificationTypeLabels = {
+    all: '전체',
+    todo: '할일',
+    comment: '댓글',
+    space: '스페이스',
+  };
+
+  const allChecked = filteredNotifications.length > 0 && 
+    filteredNotifications.every(n => selectedIds.has(n.id));
+  const someChecked = selectedIds.size > 0 && !allChecked;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
 
   return (
-    <div className="container max-w-4xl mx-auto py-6 px-4">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">알림</h1>
-          <p className="text-muted-foreground mt-1">
-            새로운 활동과 업데이트를 확인하세요
-          </p>
-        </div>
-        <Link href="/notifications/settings">
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            알림 설정
-          </Button>
-        </Link>
-      </div>
-
-      <Card>
-        <div className="p-4 border-b">
-          <div className="flex items-center justify-between">
-            <Tabs value={filter} onValueChange={(v) => setFilter(v as 'all' | 'unread')}>
-              <TabsList>
-                <TabsTrigger value="all">
-                  전체
-                  {notifications.length > 0 && (
-                    <Badge variant="secondary" className="ml-2">
-                      {notifications.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="unread">
-                  읽지 않음
-                  {unreadCount > 0 && (
-                    <Badge variant="default" className="ml-2">
-                      {unreadCount}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-
-            {unreadCount > 0 && (
+    <div className="max-w-4xl mx-auto p-4 space-y-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">알림</h1>
+        <div className="flex gap-2">
+          {selectionMode ? (
+            <>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => markAllAsRead()}
+                onClick={() => {
+                  setSelectionMode(false);
+                  setSelectedIds(new Set());
+                }}
+              >
+                <X className="h-4 w-4 mr-1" />
+                취소
+              </Button>
+              {selectedIds.size > 0 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBulkMarkAsRead}
+                    disabled={filteredNotifications
+                      .filter(n => selectedIds.has(n.id))
+                      .every(n => n.is_read)}
+                  >
+                    <CheckCheck className="h-4 w-4 mr-1" />
+                    읽음 처리
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    삭제
+                  </Button>
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleSelectionMode}
+                disabled={filteredNotifications.length === 0}
+              >
+                선택
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+              >
+                <Link href="/notifications/settings">
+                  <Settings className="h-4 w-4 mr-1" />
+                  설정
+                </Link>
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* 필터 탭 */}
+      <Tabs value={typeFilter} onValueChange={setTypeFilter}>
+        <TabsList className="grid w-full grid-cols-4">
+          {Object.entries(notificationTypeLabels).map(([value, label]) => (
+            <TabsTrigger key={value} value={value}>
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        <TabsContent value={typeFilter} className="space-y-4">
+          {/* 읽음 상태 필터 */}
+          <div className="flex gap-2">
+            <Button
+              variant={filter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('all')}
+            >
+              전체
+            </Button>
+            <Button
+              variant={filter === 'unread' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter('unread')}
+            >
+              읽지 않음
+              {unreadCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {unreadCount}
+                </Badge>
+              )}
+            </Button>
+          </div>
+
+          {/* 일괄 선택 헤더 */}
+          {selectionMode && filteredNotifications.length > 0 && (
+            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+              <Checkbox
+                checked={allChecked}
+                onCheckedChange={handleSelectAll}
+                aria-label="전체 선택"
+              />
+              <span className="text-sm text-gray-600">
+                {selectedIds.size > 0
+                  ? `${selectedIds.size}개 선택됨`
+                  : '전체 선택'}
+              </span>
+            </div>
+          )}
+
+          {/* 알림 목록 */}
+          <Card>
+            {filteredNotifications.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                {filter === 'unread' ? '읽지 않은 알림이 없습니다.' : '알림이 없습니다.'}
+              </div>
+            ) : (
+              <div className="divide-y">
+                {filteredNotifications.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onMarkAsRead={markAsRead}
+                    onDelete={deleteNotification}
+                    selectable={selectionMode}
+                    selected={selectedIds.has(notification.id)}
+                    onSelectChange={handleSelectChange}
+                  />
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* 전체 읽음 처리 버튼 */}
+          {!selectionMode && unreadCount > 0 && (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                onClick={markAllAsRead}
               >
                 <Check className="h-4 w-4 mr-2" />
                 모두 읽음으로 표시
               </Button>
-            )}
-          </div>
-
-          {/* 타입 필터 */}
-          <div className="flex gap-2 mt-4">
-            {notificationTypes.map((type) => (
-              <Button
-                key={type.value}
-                variant={typeFilter === type.value ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setTypeFilter(type.value)}
-                className="gap-2"
-              >
-                {type.icon && <type.icon className="h-4 w-4" />}
-                {type.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        <div className="min-h-[400px]">
-          {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : filteredNotifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4">
-              <Archive className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">알림이 없습니다</h3>
-              <p className="text-muted-foreground text-center">
-                {filter === 'unread' 
-                  ? '읽지 않은 알림이 없습니다.' 
-                  : '아직 받은 알림이 없습니다.'}
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {filteredNotifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onMarkAsRead={markAsRead}
-                  onDelete={deleteNotification}
-                />
-              ))}
             </div>
           )}
-        </div>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

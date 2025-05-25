@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Check, X, Users, MessageSquare, UserPlus, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Notification } from '@/lib/types/notifications';
 
@@ -11,6 +12,9 @@ interface NotificationItemProps {
   notification: Notification;
   onMarkAsRead: (id: string) => void;
   onDelete: (id: string) => void;
+  selectable?: boolean;
+  selected?: boolean;
+  onSelectChange?: (id: string, checked: boolean) => void;
 }
 
 const notificationIcons = {
@@ -35,6 +39,9 @@ export default function NotificationItem({
   notification,
   onMarkAsRead,
   onDelete,
+  selectable = false,
+  selected = false,
+  onSelectChange,
 }: NotificationItemProps) {
   const Icon = notificationIcons[notification.type] || Calendar;
   const message = notificationMessages[notification.type] || '새로운 알림';
@@ -48,6 +55,23 @@ export default function NotificationItem({
   return (
     <div
       className={cn(
+        'flex items-start gap-3 p-4 transition-colors hover:bg-gray-50 cursor-pointer',
+        !notification.is_read && 'bg-blue-50 hover:bg-blue-100',
+        selected && 'bg-gray-100'
+      )}
+      onClick={handleClick}
+    >
+      {selectable && (
+        <div className="flex items-center pt-1">
+          <Checkbox
+            checked={selected}
+            onCheckedChange={(checked) => {
+              onSelectChange?.(notification.id, checked as boolean);
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
         "relative p-4 hover:bg-accent/50 transition-colors cursor-pointer",
         !notification.is_read && "bg-accent/30"
       )}
