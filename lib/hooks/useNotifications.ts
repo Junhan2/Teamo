@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { notificationsClient } from '@/lib/api/notifications/client';
 import type { Notification, NotificationType } from '@/lib/types/notifications';
+import { useNotificationPreferences } from './useNotificationPreferences';
+import { handleNewNotification as playNotification } from '@/lib/utils/notification-sound';
+import { supabase } from '@/lib/supabase/client';
 
 interface UseNotificationsOptions {
   autoSubscribe?: boolean;
@@ -16,6 +19,9 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  
+  // 알림 설정 가져오기
+  const { preferences } = useNotificationPreferences();
 
   // 알림 목록 조회
   const fetchNotifications = useCallback(async () => {
@@ -155,7 +161,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
   }, [notifications]);
 
   // 실시간 알림 처리
-  const handleNewNotification = useCallback((notification: Notification) => {
+  const handleNewNotification = useCallback(async (notification: Notification) => {
     // 새 알림을 목록 맨 앞에 추가
     setNotifications(prev => [notification, ...prev]);
     
@@ -163,7 +169,12 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     if (!notification.is_read) {
       setUnreadCount(prev => prev + 1);
     }
-  }, []);
+    
+    // 사운드 재생 및 브라우저 알림 표시
+    if (preferences && !notification.is_read) {
+      await playNotification(notification, preferences);
+    }
+  }, [preferences]);
 
   // 초기 데이터 로드 및 실시간 구독
   useEffect(() => {

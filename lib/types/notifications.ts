@@ -35,6 +35,9 @@ export interface NotificationPreferences {
   comment_added: boolean;
   space_invited: boolean;
   space_member_joined: boolean;
+  sound_enabled: boolean;
+  browser_enabled: boolean;
+  sound_volume: number;
   created_at: string;
   updated_at: string;
 }

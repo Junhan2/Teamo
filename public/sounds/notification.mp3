@@ -1,0 +1,9 @@
+# Notification Sound File
+# This is a placeholder for the notification sound file.
+# You'll need to add an actual MP3 file here.
+# You can use a simple notification sound from:
+# - https://freesound.org/
+# - https://zapsplat.com/
+# - Or create your own short notification sound
+
+# For now, we'll use a base64 encoded simple beep sound in the code

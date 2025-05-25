@@ -1,0 +1,17 @@
+# PWA Icons Placeholder
+
+This directory should contain the following icon files for PWA and browser notifications:
+
+- icon-192x192.png (192x192 pixels)
+- icon-512x512.png (512x512 pixels)
+
+These icons will be used for:
+1. Browser notifications
+2. PWA app icon
+3. Add to home screen icon
+
+For now, the browser notifications will work without these icons, but adding them will improve the user experience.
+
+You can generate these icons from your app logo using tools like:
+- https://realfavicongenerator.net/
+- https://www.pwabuilder.com/imageGenerator

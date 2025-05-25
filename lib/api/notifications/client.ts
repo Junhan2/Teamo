@@ -110,6 +110,28 @@ export class NotificationsClient {
     if (error) throw error;
   }
 
+  // 테스트 알림 생성
+  async createTestNotification(): Promise<void> {
+    const { data: { user } } = await this.supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await this.supabase
+      .from('notifications')
+      .insert({
+        user_id: user.id,
+        type: 'todo_assigned',
+        data: {
+          actor_id: user.id,
+          actor_name: '시스템',
+          todo_id: 'test-todo',
+          title: '테스트 알림입니다'
+        },
+        is_read: false
+      });
+
+    if (error) throw error;
+  }
+
   // 실시간 알림 구독
   subscribeToNotifications(callback: (notification: Notification) => void): () => void {
     this.supabase.auth.getUser().then(({ data: { user } }) => {
