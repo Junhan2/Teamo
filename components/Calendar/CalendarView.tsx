@@ -302,20 +302,6 @@ const CalendarView = ({
     return colors[colorIndex]
   }
 
-  // Get status indicator color
-  const getStatusIndicatorColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-emerald-500'
-      case 'in_progress':
-        return 'bg-blue-500'
-      case 'pending':
-        return 'bg-amber-500'
-      default:
-        return 'bg-gray-400'
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8 text-gray-cool-800">
@@ -503,10 +489,7 @@ const CalendarView = ({
                           ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10' : 'bg-[#FDFDFD] border border-[rgba(0,0,0,0.10)]'}
                         `}
                       >
-                        {/* Status indicator */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusIndicatorColor(todo.status)}`}></div>
-                        
-                        <span className="pl-1.5 truncate text-gray-cool-800 text-sm">{todo.title}</span>
+                        <span className="truncate text-gray-cool-800 text-sm">{todo.title}</span>
                         <span className={`ml-auto flex-shrink-0 ${getStatusColor(todo.status)} rounded-sm px-1`}>
                           {getStatusIcon(todo.status)}
                         </span>
@@ -576,10 +559,7 @@ const CalendarView = ({
                           ${todo.status === 'completed' ? 'bg-[#3fcf8e]/10 border-[#3fcf8e]/20' : 'bg-[#FDFDFD] border-[rgba(0,0,0,0.10)]'}
                         `}
                       >
-                        {/* Status indicator */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${getStatusIndicatorColor(todo.status)}`}></div>
-                        
-                        <div className="pl-2">
+                        <div>
                           <h4 className={`font-medium text-sm truncate leading-4 ${todo.status === 'completed' ? 'line-through text-gray-cool-500' : 'text-gray-cool-800'}`}>
                             {todo.title}
                           </h4>
