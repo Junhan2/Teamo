@@ -43,14 +43,14 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   }, []);
-
   // 스페이스 전환
   const switchSpace = useCallback(async (spaceId: string) => {
     const space = spaces.find(s => s.id === spaceId);
     if (space) {
       setCurrentSpace(space);
-      // 스페이스 전환 시 홈으로 이동
-      router.push('/');
+      // 스페이스 전환 시 대시보드로 이동
+      router.push('/dashboard');
+      router.refresh();
     }
   }, [spaces, router]);
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSpace } from '@/contexts/SpaceContext';
-import { spacesApi } from '@/lib/api/spaces/client';
+import { spacesClient } from '@/lib/api/spaces/client';
 import { Database } from '@/types/supabase';
 import {
   DropdownMenu,
@@ -20,11 +20,11 @@ type Space = Database['public']['Tables']['spaces']['Row'];
 
 export function SpaceSelector() {
   const router = useRouter();
-  const { currentSpace, setCurrentSpace, spaces, isLoading } = useSpace();
+  const { currentSpace, switchSpace, spaces, isLoading } = useSpace();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSpaceChange = async (space: Space) => {
-    await setCurrentSpace(space);
+    await switchSpace(space.id);
     setIsOpen(false);
   };
 
