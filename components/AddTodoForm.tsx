@@ -9,19 +9,22 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon, Plus } from "lucide-react"
+import { CalendarIcon, Plus, Share2, Lock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { InlineSpinner } from "@/components/ui/loading"
+import { Switch } from "@/components/ui/switch"
 
 interface AddTodoFormProps {
   userId: string
+  spaceId?: string
   onTodoAdded?: () => void
 }
 
-export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
+export default function AddTodoForm({ userId, spaceId, onTodoAdded }: AddTodoFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [dueDate, setDueDate] = useState<Date | undefined>()
+  const [isShared, setIsShared] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
@@ -99,7 +102,9 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
         due_date: dueDate.toISOString(), // null 옵션 제거
         status: 'pending',
         user_id: userId,
-        team_id: teamId
+        team_id: teamId,
+        space_id: spaceId || null,
+        is_shared: isShared  // 공유 여부 추가
       }
       
       console.log('Adding todo with data:', todoData)
@@ -107,11 +112,13 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       const { error } = await supabase
         .from('todos')
         .insert([todoData])
-      
+        
       if (error) {
         console.error('Error details:', error)
         throw error
-      }      // 실시간 업데이트를 위한 이벤트 브로드캐스트
+      }
+      
+      // 실시간 업데이트를 위한 이벤트 브로드캐스트
       // 이렇게 하면 Supabase 실시간 업데이트가 즉시 반영되지 않더라도 
       // 할일 추가 직후 UI가 업데이트됨
       try {
@@ -132,6 +139,7 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
       setTitle("")
       setDescription("")
       setDueDate(undefined)
+      setIsShared(false)
       setMessage({ type: "success", text: "Task added successfully." })
       
       // 추가 완료 후 부모 컴포넌트에 알림 (refreshTrigger는 더 이상 필요하지 않지만 호환성 유지)
@@ -206,6 +214,30 @@ export default function AddTodoForm({ userId, onTodoAdded }: AddTodoFormProps) {
           </PopoverContent>
         </Popover>
       </div>
+      
+      {/* Share toggle - only show when in a space */}
+      {spaceId && (
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-center gap-2">
+            {isShared ? (
+              <>
+                <Share2 className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium">Share with team</span>
+              </>
+            ) : (
+              <>
+                <Lock className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium">Keep private</span>
+              </>
+            )}
+          </div>
+          <Switch
+            checked={isShared}
+            onCheckedChange={setIsShared}
+            className="data-[state=checked]:bg-blue-600"
+          />
+        </div>
+      )}
       
       {/* ADD TASK button */}
       <Button 
