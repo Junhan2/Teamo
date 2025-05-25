@@ -51,8 +51,20 @@ export default function SpaceMembersPage() {
   const [inviteEmail, setInviteEmail] = useState("")
   const [inviteRole, setInviteRole] = useState<"member" | "admin">("member")
   const [isInviting, setIsInviting] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   
   const supabase = createClient()
+
+  // 현재 사용자 ID 가져오기
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setCurrentUserId(user.id)
+      }
+    }
+    getCurrentUser()
+  }, [])
 
   // 데이터 가져오기
   const fetchData = async () => {
@@ -176,21 +188,6 @@ export default function SpaceMembersPage() {
   if (!space) {
     return <div>스페이스를 찾을 수 없습니다.</div>
   }
-
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  
-  const supabase = createClient()
-
-  // 현재 사용자 ID 가져오기
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setCurrentUserId(user.id)
-      }
-    }
-    getCurrentUser()
-  }, [supabase])
 
   const currentUserRole = members.find(m => m.user_id === currentUserId)?.role
   const isAdmin = currentUserRole === 'admin' || currentUserRole === 'owner'
