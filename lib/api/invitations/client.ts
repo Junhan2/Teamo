@@ -1,202 +1,193 @@
-import { supabaseClient } from '@/lib/auth/supabase';
-import { Database } from '@/types/supabase';
+import { createClient } from '@/lib/supabase/client'
+import { Database } from '@/types/database.types'
 
-type Invitation = Database['public']['Tables']['space_invitations']['Row'];
-type InvitationInsert = Database['public']['Tables']['space_invitations']['Insert'];
-type InvitationUpdate = Database['public']['Tables']['space_invitations']['Update'];
+type Invitation = Database['public']['Tables']['invitations']['Row']
 
-export const invitationsApi = {
-  // Create a new invitation
-  async createInvitation(
-    spaceId: string,
-    email: string,
-    role: 'admin' | 'member' = 'member',
-    message?: string
-  ): Promise<Invitation> {
-    const supabase = await supabaseClient();
-    
-    // Get current user as inviter
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) throw new Error('User not authenticated');
+export interface CreateInvitationParams {
+  spaceId: string
+  email: string
+  role: 'admin' | 'member'
+  expiresInDays?: number
+}
 
-    // Check if user has permission to invite
-    const { data: userSpace, error: permError } = await supabase
-      .from('user_spaces')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('space_id', spaceId)
-      .single();
+export interface InvitationWithSpace extends Invitation {
+  space: {
+    id: string
+    name: string
+    type: string
+  }
+}
 
-    if (permError || !userSpace || (userSpace.role !== 'owner' && userSpace.role !== 'admin')) {
-      throw new Error('Insufficient permissions to invite users');
-    }
+// 초대 토큰 생성
+function generateInviteToken(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let token = ''
+  for (let i = 0; i < 32; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return token
+}
 
-    // Check if invitation already exists
-    const { data: existingInvite } = await supabase
-      .from('space_invitations')
-      .select('*')
-      .eq('space_id', spaceId)
-      .eq('email', email)
-      .eq('status', 'pending')
-      .single();
+// 초대 생성
+export async function createInvitation({
+  spaceId,
+  email,
+  role,
+  expiresInDays = 7
+}: CreateInvitationParams) {
+  const supabase = createClient()
+  
+  try {
+    // 현재 사용자 확인
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
 
-    if (existingInvite) {
-      throw new Error('Invitation already sent to this email');
-    }
+    // 만료 시간 계산
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + expiresInDays)
 
-    // Create invitation
+    // 초대 생성
     const { data, error } = await supabase
-      .from('space_invitations')
+      .from('invitations')
       .insert({
         space_id: spaceId,
+        inviter_id: user.id,
         email,
         role,
-        invited_by: user.id,
-        message,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+        token: generateInviteToken(),
+        expires_at: expiresAt.toISOString()
       })
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
-    return data;
-  },
+    if (error) throw error
 
-  // Get pending invitations for a space
-  async getSpaceInvitations(spaceId: string): Promise<Invitation[]> {
-    const supabase = await supabaseClient();
-    
+    return data
+  } catch (error) {
+    console.error('Error creating invitation:', error)
+    throw error
+  }
+}
+
+// 스페이스의 초대 목록 가져오기
+export async function getSpaceInvitations(spaceId: string) {
+  const supabase = createClient()
+  
+  try {
     const { data, error } = await supabase
-      .from('space_invitations')
+      .from('invitations')
       .select('*')
       .eq('space_id', spaceId)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
-    if (error) throw error;
-    return data || [];
-  },
+    if (error) throw error
 
-  // Get invitations for current user's email
-  async getMyInvitations(): Promise<Invitation[]> {
-    const supabase = await supabaseClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) throw new Error('User not authenticated');
+    return data as Invitation[]
+  } catch (error) {
+    console.error('Error fetching invitations:', error)
+    throw error
+  }
+}
 
+// 토큰으로 초대 정보 가져오기
+export async function getInvitationByToken(token: string) {
+  const supabase = createClient()
+  
+  try {
     const { data, error } = await supabase
-      .from('space_invitations')
-      .select('*')
-      .eq('email', user.email)
-      .eq('status', 'pending')
-      .order('created_at', { ascending: false });
+      .from('invitations')
+      .select(`
+        *,
+        space:spaces(
+          id,
+          name,
+          type
+        )
+      `)
+      .eq('token', token)
+      .single()
 
-    if (error) throw error;
-    return data || [];
-  },
+    if (error) throw error
 
-  // Accept an invitation
-  async acceptInvitation(invitationId: string): Promise<void> {
-    const supabase = await supabaseClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) throw new Error('User not authenticated');
+    return data as InvitationWithSpace
+  } catch (error) {
+    console.error('Error fetching invitation:', error)
+    throw error
+  }
+}
 
-    // Get invitation details
-    const { data: invitation, error: invError } = await supabase
-      .from('space_invitations')
-      .select('*')
-      .eq('id', invitationId)
-      .eq('email', user.email)
-      .eq('status', 'pending')
-      .single();
-
-    if (invError || !invitation) throw new Error('Invalid invitation');
-
-    // Check if invitation has expired
-    if (new Date(invitation.expires_at) < new Date()) {
-      throw new Error('Invitation has expired');
-    }
-
-    // Start transaction to add user to space and update invitation
-    const { error: joinError } = await supabase
-      .from('user_spaces')
-      .insert({
-        user_id: user.id,
-        space_id: invitation.space_id,
-        role: invitation.role,
-      });
-
-    if (joinError) throw joinError;
-
-    // Update invitation status
-    const { error: updateError } = await supabase
-      .from('space_invitations')
-      .update({ 
-        status: 'accepted',
-        accepted_at: new Date().toISOString()
+// 초대 수락
+export async function acceptInvitation(token: string) {
+  const supabase = createClient()
+  
+  try {
+    const { data, error } = await supabase
+      .rpc('accept_invitation', {
+        invitation_token: token
       })
-      .eq('id', invitationId);
 
-    if (updateError) throw updateError;
-  },
+    if (error) throw error
 
-  // Decline an invitation
-  async declineInvitation(invitationId: string): Promise<void> {
-    const supabase = await supabaseClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) throw new Error('User not authenticated');
-
-    const { error } = await supabase
-      .from('space_invitations')
-      .update({ status: 'declined' })
-      .eq('id', invitationId)
-      .eq('email', user.email)
-      .eq('status', 'pending');
-
-    if (error) throw error;
-  },
-
-  // Cancel an invitation (by inviter)
-  async cancelInvitation(invitationId: string): Promise<void> {
-    const supabase = await supabaseClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) throw new Error('User not authenticated');
-
-    // Verify user has permission to cancel
-    const { data: invitation, error: invError } = await supabase
-      .from('space_invitations')
-      .select('space_id, invited_by')
-      .eq('id', invitationId)
-      .single();
-
-    if (invError || !invitation) throw new Error('Invitation not found');
-
-    // Check if user is the inviter or has admin/owner role in the space
-    const isInviter = invitation.invited_by === user.id;
-    
-    if (!isInviter) {
-      const { data: userSpace, error: permError } = await supabase
-        .from('user_spaces')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('space_id', invitation.space_id)
-        .single();
-
-      if (permError || !userSpace || (userSpace.role !== 'owner' && userSpace.role !== 'admin')) {
-        throw new Error('Insufficient permissions to cancel invitation');
-      }
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to accept invitation')
     }
 
-    // Cancel the invitation
-    const { error } = await supabase
-      .from('space_invitations')
-      .update({ status: 'cancelled' })
-      .eq('id', invitationId)
-      .eq('status', 'pending');
+    return data
+  } catch (error) {
+    console.error('Error accepting invitation:', error)
+    throw error
+  }
+}
 
-    if (error) throw error;
-  },
-};
+// 초대 취소
+export async function cancelInvitation(invitationId: string) {
+  const supabase = createClient()
+  
+  try {
+    const { error } = await supabase
+      .from('invitations')
+      .update({
+        status: 'cancelled',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', invitationId)
+
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Error cancelling invitation:', error)
+    throw error
+  }
+}
+
+// 만료된 초대 정리
+export async function expireOldInvitations() {
+  const supabase = createClient()
+  
+  try {
+    const { error } = await supabase
+      .rpc('expire_old_invitations')
+
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Error expiring invitations:', error)
+    throw error
+  }
+}
+
+// 이메일로 초대 전송 (Edge Function 활용 예정)
+export async function sendInvitationEmail(invitation: Invitation, spaceName: string) {
+  // TODO: Supabase Edge Function을 통한 이메일 전송 구현
+  // 현재는 초대 링크만 생성
+  const inviteUrl = `${window.location.origin}/invite/${invitation.token}`
+  
+  console.log('Invitation URL:', inviteUrl)
+  
+  return {
+    success: true,
+    inviteUrl
+  }
+}

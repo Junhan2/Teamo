@@ -116,12 +116,20 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                 )}
                 
                 {(role === 'owner' || role === 'admin') && (
-                  <Link href={`/spaces/${space.id}/settings`}>
-                    <Button size="sm" variant="outline">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href={`/spaces/${space.id}/members`}>
+                      <Button size="sm" variant="outline">
+                        <Users className="mr-2 h-4 w-4" />
+                        Members
+                      </Button>
+                    </Link>
+                    <Link href={`/spaces/${space.id}/settings`}>
+                      <Button size="sm" variant="outline">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                      </Button>
+                    </Link>
+                  </>
                 )}
               </div>
             </CardContent>
