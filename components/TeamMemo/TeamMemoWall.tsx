@@ -113,7 +113,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         .from('team_memos')
         .select(`
           *,
-          user:profiles(id, full_name, email)
+          user:profiles!team_memos_user_id_fkey(id, full_name, email)
         `)
         .order('created_at', { ascending: false })
 
@@ -139,7 +139,7 @@ export default function TeamMemoWall({ user }: TeamMemoWallProps) {
         .from('todos')
         .select(`
           *,
-          user:profiles(id, full_name, email)
+          user:profiles!todos_user_id_fkey(id, full_name, email)
         `)
         .order('created_at', { ascending: false })
 

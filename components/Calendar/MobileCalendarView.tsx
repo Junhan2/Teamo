@@ -103,7 +103,7 @@ const MobileCalendarView = ({ user }: MobileCalendarViewProps) => {
         .from('todos')
         .select(`
           *,
-          user:profiles(full_name, email)
+          user:profiles!todos_user_id_fkey(full_name, email)
         `)
         .not('due_date', 'is', null)
         .in('user_id', userIds)
