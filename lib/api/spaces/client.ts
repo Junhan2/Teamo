@@ -23,7 +23,7 @@ export class SpacesClient {
       id: row.space_id,
       name: row.space_name,
       description: row.space_description,
-      type: row.space_type,
+      type: 'team' as const, // 기본값으로 설정
       slug: row.space_slug,
       created_by: row.space_created_by,
       created_at: row.space_created_at,
