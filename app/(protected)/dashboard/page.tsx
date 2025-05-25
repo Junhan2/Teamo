@@ -12,7 +12,7 @@ import AddTodoForm from "@/components/AddTodoForm"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
 import { motion } from "framer-motion"
-import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote, User, Users } from "lucide-react"
+import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote, User, Users, LayoutGrid } from "lucide-react"
 import PageLoading from "@/components/PageLoading"
 
 interface UserProfile {
@@ -574,6 +574,18 @@ export default function DashboardPage() {
               <span>Tasks</span>
               {/* Active indicator */}
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></div>
+            </Button>
+          </Link>
+          
+          <Link href="/dashboard/unified">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full bg-white/80 border shadow-sm flex items-center gap-2 px-5 py-2.5 h-11 font-normal transition-colors duration-200 text-sm hover:bg-purple-50 hover:border-purple-300"
+              style={{borderColor: '#DCDFEA', color: '#404968'}}
+            >
+              <LayoutGrid className="w-4 h-4" />
+              <span>Unified</span>
             </Button>
           </Link>
           
