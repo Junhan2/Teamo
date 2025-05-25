@@ -50,7 +50,12 @@ interface Todo {
   status: "pending" | "in_progress" | "completed"
   priority: "high" | "medium" | "low" | null
   user_id: string
-  team_id: string
+  team_id: string | null
+  team_space_id: string | null
+  is_shared_to_team: boolean | null
+  assignee_id: string | null
+  labels: string[] | null
+  estimated_hours: number | null
   created_at: string
   updated_at: string
   user: {
@@ -59,10 +64,18 @@ interface Todo {
   }
 }
 
+interface TeamSpace {
+  id: string
+  name: string
+  color_theme: string
+  is_personal?: boolean
+}
+
 interface TeamTodoListProps {
   userId?: string
   filter: "my" | "team"
   refreshTrigger?: number
+  currentTeamSpace?: TeamSpace | null
   onDelete?: () => void  // 할일 삭제 또는 상태 변경 시 호출할 콜백 (통계 업데이트용)
   itemsPerPage?: number
 }
@@ -116,7 +129,7 @@ const getUserColor = (userId: string, currentUserId: string | undefined, type: '
   return colorSchemes[colorIndex][type]
 }
 
-const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage = 5 }: TeamTodoListProps) => {
+const TeamTodoList = ({ userId, filter, refreshTrigger, currentTeamSpace, onDelete, itemsPerPage = 5 }: TeamTodoListProps) => {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
@@ -229,6 +242,8 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
   
 
   const fetchTodos = async () => {
+    if (!currentTeamSpace) return;
+    
     try {
       setLoading(true)
       
@@ -241,13 +256,35 @@ const TeamTodoList = ({ userId, filter, refreshTrigger, onDelete, itemsPerPage =
         .order('due_date', { ascending: true, nullsLast: true })
       
       if (filter === "my" && userId) {
-        query = query.eq('user_id', userId)
+        // MY 탭: 본인 할일만
+        if (currentTeamSpace.is_personal) {
+          // 개인 스페이스: team_space_id가 null이거나 개인 스페이스 ID인 할일
+          query = query
+            .eq('user_id', userId)
+            .or(`team_space_id.is.null,team_space_id.eq.${currentTeamSpace.id}`);
+        } else {
+          // 팀 스페이스: 해당 팀의 본인 할일
+          query = query
+            .eq('user_id', userId)
+            .eq('team_space_id', currentTeamSpace.id);
+        }
+      } else if (filter === "team") {
+        // TEAM 탭: 팀에 공유된 할일만
+        if (!currentTeamSpace.is_personal) {
+          query = query
+            .eq('team_space_id', currentTeamSpace.id)
+            .eq('is_shared_to_team', true);
+        } else {
+          // 개인 스페이스에서는 팀 탭이 의미없으므로 빈 데이터
+          setTodos([]);
+          setLoading(false);
+          return;
+        }
       }
       
       if (statusFilter) {
         query = query.eq('status', statusFilter)
       }
-      
       
       // Due date 필터 적용
       if (dateFilter) {

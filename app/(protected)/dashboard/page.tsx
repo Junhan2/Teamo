@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import TeamTodoList from "@/components/TeamTodoList"
-import AddTodoForm from "@/components/AddTodoForm"
+import EnhancedAddTodoForm from "@/components/EnhancedAddTodoForm"
+import TeamSpaceSwitcher from "@/components/TeamSpaceSwitcher"
 import Navbar from "@/components/Navbar"
 import ContributionGraph from "@/components/ContributionGraph/ContributionGraph"
+import { useTeamSpaces } from "@/hooks/useTeamSpaces"
 import { motion } from "framer-motion"
 import { CheckSquare, Calendar, Plus, BarChart3, ClipboardList, StickyNote, User, Users } from "lucide-react"
 import PageLoading from "@/components/PageLoading"
@@ -36,30 +38,58 @@ export default function DashboardPage() {
   const router = useRouter()
   const supabase = createClient()
   
+  // 팀 스페이스 관리
+  const {
+    teamSpaces,
+    currentTeamSpace,
+    setCurrentTeamSpace,
+    loading: teamSpacesLoading,
+    createTeamSpace,
+  } = useTeamSpaces(user?.id)
+  
   // Tab refs for dynamic width calculation
   const myTabRef = useRef<HTMLButtonElement>(null)
   const teamTabRef = useRef<HTMLButtonElement>(null)
 
-  // 통계 데이터 가져오기 (MY/TEAM 탭에 따라 다른 데이터)
+  // 통계 데이터 가져오기 (현재 팀 스페이스 기준)
   const fetchTodoStats = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id || !currentTeamSpace) return;
     
     try {
-      console.log('통계 데이터 가져오는 중...', activeTab);
+      console.log('통계 데이터 가져오는 중...', activeTab, currentTeamSpace.name);
       
       let query;
       
       if (activeTab === "my-todos") {
-        // MY: 본인 할일만
-        query = supabase
-          .from('todos')
-          .select('status')
-          .eq('user_id', user.id);
+        // MY: 본인 할일만 (현재 팀 스페이스 내에서)
+        if (currentTeamSpace.is_personal) {
+          // 개인 스페이스: team_space_id가 null이거나 개인 스페이스 ID인 할일
+          query = supabase
+            .from('todos')
+            .select('status')
+            .eq('user_id', user.id)
+            .or(`team_space_id.is.null,team_space_id.eq.${currentTeamSpace.id}`);
+        } else {
+          // 팀 스페이스: 해당 팀의 본인 할일
+          query = supabase
+            .from('todos')
+            .select('status')
+            .eq('user_id', user.id)
+            .eq('team_space_id', currentTeamSpace.id);
+        }
       } else {
-        // TEAM: 팀 전체 할일
-        query = supabase
-          .from('todos')
-          .select('status, user_id');
+        // TEAM: 팀 전체 할일 (팀에 공유된 할일만)
+        if (!currentTeamSpace.is_personal) {
+          query = supabase
+            .from('todos')
+            .select('status, user_id')
+            .eq('team_space_id', currentTeamSpace.id)
+            .eq('is_shared_to_team', true);
+        } else {
+          // 개인 스페이스에서는 팀 탭이 의미없으므로 빈 데이터
+          setTodoStats({ completed: 0, inProgress: 0, pending: 0, total: 0 });
+          return;
+        }
       }
       
       const { data, error } = await query;
@@ -336,23 +366,46 @@ export default function DashboardPage() {
         console.error('구독 해제 중 오류:', err);
       }
     };
-  }, [user?.id, supabase, fetchTodoStats]);
+  }, [user?.id, currentTeamSpace, supabase, fetchTodoStats]);
 
   // 탭 변경 시 통계 새로고침
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id && currentTeamSpace) {
       console.log('탭 변경됨:', activeTab);
       fetchTodoStats();
     }
-  }, [activeTab, user?.id, fetchTodoStats]);
+  }, [activeTab, user?.id, currentTeamSpace, fetchTodoStats]);
 
-  if (loading) {
+  if (loading || teamSpacesLoading) {
     return <PageLoading message="Loading your tasks..." />
   }
 
   return (
     <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #FCFCFD 0%, #F9F9FB 50%, rgba(239, 241, 245, 0.5) 100%)'}}>
       <Navbar user={user} />
+      
+      {/* 팀 스페이스 전환기 */}
+      {currentTeamSpace && (
+        <div className="container-responsive pt-6">
+          <TeamSpaceSwitcher
+            currentSpace={currentTeamSpace}
+            teamSpaces={teamSpaces}
+            onSpaceChange={setCurrentTeamSpace}
+            onCreateTeam={() => {
+              // TODO: 팀 생성 모달 열기
+              const teamName = prompt('팀 이름을 입력하세요:');
+              if (teamName) {
+                createTeamSpace({ name: teamName, color_theme: 'purple' });
+              }
+            }}
+            onManageTeam={() => {
+              // TODO: 팀 관리 페이지로 이동
+              alert('팀 관리 기능은 곇 추가될 예정입니다.');
+            }}
+          />
+        </div>
+      )}
+      
       <main className="container-responsive py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* 모바일에서는 할일 목록 섹션이 먼저 표시 */}
@@ -448,17 +501,28 @@ export default function DashboardPage() {
                 </TabsContent>
                 
                 <TabsContent value="team-todos" className="focus:outline-none">
-                  <TeamTodoList 
-                    key={`team-todos-${activeTab}`}
-                    userId={user?.id} 
-                    filter="team" 
-                    refreshTrigger={refreshTrigger}
-                    onDelete={() => {
-                      console.log('팀 할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
-                      // 즉시 통계 업데이트
-                      fetchTodoStats();
-                    }}
-                  />
+                  {currentTeamSpace?.is_personal ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-center text-gray-cool-400">
+                      <div className="w-20 h-20 mb-5 rounded-full bg-gray-100 flex items-center justify-center shadow-lg shadow-gray-cool-200/20">
+                        <Users size={32} className="text-gray-cool-600" />
+                      </div>
+                      <p className="text-lg font-semibold text-gray-cool-700">No Team Space</p>
+                      <p className="text-sm text-gray-cool-400 mt-2 max-w-xs">Switch to a team space to see shared tasks</p>
+                    </div>
+                  ) : (
+                    <TeamTodoList 
+                      key={`team-todos-${activeTab}-${currentTeamSpace?.id}`}
+                      userId={user?.id} 
+                      filter="team" 
+                      refreshTrigger={refreshTrigger}
+                      currentTeamSpace={currentTeamSpace}
+                      onDelete={() => {
+                        console.log('팀 할일 삭제/상태변경 콜백 - 통계 즉시 업데이트');
+                        // 즉시 통계 업데이트
+                        fetchTodoStats();
+                      }}
+                    />
+                  )}
                 </TabsContent>
               </Tabs>
             </div>
@@ -475,11 +539,13 @@ export default function DashboardPage() {
                   </div>
                   ADD NEW TASK
                 </h2>
-                {user && (
-                  <AddTodoForm 
+                {user && currentTeamSpace && (
+                  <EnhancedAddTodoForm 
                     userId={user.id} 
+                    currentTeamSpace={currentTeamSpace}
                     onTodoAdded={() => {
                       refreshTodos();
+                      // 새 할일이 추가되면 MY 탭으로 전환
                       setActiveTab("my-todos");
                     }} 
                   />
@@ -493,7 +559,7 @@ export default function DashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
                   <BarChart3 className="w-4 h-4 text-purple-600" />
                 </div>
-                STATISTICS
+                STATISTICS - {currentTeamSpace?.name}
               </h2>
               <div className="space-y-3">
                 {/* Complete */}
