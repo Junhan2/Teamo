@@ -20,8 +20,23 @@ interface SpaceListProps {
 }
 
 export function SpaceList({ onSpaceSelect }: SpaceListProps) {
-  const { spaces, currentSpace, setCurrentSpace, userSpaces } = useSpace();
+  const context = useSpace();
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  
+  // SpaceContext가 없을 때의 폴백
+  if (!context) {
+    return <div>Loading spaces...</div>;
+  }
+  
+  const { spaces, currentSpace, switchSpace } = context;
+  
+  // userSpaces를 spaces에서 추출
+  const userSpaces = spaces.map(s => ({
+    space_id: s.id,
+    user_id: s.created_by,
+    role: s.user_role,
+    is_default: s.is_default
+  }));
 
   const handleSetDefault = async (spaceId: string) => {
     setIsLoading(spaceId);
@@ -47,18 +62,18 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
     if (onSpaceSelect) {
       onSpaceSelect(space);
     } else {
-      await setCurrentSpace(space);
+      await switchSpace(space.id);
     }
   };
 
   const getUserRole = (spaceId: string): string | null => {
-    const userSpace = userSpaces.find(us => us.space_id === spaceId);
-    return userSpace?.role || null;
+    const space = spaces.find(s => s.id === spaceId);
+    return space?.user_role || null;
   };
 
   const getDefaultSpaceId = (): string | null => {
-    const defaultSpace = userSpaces.find(us => us.is_default);
-    return defaultSpace?.space_id || null;
+    const defaultSpace = spaces.find(s => s.is_default);
+    return defaultSpace?.id || null;
   };
 
   const defaultSpaceId = getDefaultSpaceId();
@@ -66,8 +81,8 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {spaces.map((space) => {
-        const role = getUserRole(space.id);
-        const isDefault = space.id === defaultSpaceId;
+        const role = space.user_role;
+        const isDefault = space.is_default;
         const isCurrent = space.id === currentSpace?.id;
 
         return (
