@@ -5,7 +5,7 @@ import { SpaceGroupedTodos } from '@/lib/api/todos/unified'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight, Users, Lock, CheckCircle2, Clock, CircleDot } from 'lucide-react'
+import { ChevronDown, ChevronRight, Users, Lock, CheckCircle2, Clock, CircleDot, Activity } from 'lucide-react'
 import TodoItem from './TodoItem'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -75,20 +75,28 @@ export default function SpaceGroupedTodoCard({
             {/* 통계 뱃지 */}
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="bg-gray-100">
-                <CircleDot className="h-3 w-3 mr-1" />
+                <Activity className="h-3 w-3 mr-1" style={{ color: '#4D51CC' }} />
                 {stats.total}
               </Badge>
               
               {stats.completed > 0 && (
-                <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
-                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                <Badge 
+                  variant="secondary" 
+                  className="text-white font-mono font-medium border-0"
+                  style={{ backgroundColor: '#3FCF8E' }}
+                >
+                  <CheckCircle2 className="h-3 w-3 mr-1 text-white" />
                   {stats.completed}
                 </Badge>
               )}
               
               {stats.inProgress > 0 && (
-                <Badge variant="secondary" className="bg-pink-100 text-pink-700">
-                  <Clock className="h-3 w-3 mr-1" />
+                <Badge 
+                  variant="secondary" 
+                  className="text-white font-mono font-medium border-0"
+                  style={{ backgroundColor: '#FF82C2' }}
+                >
+                  <Clock className="h-3 w-3 mr-1 text-white" />
                   {stats.inProgress}
                 </Badge>
               )}

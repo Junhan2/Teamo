@@ -25,6 +25,7 @@ import {
   Loader2,
   CheckCircle2,
   Circle,
+  Activity,
   AlertCircle,
   ChevronDown,
   ChevronRight,
@@ -107,26 +108,39 @@ export function SpaceTodoList({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'done':
-        return <CheckCircle2 className="h-4 w-4 text-emerald-600" />;
+        return <CheckCircle2 className="h-4 w-4 text-white" />;
       case 'doing':
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-pink-600" />;
+        return <Clock className="h-4 w-4 text-white" />;
       case 'todo':
       default:
-        return <Circle className="h-4 w-4 text-sky-500" />;
+        return <Activity className="h-4 w-4 text-white" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'done':
-        return 'text-emerald-700 bg-emerald-100 border-emerald-300';
+        return 'text-white font-mono font-medium border-0';
       case 'doing':
       case 'in_progress':
-        return 'text-pink-700 bg-pink-100 border-pink-300';
+        return 'text-white font-mono font-medium border-0';
       case 'todo':
       default:
-        return 'text-sky-700 bg-sky-100 border-sky-300';
+        return 'text-white font-mono font-medium border-0';
+    }
+  };
+
+  const getStatusBgColor = (status: string) => {
+    switch (status) {
+      case 'done':
+        return '#3FCF8E';
+      case 'doing':
+      case 'in_progress':
+        return '#FF82C2';
+      case 'todo':
+      default:
+        return '#4D51CC';
     }
   };
 
@@ -375,10 +389,13 @@ export function SpaceTodoList({
                               <Badge 
                                 variant="outline" 
                                 className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
+                                style={{ backgroundColor: getStatusBgColor(todo.status) }}
                               >
                                 {getStatusIcon(todo.status)}
-                                <span className="ml-1 capitalize">
-                                  {todo.status.replace('_', ' ')}
+                                <span className="ml-1 capitalize font-mono">
+                                  {todo.status === 'todo' ? 'ToDo' : 
+                                   todo.status === 'in_progress' || todo.status === 'doing' ? 'Doing' : 
+                                   'Complete'}
                                 </span>
                               </Badge>
                             </Button>
@@ -388,22 +405,22 @@ export function SpaceTodoList({
                               onClick={() => handleStatusChange(todo.id, 'todo')}
                               className="flex items-center gap-2"
                             >
-                              <Circle className="h-4 w-4 text-sky-500" />
-                              To Do
+                              <Activity className="h-4 w-4" style={{ color: '#4D51CC' }} />
+                              <span className="font-mono">ToDo</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'doing')}
                               className="flex items-center gap-2"
                             >
-                              <Clock className="h-4 w-4 text-pink-600" />
-                              Doing
+                              <Clock className="h-4 w-4" style={{ color: '#FF82C2' }} />
+                              <span className="font-mono">Doing</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'done')}
                               className="flex items-center gap-2"
                             >
-                              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                              Done
+                              <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
+                              <span className="font-mono">Complete</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
