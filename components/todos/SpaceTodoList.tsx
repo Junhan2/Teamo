@@ -108,7 +108,7 @@ export function SpaceTodoList({
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'done':
+      case 'completed':
         return <CheckCircle2 className="h-4 w-4 text-white" />;
       case 'doing':
         return <Activity className="h-4 w-4 text-white" />;
@@ -120,7 +120,7 @@ export function SpaceTodoList({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'done':
+      case 'completed':
         return 'text-white font-mono font-semibold border-0';
       case 'doing':
         return 'text-white font-mono font-semibold border-0';
@@ -132,7 +132,7 @@ export function SpaceTodoList({
 
   const getStatusBgColor = (status: string) => {
     switch (status) {
-      case 'done':
+      case 'completed':
         return '#3FCF8E';
       case 'doing':
         return '#FF82C2';
@@ -268,12 +268,12 @@ export function SpaceTodoList({
             Doing
           </Button>
           <Button
-            variant={statusFilter === 'done' ? 'default' : 'outline'}
+            variant={statusFilter === 'completed' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setStatusFilter('done')}
+            onClick={() => setStatusFilter('completed')}
             className="transition-colors"
           >
-            Done
+            Completed
           </Button>
         </div>
       </div>
@@ -313,13 +313,13 @@ export function SpaceTodoList({
                     {/* Title Row */}
                     <div className="flex items-center gap-3">
                       <Checkbox
-                        checked={todo.status === 'done'}
+                        checked={todo.status === 'completed'}
                         onCheckedChange={(checked) => 
-                          handleStatusChange(todo.id, checked ? 'done' : 'todo')
+                          handleStatusChange(todo.id, checked ? 'completed' : 'todo')
                         }
                       />
                       <h3 className={`font-medium text-lg flex-1 ${
-                        todo.status === 'done' ? 'line-through text-muted-foreground' : ''
+                        todo.status === 'completed' ? 'line-through text-muted-foreground' : ''
                       }`}>
                         {todo.title}
                       </h3>
@@ -393,7 +393,7 @@ export function SpaceTodoList({
                                 <span className="ml-1 capitalize font-mono font-semibold">
                                   {todo.status === 'todo' ? 'ToDo' : 
                                    todo.status === 'doing' ? 'Doing' : 
-                                   'Complete'}
+                                   'Completed'}
                                 </span>
                               </Badge>
                             </Button>
@@ -414,11 +414,11 @@ export function SpaceTodoList({
                               <span className="font-mono font-semibold">Doing</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => handleStatusChange(todo.id, 'done')}
+                              onClick={() => handleStatusChange(todo.id, 'completed')}
                               className="flex items-center gap-2"
                             >
                               <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
-                              <span className="font-mono font-semibold">Complete</span>
+                              <span className="font-mono font-semibold">Completed</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

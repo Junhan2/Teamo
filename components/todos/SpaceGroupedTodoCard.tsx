@@ -90,14 +90,14 @@ export default function SpaceGroupedTodoCard({
                 </Badge>
               )}
               
-              {stats.inProgress > 0 && (
+              {stats.doing > 0 && (
                 <Badge 
                   variant="secondary" 
                   className="text-white font-mono font-semibold border-0"
                   style={{ backgroundColor: '#FF82C2' }}
                 >
                   <Activity className="h-3 w-3 mr-1 text-white" />
-                  {stats.inProgress}
+                  {stats.doing}
                 </Badge>
               )}
             </div>

@@ -34,7 +34,7 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
       await todosClient.updateTodo(todo.id, {
         is_completed: newCompleted,
         completed_at: newCompleted ? new Date().toISOString() : null,
-        status: newCompleted ? 'done' : 'todo' // 원래 값 유지
+        status: newCompleted ? 'completed' : 'todo' // completed <-> todo
       })
       
       toast.success(todo.is_completed ? '할일을 미완료로 변경했습니다.' : '할일을 완료했습니다.')
@@ -77,7 +77,7 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
         return <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
       case 'doing':
         return <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
-      case 'done':
+      case 'completed':
         return <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
       default:
         return null

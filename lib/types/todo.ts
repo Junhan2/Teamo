@@ -12,8 +12,8 @@ export interface TodoWithSpace extends Todo {
   } | null
 }
 
-// Todo status type
-export type TodoStatus = 'todo' | 'doing' | 'done'
+// Todo status type - only 3 values allowed
+export type TodoStatus = 'todo' | 'doing' | 'completed'
 
 // Todo priority type  
 export type TodoPriority = 'low' | 'medium' | 'high'

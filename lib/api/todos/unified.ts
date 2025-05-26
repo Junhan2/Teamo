@@ -14,8 +14,8 @@ export interface SpaceGroupedTodos {
   stats: {
     total: number
     completed: number
-    inProgress: number
-    pending: number
+    doing: number
+    todo: number
   }
 }
 
@@ -100,8 +100,8 @@ export async function getSpaceGroupedTodos(userId: string): Promise<SpaceGrouped
         stats: {
           total: spaceTodos.length,
           completed: spaceTodos.filter(t => t.status === 'completed').length,
-          inProgress: spaceTodos.filter(t => t.status === 'in_progress').length,
-          pending: spaceTodos.filter(t => t.status === 'pending').length
+          doing: spaceTodos.filter(t => t.status === 'doing').length,
+          todo: spaceTodos.filter(t => t.status === 'todo').length
         }
       }
     })
@@ -149,8 +149,8 @@ export interface UnifiedStats {
   totalSpaces: number
   totalTodos: number
   completedTodos: number
-  inProgressTodos: number
-  pendingTodos: number
+  doingTodos: number
+  todoTodos: number
   sharedTodos: number
   personalTodos: number
 }
@@ -177,8 +177,8 @@ export async function getUnifiedStats(userId: string): Promise<UnifiedStats> {
       totalSpaces: spacesCount || 0,
       totalTodos: todos?.length || 0,
       completedTodos: todos?.filter(t => t.status === 'completed').length || 0,
-      inProgressTodos: todos?.filter(t => t.status === 'in_progress').length || 0,
-      pendingTodos: todos?.filter(t => t.status === 'pending').length || 0,
+      doingTodos: todos?.filter(t => t.status === 'doing').length || 0,
+      todoTodos: todos?.filter(t => t.status === 'todo').length || 0,
       sharedTodos: todos?.filter(t => t.is_shared).length || 0,
       personalTodos: todos?.filter(t => !t.is_shared).length || 0
     }
