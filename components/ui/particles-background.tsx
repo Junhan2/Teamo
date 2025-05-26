@@ -134,25 +134,6 @@ export default function ParticlesBackground({
         
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${particle.opacity})`
         ctx.fill()
-
-        // 연결선 그리기
-        particles.forEach((otherParticle, j) => {
-          if (i !== j) {
-            const dx = particle.x - otherParticle.x
-            const dy = particle.y - otherParticle.y
-            const distance = Math.sqrt(dx * dx + dy * dy)
-            
-            if (distance < 100) {
-              ctx.beginPath()
-              ctx.moveTo(particle.x, particle.y)
-              ctx.lineTo(otherParticle.x, otherParticle.y)
-              const lineOpacity = (100 - distance) / 100 * 0.2
-              ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${lineOpacity})`
-              ctx.lineWidth = 0.5
-              ctx.stroke()
-            }
-          }
-        })
       })
 
       animationRef.current = requestAnimationFrame(animate)
