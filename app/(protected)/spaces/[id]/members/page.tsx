@@ -210,10 +210,10 @@ export default function SpaceMembersPage() {
         {/* 헤더 */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <Link href={`/spaces/${spaceId}`}>
+            <Link href={`/dashboard/space/${spaceId}`}>
               <Button variant="ghost" size="sm" className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
-                스페이스로 돌아가기
+                Back to space
               </Button>
             </Link>
           </div>

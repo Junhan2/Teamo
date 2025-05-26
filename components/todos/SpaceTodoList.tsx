@@ -27,13 +27,6 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -166,29 +159,70 @@ export function SpaceTodoList({
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4">
-        <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Tasks</SelectItem>
-            <SelectItem value="personal">Personal Only</SelectItem>
-            <SelectItem value="shared">Shared Only</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Type Filter - Left side */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+            className="transition-colors"
+          >
+            All Tasks
+          </Button>
+          <Button
+            variant={filter === 'personal' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('personal')}
+            className="transition-colors"
+          >
+            Personal
+          </Button>
+          <Button
+            variant={filter === 'shared' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('shared')}
+            className="transition-colors"
+          >
+            Team Shared
+          </Button>
+        </div>
 
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="todo">To Do</SelectItem>
-            <SelectItem value="doing">Doing</SelectItem>
-            <SelectItem value="done">Done</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Status Filter - Right side */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant={statusFilter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('all')}
+            className="transition-colors"
+          >
+            All Status
+          </Button>
+          <Button
+            variant={statusFilter === 'todo' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('todo')}
+            className="transition-colors"
+          >
+            To Do
+          </Button>
+          <Button
+            variant={statusFilter === 'doing' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('doing')}
+            className="transition-colors"
+          >
+            Doing
+          </Button>
+          <Button
+            variant={statusFilter === 'done' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setStatusFilter('done')}
+            className="transition-colors"
+          >
+            Done
+          </Button>
+        </div>
       </div>
 
       {/* Todo List */}
@@ -203,7 +237,10 @@ export function SpaceTodoList({
           <CardContent className="flex items-center justify-center py-8">
             <div className="text-center">
               <p className="text-sm text-muted-foreground">No tasks found</p>
-              <Button variant="link" className="mt-2" onClick={() => setFilter('all')}>
+              <Button variant="link" className="mt-2" onClick={() => {
+                setFilter('all');
+                setStatusFilter('all');
+              }}>
                 Clear filters
               </Button>
             </div>
@@ -237,15 +274,21 @@ export function SpaceTodoList({
                     <div className="flex items-center gap-4 mt-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Badge 
-                            variant="outline" 
-                            className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-0 h-auto hover:bg-transparent"
                           >
-                            {getStatusIcon(todo.status)}
-                            <span className="ml-1 capitalize">
-                              {todo.status.replace('_', ' ')}
-                            </span>
-                          </Badge>
+                            <Badge 
+                              variant="outline" 
+                              className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
+                            >
+                              {getStatusIcon(todo.status)}
+                              <span className="ml-1 capitalize">
+                                {todo.status.replace('_', ' ')}
+                              </span>
+                            </Badge>
+                          </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                           <DropdownMenuItem 

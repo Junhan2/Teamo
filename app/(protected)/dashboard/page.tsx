@@ -195,17 +195,9 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Recent Tasks */}
+        {/* Tasks */}
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Recent Tasks</CardTitle>
-              <Link href="/overview">
-                <Button variant="outline" size="sm">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  View All
-                </Button>
-              </Link>
+          <CardContent className="pt-6">
             </div>
           </CardHeader>
           <CardContent>
