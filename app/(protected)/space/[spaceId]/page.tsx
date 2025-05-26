@@ -57,7 +57,6 @@ export default function SpaceOverviewPage() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Load user profile
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
@@ -81,27 +80,23 @@ export default function SpaceOverviewPage() {
 
   const loadSpaceStats = async (userId: string, spaceId: string) => {
     try {
-      // Get space info
       const { data: space } = await supabase
         .from('spaces')
         .select('name')
         .eq('id', spaceId)
         .single();
 
-      // Get my todos in this space
       const { data: myTodos } = await supabase
         .from('todos')
         .select('status')
         .eq('user_id', userId)
         .eq('space_id', spaceId);
 
-      // Get all todos in this space
       const { data: allTodos } = await supabase
         .from('todos')
         .select('status')
         .eq('space_id', spaceId);
 
-      // Get team members count
       const { data: members } = await supabase
         .from('user_spaces')
         .select('user_id')
@@ -145,7 +140,6 @@ export default function SpaceOverviewPage() {
       <Navbar user={user} />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">{stats.spaceName} Overview</h1>
           <p className="text-muted-foreground mt-1">
@@ -153,9 +147,7 @@ export default function SpaceOverviewPage() {
           </p>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-          {/* My Progress */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -189,7 +181,6 @@ export default function SpaceOverviewPage() {
                 </span>
                 <span className="font-semibold text-green-600">{stats.myTodos.completed}</span>
               </div>
-              {/* Progress Bar */}
               <div className="pt-2">
                 <div className="flex justify-between text-xs text-gray-500 mb-1">
                   <span>Progress</span>
@@ -207,7 +198,6 @@ export default function SpaceOverviewPage() {
             </CardContent>
           </Card>
 
-          {/* Team Progress */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -232,7 +222,6 @@ export default function SpaceOverviewPage() {
                 <span className="text-sm text-gray-600">Complete</span>
                 <span className="font-semibold text-green-600">{stats.teamTodos.completed}</span>
               </div>
-              {/* Team Progress Bar */}
               <div className="pt-2">
                 <div className="flex justify-between text-xs text-gray-500 mb-1">
                   <span>Team Progress</span>
@@ -250,7 +239,6 @@ export default function SpaceOverviewPage() {
             </CardContent>
           </Card>
 
-          {/* Team Info */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -275,170 +263,6 @@ export default function SpaceOverviewPage() {
           </Card>
         </div>
       </main>
-    </div>
-  );
-}
-        
-        {/* Recent Activity Section */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* My Recent Tasks */}
-          <Card>
-            <CardHeader>
-              <CardTitle>My Recent Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecentTasks userId={user.id} spaceId={spaceId} />
-            </CardContent>
-          </Card>
-
-          {/* Team Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TeamActivity spaceId={spaceId} />
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-// Recent Tasks Component
-function RecentTasks({ userId, spaceId }: { userId: string; spaceId: string }) {
-  const [recentTasks, setRecentTasks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function loadRecentTasks() {
-      try {
-        const { data } = await supabase
-          .from('todos')
-          .select('id, title, status, updated_at')
-          .eq('user_id', userId)
-          .eq('space_id', spaceId)
-          .order('updated_at', { ascending: false })
-          .limit(5);
-
-        setRecentTasks(data || []);
-      } catch (error) {
-        console.error('Error loading recent tasks:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadRecentTasks();
-  }, [userId, spaceId, supabase]);
-
-  if (loading) {
-    return <div className="text-center py-4 text-sm text-gray-500">Loading...</div>;
-  }
-
-  if (recentTasks.length === 0) {
-    return <div className="text-center py-4 text-sm text-gray-500">No recent tasks</div>;
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'text-orange-600 bg-orange-100';
-      case 'in_progress': return 'text-blue-600 bg-blue-100';
-      case 'completed': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'pending': return 'Not Yet';
-      case 'in_progress': return 'Doing';
-      case 'completed': return 'Complete';
-      default: return status;
-    }
-  };
-
-  return (
-    <div className="space-y-3">
-      {recentTasks.map((task) => (
-        <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
-            <p className="text-xs text-gray-500">
-              {new Date(task.updated_at).toLocaleDateString()}
-            </p>
-          </div>
-          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(task.status)}`}>
-            {getStatusLabel(task.status)}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Team Activity Component
-function TeamActivity({ spaceId }: { spaceId: string }) {
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function loadTeamActivity() {
-      try {
-        const { data } = await supabase
-          .from('todos')
-          .select(`
-            id, 
-            title, 
-            status, 
-            updated_at,
-            profiles!inner(full_name, email)
-          `)
-          .eq('space_id', spaceId)
-          .order('updated_at', { ascending: false })
-          .limit(5);
-
-        setActivities(data || []);
-      } catch (error) {
-        console.error('Error loading team activity:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadTeamActivity();
-  }, [spaceId, supabase]);
-
-  if (loading) {
-    return <div className="text-center py-4 text-sm text-gray-500">Loading...</div>;
-  }
-
-  if (activities.length === 0) {
-    return <div className="text-center py-4 text-sm text-gray-500">No recent activity</div>;
-  }
-
-  return (
-    <div className="space-y-3">
-      {activities.map((activity) => (
-        <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-medium">
-            {activity.profiles?.full_name?.[0] || activity.profiles?.email?.[0] || 'U'}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-gray-900">
-              <span className="font-medium">{activity.profiles?.full_name || 'User'}</span>
-              {' '}updated{' '}
-              <span className="font-medium">"{activity.title}"</span>
-            </p>
-            <p className="text-xs text-gray-500">
-              {new Date(activity.updated_at).toLocaleDateString()}
-            </p>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

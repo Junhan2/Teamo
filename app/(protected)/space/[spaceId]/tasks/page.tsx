@@ -62,7 +62,6 @@ export default function SpaceTasksPage() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Load user profile
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
@@ -103,7 +102,6 @@ export default function SpaceTasksPage() {
 
   const loadTasks = async (userId: string, spaceId: string) => {
     try {
-      // Load my tasks
       const { data: myTasks } = await supabase
         .from('todos')
         .select('*')
@@ -111,7 +109,6 @@ export default function SpaceTasksPage() {
         .eq('space_id', spaceId)
         .order('created_at', { ascending: false });
 
-      // Load team tasks (all tasks in this space)
       const { data: allTasks } = await supabase
         .from('todos')
         .select(`
@@ -148,7 +145,6 @@ export default function SpaceTasksPage() {
       <Navbar user={user} />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">{spaceName} Tasks</h1>
           <p className="text-muted-foreground mt-1">
@@ -156,7 +152,6 @@ export default function SpaceTasksPage() {
           </p>
         </div>
 
-        {/* Tasks Section */}
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -209,7 +204,6 @@ export default function SpaceTasksPage() {
   );
 }
 
-// Task List Component
 function TaskList({ 
   tasks, 
   userId, 
@@ -230,9 +224,6 @@ function TaskList({
         <p className="text-gray-500">
           {isTeamView ? 'No team tasks yet' : 'No tasks yet'}
         </p>
-        <p className="text-sm text-gray-400">
-          {isTeamView ? 'Team tasks will appear here' : 'Create your first task to get started'}
-        </p>
       </div>
     );
   }
@@ -252,7 +243,6 @@ function TaskList({
   );
 }
 
-// Task Card Component (개선된 버전)
 function TaskCard({ 
   task, 
   userId, 
@@ -265,8 +255,6 @@ function TaskCard({
   isTeamView?: boolean; 
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const supabase = createClient();
 
   const getStatusColor = (status: string) => {
@@ -304,7 +292,6 @@ function TaskCard({
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this task?')) return;
     
-    setIsDeleting(true);
     try {
       const { error } = await supabase
         .from('todos')
@@ -315,22 +302,17 @@ function TaskCard({
       onTaskUpdate();
     } catch (error) {
       console.error('Error deleting task:', error);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
   return (
     <div className="border border-gray-200 rounded-lg bg-white hover:shadow-sm transition-all duration-200">
-      {/* Main content - compact height */}
       <div className="p-4">
         <div className="flex items-center justify-between">
-          {/* Left side - Title and basic info */}
           <div className="flex-1 min-w-0 mr-4">
             <div className="flex items-center gap-3">
               <h3 className="font-medium text-gray-900 truncate">{task.title}</h3>
               
-              {/* Status Badge with click to change */}
               <select
                 value={task.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
@@ -345,7 +327,6 @@ function TaskCard({
               </select>
             </div>
             
-            {/* Description toggle and meta info */}
             <div className="flex items-center gap-2 mt-1">
               {task.description && (
                 <button
@@ -369,35 +350,13 @@ function TaskCard({
             </div>
           </div>
 
-          {/* Right side - Action buttons */}
           {task.user_id === userId && (
             <div className="flex items-center gap-1">
-              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                    <Edit className="h-4 w-4 text-gray-500" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Edit Task</DialogTitle>
-                  </DialogHeader>
-                  <EditTodoForm
-                    task={task}
-                    onTaskUpdated={() => {
-                      onTaskUpdate();
-                      setIsEditDialogOpen(false);
-                    }}
-                  />
-                </DialogContent>
-              </Dialog>
-              
               <Button 
                 variant="ghost" 
                 size="sm" 
                 className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
                 onClick={handleDelete}
-                disabled={isDeleting}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -406,7 +365,6 @@ function TaskCard({
         </div>
       </div>
 
-      {/* Expandable description */}
       {task.description && isExpanded && (
         <div className="px-4 pb-4 border-t border-gray-100">
           <p className="text-sm text-gray-600 mt-3 leading-relaxed">
@@ -417,96 +375,3 @@ function TaskCard({
     </div>
   );
 }
-}
-
-// Edit Todo Form Component
-function EditTodoForm({ 
-  task, 
-  onTaskUpdated 
-}: { 
-  task: Todo; 
-  onTaskUpdated: () => void; 
-}) {
-  const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description || '');
-  const [status, setStatus] = useState(task.status);
-  const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-
-    setIsLoading(true);
-    try {
-      const { error } = await supabase
-        .from('todos')
-        .update({
-          title: title.trim(),
-          description: description.trim() || null,
-          status: status
-        })
-        .eq('id', task.id);
-
-      if (error) throw error;
-      onTaskUpdated();
-    } catch (error) {
-      console.error('Error updating task:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-          Title
-        </label>
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows={3}
-          placeholder="Optional description..."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-          Status
-        </label>
-        <select
-          id="status"
-          value={status}
-          onChange={(e) => setStatus(e.target.value as 'pending' | 'in_progress' | 'completed')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="pending">Not Yet</option>
-          <option value="in_progress">Doing</option>
-          <option value="completed">Complete</option>
-        </select>
-      </div>
-
-      <div className="flex justify-end gap-2 pt-4">
-        <Button type="submit" disabled={isLoading || !title.trim()} className="bg-blue-600 hover:bg-blue-700">
-          {isLoading ? 'Updating...' : 'Update Task'}
-        </Button>
-      </div>
-    </form>
-  );
