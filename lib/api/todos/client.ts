@@ -163,16 +163,36 @@ export const todosApi = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
+    // RLS가 이미 user_id를 체크하므로 .eq('user_id', user.id) 제거
     const { data, error } = await supabase
       .from('todos')
       .update(updates)
       .eq('id', todoId)
-      .eq('user_id', user.id)
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Todo update error:', error);
+      throw error;
+    }
     return data;
+  },
+
+  // Delete todo
+  async deleteTodo(todoId: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    // RLS가 이미 user_id를 체크하므로 .eq('user_id', user.id) 제거
+    const { error } = await supabase
+      .from('todos')
+      .delete()
+      .eq('id', todoId);
+
+    if (error) {
+      console.error('Todo delete error:', error);
+      throw error;
+    }
   },
 };
 

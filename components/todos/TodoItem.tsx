@@ -21,10 +21,10 @@ import { toast } from 'sonner'
 interface TodoItemProps {
   todo: Todo | TodoWithSpace
   onUpdate?: () => void
-  showSpace?: boolean
+  showSpaceInfo?: boolean
 }
 
-export default function TodoItem({ todo, onUpdate, showSpace = false }: TodoItemProps) {
+export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: TodoItemProps) {
   const [isUpdating, setIsUpdating] = useState(false)
 
   const handleToggleComplete = async () => {
@@ -87,7 +87,7 @@ export default function TodoItem({ todo, onUpdate, showSpace = false }: TodoItem
   return (
     <div
       className={cn(
-        "flex items-start gap-3 p-4 rounded-lg border transition-colors",
+        "flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white transition-colors",
         todo.is_completed && "bg-gray-50 opacity-60",
         isOverdue && "border-red-200 bg-red-50/30"
       )}
@@ -129,7 +129,7 @@ export default function TodoItem({ todo, onUpdate, showSpace = false }: TodoItem
                 </div>
               )}
 
-              {showSpace && 'space' in todo && todo.space && (
+              {showSpaceInfo && 'space' in todo && todo.space && (
                 <span className="text-sm text-gray-500">
                   {todo.space.name}
                 </span>
