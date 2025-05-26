@@ -44,7 +44,7 @@ export default function ParticlesBackground({
     // 파티클 생성
     const createParticles = () => {
       const particles = []
-      const particleCount = 400      
+      const particleCount = 300      
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
