@@ -53,7 +53,7 @@ export default function LoginPage() {
         mouseInteraction={true}
         particleTransparency={true}
         baseSize={100}
-        spread={10}
+        spread={2}
         speed={0.1}
         className="opacity-40"
       />
