@@ -105,7 +105,7 @@ export default function AddTodoForm({ userId, spaceId, onTodoAdded, showSpaceSel
         title,
         description: description || null,
         due_date: dueDate.toISOString(), // null 옵션 제거
-        status: 'pending',
+        status: 'todo', // 기본 상태를 'todo'로 변경
         user_id: userId,
         team_id: teamId,
         space_id: selectedSpaceId || null, // 선택된 스페이스 사용

@@ -34,7 +34,7 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
       await todosClient.updateTodo(todo.id, {
         is_completed: newCompleted,
         completed_at: newCompleted ? new Date().toISOString() : null,
-        status: newCompleted ? 'done' : 'todo' // status도 함께 업데이트
+        status: newCompleted ? 'done' : 'todo' // 원래 값 유지
       })
       
       toast.success(todo.is_completed ? '할일을 미완료로 변경했습니다.' : '할일을 완료했습니다.')
