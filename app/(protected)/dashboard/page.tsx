@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
       // Get spaces count
       const { data: spaces } = await supabase
-        .from('space_members')
+        .from('user_spaces')
         .select('space_id')
         .eq('user_id', userId);
 
@@ -295,7 +295,7 @@ function SpacesList({ userId }: { userId: string }) {
     async function loadSpaces() {
       try {
         const { data } = await supabase
-          .from('space_members')
+          .from('user_spaces')
           .select(`
             space:spaces(
               id,

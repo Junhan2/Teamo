@@ -97,7 +97,7 @@ export default function SpaceDashboardPage() {
 
         // Check if user is member of this space
         const { data: membership } = await supabase
-          .from('space_members')
+          .from('user_spaces')
           .select('*')
           .eq('space_id', spaceId)
           .eq('user_id', user.id)
@@ -110,7 +110,7 @@ export default function SpaceDashboardPage() {
 
         // Load space members
         const { data: membersData } = await supabase
-          .from('space_members')
+          .from('user_spaces')
           .select(`
             user_id,
             role,
