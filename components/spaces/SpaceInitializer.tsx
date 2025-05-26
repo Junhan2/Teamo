@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSpace } from '@/contexts/SpaceContext';
-import { Loader2 } from 'lucide-react';
+import { UnifiedSpinner } from '@/components/ui/UnifiedSpinner';
 
 export function SpaceInitializer({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -28,8 +28,8 @@ export function SpaceInitializer({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <UnifiedSpinner size="lg" />
       </div>
     );
   }
@@ -37,8 +37,8 @@ export function SpaceInitializer({ children }: { children: React.ReactNode }) {
   // If no current space, show loading while redirecting
   if (!currentSpace) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <UnifiedSpinner size="lg" />
       </div>
     );
   }

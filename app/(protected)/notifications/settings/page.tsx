@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, ArrowLeft, Bell, Calendar, MessageSquare, Users, UserPlus, CheckCircle, Volume2, VolumeX, Monitor } from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, MessageSquare, Users, UserPlus, CheckCircle, Volume2, VolumeX, Monitor } from 'lucide-react';
+import { InlineSpinner } from '@/components/ui/UnifiedSpinner';
 import { useNotificationPreferences } from '@/lib/hooks/useNotificationPreferences';
 import { toast } from 'sonner';
 import EmailSettings from './email-settings';
@@ -168,7 +169,7 @@ export default function NotificationSettingsPage() {
     return (
       <div className="container max-w-2xl mx-auto py-6 px-4">
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <InlineSpinner className="w-8 h-8" />
         </div>
       </div>
     );
@@ -363,7 +364,7 @@ export default function NotificationSettingsPage() {
         >
           {saving ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <InlineSpinner className="w-4 h-4 mr-2" />
               저장 중...
             </>
           ) : (

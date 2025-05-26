@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { motion, AnimatePresence } from "framer-motion"
 import { Users, ChevronDown, Check } from "lucide-react"
-import { toast } from "sonner"
+import { InlineSpinner } from "@/components/ui/UnifiedSpinner"
 
 interface TeamMember {
   id: string
@@ -202,7 +202,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
     return (
       <div className="bg-[#fcfcfc] rounded-xl shadow-md border border-[rgba(0,0,0,0.20)] p-4">
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-500"></div>
+          <InlineSpinner className="w-6 h-6" />
         </div>
       </div>
     )
@@ -304,7 +304,7 @@ const TeamMemberSubscription = ({ userId, onSubscriptionChange }: TeamMemberSubs
                   >
                     {saving ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <InlineSpinner className="w-4 h-4" />
                         Saving...
                       </div>
                     ) : (

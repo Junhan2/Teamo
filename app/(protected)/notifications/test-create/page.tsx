@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { InlineSpinner } from '@/components/ui/UnifiedSpinner';
 import { toast } from 'sonner';
 import type { NotificationType } from '@/lib/types/notifications';
 
@@ -133,7 +134,7 @@ export default function NotificationTestPage() {
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <InlineSpinner className="w-4 h-4 mr-2" />
                 생성 중...
               </>
             ) : (

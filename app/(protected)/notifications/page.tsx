@@ -7,10 +7,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { InlineSpinner } from '@/components/ui/UnifiedSpinner';
 import { 
   Check, 
   Archive, 
-  Loader2, 
   Calendar,
   MessageSquare,
   Users,
@@ -150,7 +150,7 @@ export default function NotificationsPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <InlineSpinner className="w-8 h-8" />
       </div>
     );
   }
