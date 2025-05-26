@@ -122,3 +122,55 @@ export function useSpace() {
   }
   return context;
 }
+    // 현재 스페이스도 업데이트
+    const newDefaultSpace = updatedSpaces.find(s => s.id === spaceId);
+    if (newDefaultSpace) {
+      setCurrentSpace(newDefaultSpace);
+    }
+  }, [spaces]);
+
+  // 새 스페이스 추가 (즉시 목록에 반영)
+  const addSpace = useCallback((space: SpaceWithRole) => {
+    setSpaces(prevSpaces => [...prevSpaces, space]);
+    
+    // 첫 번째 스페이스이거나 현재 스페이스가 없으면 현재 스페이스로 설정
+    if (spaces.length === 0 || !currentSpace) {
+      setCurrentSpace(space);
+    }
+  }, [spaces.length, currentSpace]);
+
+  // 스페이스 목록 새로고침
+  const refreshSpaces = useCallback(async () => {
+    setIsLoading(true);
+    await loadSpaces();
+  }, [loadSpaces]);
+
+  useEffect(() => {
+    loadSpaces();
+  }, [loadSpaces]);
+
+  return (
+    <SpaceContext.Provider
+      value={{
+        currentSpace,
+        spaces,
+        isLoading,
+        switchSpace,
+        refreshSpaces,
+        setDefaultSpace,
+        updateSpaceDefault,
+        addSpace,
+      }}
+    >
+      {children}
+    </SpaceContext.Provider>
+  );
+}
+
+export function useSpace() {
+  const context = useContext(SpaceContext);
+  if (!context) {
+    throw new Error('useSpace must be used within a SpaceProvider');
+  }
+  return context;
+}

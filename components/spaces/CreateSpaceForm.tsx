@@ -62,7 +62,7 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
         onSuccess();
       } else {
         // 새로 생성된 스페이스로 리다이렉트
-        router.push(`/space/${space.id}`);
+        router.push(`/dashboard/space/${space.id}`);
       }
     } catch (error) {
       console.error('Error creating space:', error);

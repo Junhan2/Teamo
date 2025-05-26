@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
-import { Star, Users, LogIn } from 'lucide-react';
+import { Star, Users, LogIn, Crown } from 'lucide-react';
 import Link from 'next/link';
 
 type Space = Database['public']['Tables']['spaces']['Row'];
@@ -29,32 +29,28 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
   }
   
   const { spaces, currentSpace, switchSpace } = context;
-  
-  // userSpaces를 spaces에서 추출
-  const userSpaces = spaces.map(s => ({
-    space_id: s.id,
-    user_id: s.created_by,
-    role: s.user_role,
-    is_default: s.is_default
-  }));
 
   const handleSetDefault = async (spaceId: string) => {
-    setIsLoading(spaceId);
+    // 낙관적 업데이트 - UI를 즉시 업데이트
+    context.updateSpaceDefault(spaceId);
+    
+    toast({
+      title: 'Success',
+      description: 'Default space updated',
+    });
+    
     try {
+      // 백그라운드에서 서버 업데이트
       await context.setDefaultSpace(spaceId);
-      toast({
-        title: 'Success',
-        description: 'Default space updated',
-      });
     } catch (error) {
       console.error('Error setting default space:', error);
+      // 실패시 롤백
+      context.refreshSpaces();
       toast({
         title: 'Error',
-        description: 'Failed to set default space',
+        description: 'Failed to set default space. Changes reverted.',
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(null);
     }
   };
 
@@ -65,18 +61,6 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
       await switchSpace(space.id);
     }
   };
-
-  const getUserRole = (spaceId: string): string | null => {
-    const space = spaces.find(s => s.id === spaceId);
-    return space?.user_role || null;
-  };
-
-  const getDefaultSpaceId = (): string | null => {
-    const defaultSpace = spaces.find(s => s.is_default);
-    return defaultSpace?.id || null;
-  };
-
-  const defaultSpaceId = getDefaultSpaceId();
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -94,6 +78,9 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                     {space.name}
                     {isDefault && (
                       <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    )}
+                    {role === 'owner' && (
+                      <Crown className="h-4 w-4 text-amber-600" />
                     )}
                   </CardTitle>
                   {space.description && (
