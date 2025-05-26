@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { InlineSpinner } from "@/components/ui/loading"
-import { DiagonalSquares } from "@/components/ui/diagonal-squares"
+import ParticlesBackground from "@/components/ui/particles-background"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -49,19 +49,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-white relative overflow-hidden">
-      {/* Diagonal Squares Background */}
-      <div className="absolute inset-0 z-0">
-        <DiagonalSquares 
-          squareSize={50}
-          borderColor="rgba(156, 163, 175, 0.15)"
-          hoverColor="rgba(59, 130, 246, 0.08)"
-          transitionSpeed={300}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-gray-50/30"></div>
-      </div>
+    <div className="flex min-h-screen items-center justify-center p-4 bg-gray-900 relative overflow-hidden">
+      {/* Particles Background */}
+      <ParticlesBackground 
+        color="#ffffff"
+        mouseInteraction={true}
+        particleTransparency={true}
+        baseSize={200}
+        spread={10}
+        speed={0.1}
+        className="opacity-40"
+      />
       
-      <div className="container relative z-10 max-w-md">
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900/70 via-gray-800/50 to-gray-900/70 z-10"></div>
+      
+      <div className="container relative z-20 max-w-md">
         <div 
           className="text-center mb-10 animate-fadeIn"
         >
@@ -77,7 +80,7 @@ export default function LoginPage() {
             
             {/* Title */}
             <h1 
-              className="text-5xl font-bold text-gray-cool-800 mb-3"
+              className="text-5xl font-bold text-white mb-3"
               style={{
                 fontFamily: "var(--font-dm-sans)",
                 letterSpacing: "-0.02em"
@@ -86,7 +89,7 @@ export default function LoginPage() {
               Teamo
             </h1>
             <p 
-              className="text-gray-cool-600 text-lg"
+              className="text-gray-300 text-lg"
               style={{
                 fontFamily: "var(--font-dm-sans)"
               }}
@@ -97,7 +100,7 @@ export default function LoginPage() {
         </div>
         
         <div className="animate-fadeIn">
-          <Card className="bg-white/90 backdrop-blur-sm border-gray-cool-100 shadow-2xl rounded-2xl overflow-hidden">
+          <Card className="bg-white/95 backdrop-blur-lg border-white/20 shadow-2xl rounded-2xl overflow-hidden">
             <CardContent className="px-8 pt-8 pb-6">
               {error && (
                 <div className="p-4 rounded-xl bg-red-50 text-red-600 border border-red-200 text-sm mb-4 animate-fadeIn">
@@ -108,7 +111,7 @@ export default function LoginPage() {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full h-14 bg-white text-neutral-900 hover:bg-gray-cool-50 text-base font-normal outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-3"
+                className="w-full h-14 bg-white/90 text-neutral-900 hover:bg-white text-base font-normal outline outline-1 outline-offset-[-1px] outline-black/20 rounded-md transition-all duration-200 flex items-center justify-center gap-3 backdrop-blur-sm"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -147,8 +150,8 @@ export default function LoginPage() {
               </Button>
               
             </CardContent>
-            <CardFooter className="bg-gray-cool-50/50 px-8 py-3 text-center border-t border-gray-cool-100/50">
-              <p className="text-xs text-gray-cool-500 w-full" style={{ fontFamily: "var(--font-dm-sans)" }}>
+            <CardFooter className="bg-white/50 backdrop-blur-sm px-8 py-3 text-center border-t border-gray-200/50">
+              <p className="text-xs text-gray-600 w-full" style={{ fontFamily: "var(--font-dm-sans)" }}>
                 By signing in, you agree to our Terms of Service and Privacy Policy.
               </p>
             </CardFooter>
@@ -157,7 +160,7 @@ export default function LoginPage() {
         
         <div className="mt-8 text-center animate-fadeIn">
           <p 
-            className="text-xs text-gray-cool-400"
+            className="text-xs text-gray-400"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             © 2025 Tide. All rights reserved.
