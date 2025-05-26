@@ -13,6 +13,7 @@ interface SpaceContextType {
   switchSpace: (spaceId: string) => Promise<void>;
   refreshSpaces: () => Promise<void>;
   setDefaultSpace: (spaceId: string) => Promise<void>;
+  updateSpaceDefault: (spaceId: string) => void;
   addSpace: (space: SpaceWithRole) => void;
 }
 
@@ -44,6 +45,7 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   }, []);
+
   // 스페이스 전환
   const switchSpace = useCallback(async (spaceId: string) => {
     const space = spaces.find(s => s.id === spaceId);
@@ -55,7 +57,7 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [spaces, router]);
 
-  // 기본 스페이스 설정
+  // 기본 스페이스 설정 (서버와 동기화)
   const setDefaultSpace = useCallback(async (spaceId: string) => {
     try {
       await spacesClient.setDefaultSpace(spaceId);
@@ -78,50 +80,14 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
     }
   }, [spaces]);
 
-  // 새 스페이스 추가 (즉시 목록에 반영)
-  const addSpace = useCallback((space: SpaceWithRole) => {
-    setSpaces(prevSpaces => [...prevSpaces, space]);
+  // 낙관적 업데이트용 함수 (UI만 즉시 업데이트)
+  const updateSpaceDefault = useCallback((spaceId: string) => {
+    const updatedSpaces = spaces.map(space => ({
+      ...space,
+      is_default: space.id === spaceId
+    }));
+    setSpaces(updatedSpaces);
     
-    // 첫 번째 스페이스이거나 현재 스페이스가 없으면 현재 스페이스로 설정
-    if (spaces.length === 0 || !currentSpace) {
-      setCurrentSpace(space);
-    }
-  }, [spaces.length, currentSpace]);
-
-  // 스페이스 목록 새로고침
-  const refreshSpaces = useCallback(async () => {
-    setIsLoading(true);
-    await loadSpaces();
-  }, [loadSpaces]);
-
-  useEffect(() => {
-    loadSpaces();
-  }, [loadSpaces]);
-
-  return (
-    <SpaceContext.Provider
-      value={{
-        currentSpace,
-        spaces,
-        isLoading,
-        switchSpace,
-        refreshSpaces,
-        setDefaultSpace,
-        addSpace,
-      }}
-    >
-      {children}
-    </SpaceContext.Provider>
-  );
-}
-
-export function useSpace() {
-  const context = useContext(SpaceContext);
-  if (!context) {
-    throw new Error('useSpace must be used within a SpaceProvider');
-  }
-  return context;
-}
     // 현재 스페이스도 업데이트
     const newDefaultSpace = updatedSpaces.find(s => s.id === spaceId);
     if (newDefaultSpace) {
