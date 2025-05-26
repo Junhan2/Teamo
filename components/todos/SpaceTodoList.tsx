@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import AddTodoForm from '@/components/AddTodoForm';
 import { todosApi } from '@/lib/api/todos/client';
 import { Database } from '@/types/supabase';
 import {
@@ -49,6 +51,7 @@ export function SpaceTodoList({
   const { currentSpace } = useSpace();
   const [filter, setFilter] = useState<'all' | 'personal' | 'shared'>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   
   const { todos, isLoading, error, toggleSharing, refresh } = useTodos({
     teamId,
@@ -71,6 +74,11 @@ export function SpaceTodoList({
         variant: 'destructive',
       });
     }
+  };
+
+  const handleTodoAdded = () => {
+    setIsAddDialogOpen(false);
+    refresh();
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -122,10 +130,26 @@ export function SpaceTodoList({
           <h2 className="text-2xl font-semibold">Tasks</h2>
           {showSpaceInfo && <SpaceInfo />}
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Task
-        </Button>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Add New Task</DialogTitle>
+            </DialogHeader>
+            {userId && (
+              <AddTodoForm 
+                userId={userId} 
+                spaceId={currentSpace?.id}
+                onTodoAdded={handleTodoAdded}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Filters */}
