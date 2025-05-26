@@ -37,6 +37,8 @@ export default function ParticlesBackground({
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
+      // 화면 크기 변경 시 파티클 재생성
+      particlesRef.current = createParticles()
     }
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
@@ -44,7 +46,19 @@ export default function ParticlesBackground({
     // 파티클 생성
     const createParticles = () => {
       const particles = []
-      const particleCount = 300      
+      // 화면 크기에 따라 파티클 개수 동적 조정
+      const screenArea = canvas.width * canvas.height
+      const baseArea = 1920 * 1080 // 기준 해상도 (Full HD)
+      let densityFactor = Math.sqrt(screenArea / baseArea)
+      
+      // 모바일/태블릿에서 추가 최적화
+      if (canvas.width <= 768) {
+        densityFactor *= 0.7 // 모바일에서 30% 감소
+      } else if (canvas.width <= 1024) {
+        densityFactor *= 0.85 // 태블릿에서 15% 감소
+      }
+      
+      const particleCount = Math.max(30, Math.floor(300 * densityFactor)) // 모바일에서 최소 30개      
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
