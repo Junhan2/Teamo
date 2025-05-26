@@ -99,7 +99,7 @@ export default function LoginPage() {
         
         <div className="animate-fadeIn">
           <Card className="bg-white/90 backdrop-blur-sm border-gray-cool-100 shadow-2xl rounded-2xl overflow-hidden">
-            <CardContent className="p-8">
+            <CardContent className="px-8 pt-8 pb-6">
               {error && (
                 <div className="p-4 rounded-xl bg-red-50 text-red-600 border border-red-200 text-sm mb-4 animate-fadeIn">
                   {error}
@@ -148,7 +148,7 @@ export default function LoginPage() {
               </Button>
               
             </CardContent>
-            <CardFooter className="bg-gray-cool-50/50 px-8 py-4 text-center">
+            <CardFooter className="bg-gray-cool-50/50 px-8 py-3 text-center border-t border-gray-cool-100/50">
               <p className="text-xs text-gray-cool-500 w-full" style={{ fontFamily: "var(--font-dm-sans)" }}>
                 By signing in, you agree to our Terms of Service and Privacy Policy.
               </p>
