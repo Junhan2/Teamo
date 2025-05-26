@@ -36,6 +36,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { format, differenceInDays } from 'date-fns';
 
@@ -213,8 +214,8 @@ export function SpaceTodoList({
 
       {/* Filters */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        {/* Type Filter - Left side */}
-        <div className="flex items-center gap-2">
+        {/* Desktop Filters - Hidden on mobile */}
+        <div className="hidden md:flex items-center gap-2">
           <Button
             variant={filter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -241,8 +242,7 @@ export function SpaceTodoList({
           </Button>
         </div>
 
-        {/* Status Filter - Right side */}
-        <div className="flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <Button
             variant={statusFilter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -275,6 +275,91 @@ export function SpaceTodoList({
           >
             Completed
           </Button>
+        </div>
+
+        {/* Mobile Filters - Dropdown format */}
+        <div className="flex md:hidden items-center gap-2 w-full">
+          {/* Type Filter Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex-1 justify-between">
+                <span className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  {filter === 'all' ? 'All Tasks' : 
+                   filter === 'personal' ? 'Personal' : 'Team Shared'}
+                </span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem onClick={() => setFilter('all')}>
+                <div className="flex items-center gap-2">
+                  {filter === 'all' && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                  <span className={filter === 'all' ? 'font-medium' : ''}>All Tasks</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilter('personal')}>
+                <div className="flex items-center gap-2">
+                  {filter === 'personal' && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                  <span className={filter === 'personal' ? 'font-medium' : ''}>Personal</span>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilter('shared')}>
+                <div className="flex items-center gap-2">
+                  {filter === 'shared' && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                  <span className={filter === 'shared' ? 'font-medium' : ''}>Team Shared</span>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Status Filter Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex-1 justify-between">
+                <span className="flex items-center gap-2">
+                  {statusFilter === 'all' && <Filter className="h-4 w-4" />}
+                  {statusFilter === 'todo' && <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />}
+                  {statusFilter === 'doing' && <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />}
+                  {statusFilter === 'completed' && <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />}
+                  {statusFilter === 'all' ? 'All Status' :
+                   statusFilter === 'todo' ? 'To Do' :
+                   statusFilter === 'doing' ? 'Doing' : 'Completed'}
+                </span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setStatusFilter('all')}>
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  <span className={statusFilter === 'all' ? 'font-medium' : ''}>All Status</span>
+                  {statusFilter === 'all' && <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('todo')}>
+                <div className="flex items-center gap-2">
+                  <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
+                  <span className={statusFilter === 'todo' ? 'font-medium' : ''}>To Do</span>
+                  {statusFilter === 'todo' && <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('doing')}>
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
+                  <span className={statusFilter === 'doing' ? 'font-medium' : ''}>Doing</span>
+                  {statusFilter === 'doing' && <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('completed')}>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
+                  <span className={statusFilter === 'completed' ? 'font-medium' : ''}>Completed</span>
+                  {statusFilter === 'completed' && <CheckCircle2 className="h-4 w-4 text-primary ml-auto" />}
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
