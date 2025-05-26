@@ -198,9 +198,6 @@ export default function DashboardPage() {
         {/* Tasks */}
         <Card>
           <CardContent className="pt-6">
-            </div>
-          </CardHeader>
-          <CardContent>
             <SpaceTodoList 
               userId={user.id}
               showSpaceInfo={true}
