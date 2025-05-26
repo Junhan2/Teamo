@@ -33,6 +33,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 
 type Todo = Database['public']['Tables']['todos']['Row'];
@@ -41,6 +47,7 @@ interface SpaceTodoListProps {
   teamId?: string;
   userId?: string;
   showSpaceInfo?: boolean;
+  showSpaceSelector?: boolean;
   limit?: number;
 }
 
@@ -48,6 +55,7 @@ export function SpaceTodoList({
   teamId, 
   userId, 
   showSpaceInfo = true,
+  showSpaceSelector = false,
   limit 
 }: SpaceTodoListProps) {
   const { currentSpace } = useSpace();
@@ -93,6 +101,7 @@ export function SpaceTodoList({
     switch (status) {
       case 'done':
         return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+      case 'doing':
       case 'in_progress':
         return <Clock className="h-4 w-4 text-blue-600" />;
       default:
@@ -104,6 +113,7 @@ export function SpaceTodoList({
     switch (status) {
       case 'done':
         return 'text-green-600 bg-green-50';
+      case 'doing':
       case 'in_progress':
         return 'text-blue-600 bg-blue-50';
       default:
@@ -148,6 +158,7 @@ export function SpaceTodoList({
                 userId={userId} 
                 spaceId={currentSpace?.id}
                 onTodoAdded={handleTodoAdded}
+                showSpaceSelector={showSpaceSelector}
               />
             )}
           </DialogContent>
@@ -174,7 +185,7 @@ export function SpaceTodoList({
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="todo">To Do</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
+            <SelectItem value="doing">Doing</SelectItem>
             <SelectItem value="done">Done</SelectItem>
           </SelectContent>
         </Select>
@@ -224,12 +235,42 @@ export function SpaceTodoList({
                     )}
                     
                     <div className="flex items-center gap-4 mt-2">
-                      <Badge variant="outline" className={getStatusColor(todo.status)}>
-                        {getStatusIcon(todo.status)}
-                        <span className="ml-1 capitalize">
-                          {todo.status.replace('_', ' ')}
-                        </span>
-                      </Badge>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Badge 
+                            variant="outline" 
+                            className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
+                          >
+                            {getStatusIcon(todo.status)}
+                            <span className="ml-1 capitalize">
+                              {todo.status.replace('_', ' ')}
+                            </span>
+                          </Badge>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusChange(todo.id, 'todo')}
+                            className="flex items-center gap-2"
+                          >
+                            <Circle className="h-4 w-4 text-gray-400" />
+                            To Do
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusChange(todo.id, 'doing')}
+                            className="flex items-center gap-2"
+                          >
+                            <Clock className="h-4 w-4 text-blue-600" />
+                            Doing
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusChange(todo.id, 'done')}
+                            className="flex items-center gap-2"
+                          >
+                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            Done
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       
                       {todo.due_date && (
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">

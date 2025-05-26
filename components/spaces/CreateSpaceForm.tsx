@@ -45,11 +45,13 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
       });
 
       // 새로 생성된 스페이스를 즉시 목록에 추가
-      addSpace({
+      const newSpaceWithRole = {
         ...space,
         user_role: 'owner', // 생성자는 owner
         is_default: false   // 새 스페이스는 기본값이 아님
-      });
+      };
+      
+      addSpace(newSpaceWithRole);
 
       toast({
         title: 'Success',
@@ -59,8 +61,8 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
       if (onSuccess) {
         onSuccess();
       } else {
-        // 대시보드로 리다이렉트
-        router.push('/dashboard');
+        // 새로 생성된 스페이스로 리다이렉트
+        router.push(`/space/${space.id}`);
       }
     } catch (error) {
       console.error('Error creating space:', error);

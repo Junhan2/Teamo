@@ -269,6 +269,7 @@ export default function OverviewPage() {
                 <SpaceTodoList 
                   userId={user.id}
                   showSpaceInfo={true}
+                  showSpaceSelector={true}
                 />
               </TabsContent>
               

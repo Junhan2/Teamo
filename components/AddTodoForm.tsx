@@ -2,14 +2,16 @@
 
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { useSpace } from "@/contexts/SpaceContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarIcon, Plus, Share2, Lock } from "lucide-react"
+import { CalendarIcon, Plus, Share2, Lock, Building2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { InlineSpinner } from "@/components/ui/loading"
 import { Switch } from "@/components/ui/switch"
@@ -18,18 +20,21 @@ interface AddTodoFormProps {
   userId: string
   spaceId?: string
   onTodoAdded?: () => void
+  showSpaceSelector?: boolean // 스페이스 선택기 표시 여부
 }
 
-export default function AddTodoForm({ userId, spaceId, onTodoAdded }: AddTodoFormProps) {
+export default function AddTodoForm({ userId, spaceId, onTodoAdded, showSpaceSelector = false }: AddTodoFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [dueDate, setDueDate] = useState<Date | undefined>()
+  const [selectedSpaceId, setSelectedSpaceId] = useState<string | undefined>(spaceId)
   const [isShared, setIsShared] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   
   const supabase = createClient()
+  const { spaces } = useSpace() // 스페이스 목록 가져오기
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,7 +108,7 @@ export default function AddTodoForm({ userId, spaceId, onTodoAdded }: AddTodoFor
         status: 'pending',
         user_id: userId,
         team_id: teamId,
-        space_id: spaceId || null,
+        space_id: selectedSpaceId || null, // 선택된 스페이스 사용
         is_shared: isShared  // 공유 여부 추가
       }
       
@@ -183,6 +188,36 @@ export default function AddTodoForm({ userId, spaceId, onTodoAdded }: AddTodoFor
           className="w-full px-4 py-3 text-base bg-white border-gray-cool-200 hover:border-gray-cool-300 focus:border-sky-500 transition-colors resize-none"
         />
       </div>
+
+      {/* Space selector - only show when showSpaceSelector is true */}
+      {showSpaceSelector && spaces.length > 0 && (
+        <div className="relative">
+          <Select value={selectedSpaceId || ""} onValueChange={(value) => setSelectedSpaceId(value || undefined)}>
+            <SelectTrigger className="w-full h-12 bg-white border-gray-cool-200 hover:border-gray-cool-300 focus:border-sky-500 transition-colors">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-gray-cool-500" />
+                <SelectValue placeholder="Select a space (optional)" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                  <span>No space (personal task)</span>
+                </div>
+              </SelectItem>
+              {spaces.map((space) => (
+                <SelectItem key={space.id} value={space.id}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span>{space.name}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
       
       {/* Due date input with special styling */}
       <div className="relative">
