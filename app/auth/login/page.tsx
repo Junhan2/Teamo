@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { InlineSpinner } from "@/components/ui/loading"
+import { DiagonalSquares } from "@/components/ui/diagonal-squares"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -48,18 +49,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-gradient-to-br from-gray-cool-25 via-gray-cool-50 to-gray-cool-100/30 relative overflow-hidden">
-      {/* Grid pattern background */}
+    <div className="flex min-h-screen items-center justify-center p-4 bg-white relative overflow-hidden">
+      {/* Diagonal Squares Background */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
-            backgroundSize: '20px 20px'
-          }}
+        <DiagonalSquares 
+          squareSize={50}
+          borderColor="rgba(156, 163, 175, 0.15)"
+          hoverColor="rgba(59, 130, 246, 0.08)"
+          transitionSpeed={300}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-100/20 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-gray-cool-50/50 to-sky-50/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-gray-50/30"></div>
       </div>
       
       <div className="container relative z-10 max-w-md">
