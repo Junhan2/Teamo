@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Todo, TodoWithSpace } from '@/lib/types/todo'
+import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Calendar, Clock, MoreHorizontal, Edit2, Trash2, CheckCircle2, CircleDot, Activity, ListTodo } from 'lucide-react'
@@ -74,13 +75,38 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
   const getStatusIcon = () => {
     switch (todo.status) {
       case 'todo':
-        return <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
+        return <ListTodo className="h-4 w-4 text-white" />
       case 'doing':
-        return <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
+        return <Activity className="h-4 w-4 text-white" />
       case 'completed':
-        return <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
+        return <CheckCircle2 className="h-4 w-4 text-white" />
       default:
         return null
+    }
+  }
+
+  const getStatusBgColor = () => {
+    switch (todo.status) {
+      case 'completed':
+        return '#3FCF8E'
+      case 'doing':
+        return '#FF82C2'
+      case 'todo':
+      default:
+        return '#4D51CC'
+    }
+  }
+
+  const getStatusText = () => {
+    switch (todo.status) {
+      case 'todo':
+        return 'ToDo'
+      case 'doing':
+        return 'Doing'
+      case 'completed':
+        return 'Completed'
+      default:
+        return 'ToDo'
     }
   }
 
@@ -120,7 +146,18 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
 
             <div className="flex items-center gap-4 mt-2">
               {getPriorityIcon()}
-              {getStatusIcon()}
+              
+              {/* Status Badge - matching SpaceTodoList design */}
+              <Badge 
+                variant="outline" 
+                className="text-white font-mono font-semibold border-0 cursor-default"
+                style={{ backgroundColor: getStatusBgColor() }}
+              >
+                {getStatusIcon()}
+                <span className="ml-1">
+                  {getStatusText()}
+                </span>
+              </Badge>
               
               {todo.due_date && (
                 <div className={cn(
