@@ -41,12 +41,14 @@ interface SpaceTodoListProps {
   teamId?: string;
   userId?: string;
   showSpaceInfo?: boolean;
+  limit?: number;
 }
 
 export function SpaceTodoList({ 
   teamId, 
   userId, 
-  showSpaceInfo = true 
+  showSpaceInfo = true,
+  limit 
 }: SpaceTodoListProps) {
   const { currentSpace } = useSpace();
   const [filter, setFilter] = useState<'all' | 'personal' | 'shared'>('all');
@@ -85,7 +87,7 @@ export function SpaceTodoList({
     if (userId && todo.user_id !== userId) return false;
     if (statusFilter !== 'all' && todo.status !== statusFilter) return false;
     return true;
-  });
+  }).slice(0, limit);
 
   const getStatusIcon = (status: string) => {
     switch (status) {

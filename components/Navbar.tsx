@@ -4,7 +4,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { LogOut, User, Plus, Calendar, CheckSquare, Database } from "lucide-react"
+import { LogOut, User, Plus, Calendar, CheckSquare, Database, BarChart3 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +52,30 @@ export default function Navbar({ user }: NavbarProps) {
           </Link>
 
           <div className="flex items-center gap-4">
+            {/* Navigation Links */}
+            {user && (
+              <nav className="hidden md:flex items-center gap-2">
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/overview">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Overview
+                  </Button>
+                </Link>
+                <Link href="/spaces">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                    <Database className="h-4 w-4 mr-2" />
+                    Spaces
+                  </Button>
+                </Link>
+              </nav>
+            )}
+            
             {/* Space Selector */}
             {user && <SpaceSelector />}
             

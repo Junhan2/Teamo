@@ -55,8 +55,13 @@ export async function getSpaceGroupedTodos(userId: string): Promise<SpaceGrouped
     const { data: memberSpaces, error: spacesError } = await supabase
       .from('user_spaces')
       .select(`
-        *,
-        space:spaces(*)
+        space_id,
+        spaces!inner(
+          id,
+          name,
+          description,
+          type
+        )
       `)
       .eq('user_id', userId)
 
@@ -70,7 +75,7 @@ export async function getSpaceGroupedTodos(userId: string): Promise<SpaceGrouped
     }
 
     // 2. 각 스페이스별로 할일 가져오기
-    const spaceIds = memberSpaces.map(ms => ms.space.id)
+    const spaceIds = memberSpaces.map(ms => ms.spaces.id)
     
     const { data: todos, error: todosError } = await supabase
       .from('todos')
@@ -86,7 +91,7 @@ export async function getSpaceGroupedTodos(userId: string): Promise<SpaceGrouped
 
     // 3. 스페이스별로 그룹핑
     const groupedData: SpaceGroupedTodos[] = memberSpaces.map(ms => {
-      const space = ms.space
+      const space = ms.spaces
       const spaceTodos = todos?.filter(todo => todo.space_id === space.id) || []
       
       return {

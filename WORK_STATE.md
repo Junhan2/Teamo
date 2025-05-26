@@ -1,41 +1,59 @@
 # 작업 상태 기록
 
-## ✅ Dashboard 404 오류 해결 완료!
+## ✅ Add Task 버튼 기능 구현 완료!
 
 ### 문제 분석
-- **오류**: `GET https://zxjmtfyjxonkqhcpuimx.supabase.co/rest/v1/space_members 404 (Not Found)`
-- **원인**: 코드에서 `space_members` 테이블을 참조했지만, 실제 DB에는 `user_spaces` 테이블이 존재
+- **문제**: + Add Task 버튼 클릭 시 아무 반응 없음
+- **원인**: SpaceTodoList 컴포넌트의 Add Task 버튼에 onClick 핸들러가 없었음
 
-### 해결된 문제
-1. **Dashboard 메인 페이지**: `space_members` → `user_spaces` 수정
-2. **Space 상세 페이지**: `space_members` → `user_spaces` 수정
-3. **멤버십 체크**: 올바른 테이블로 사용자 권한 확인
-4. **스페이스 목록**: 정확한 테이블에서 사용자 스페이스 조회
+### 해결한 내용
+
+1. **Dialog 기능 추가**
+   - `@/components/ui/dialog` import 추가
+   - Add Task 버튼을 DialogTrigger로 래핑
+
+2. **AddTodoForm 연동**
+   - Dialog 내부에 AddTodoForm 컴포넌트 배치
+   - userId와 spaceId 제대로 전달
+   - 할일 추가 후 모달 닫기 및 목록 새로고침 구현
+
+3. **State 관리 추가**
+   - `isAddDialogOpen` state로 모달 열기/닫기 제어
+   - `handleTodoAdded` 콜백으로 추가 후 처리
+
+4. **예외 처리 개선**
+   - currentSpace가 null이어도 작동하도록 수정
+   - spaceId를 optional로 처리
 
 ### 수정한 파일들
-- `app/(protected)/dashboard/page.tsx`: 2곳 수정
-- `app/(protected)/dashboard/space/[spaceId]/page.tsx`: 2곳 수정
+- `components/todos/SpaceTodoList.tsx`: Dialog와 AddTodoForm 연동
+- Dialog import 및 state 관리 추가
 
-### 빌드 결과
+### 테스트 환경
 - ✅ 로컬 빌드 성공
-- ✅ GitHub 푸시 완료 (commit: f91ba45)
-- ✅ Vercel 배포 준비 완료
+- ✅ GitHub 푸시 완료 (commit: 445624e)
+- 🚀 로컬 서버 실행 중: http://localhost:3005
 
 ### 기대 결과
-이제 로그인 후 Dashboard에서 404 오류가 발생하지 않고 정상적으로 작동할 것입니다:
-- 스페이스 개수 정상 표시
-- 사용자의 스페이스 목록 정상 조회
-- Space 상세 페이지 접근 가능
+이제 Add Task 버튼 클릭 시:
+- ✅ 할일 추가 모달이 표시됨
+- ✅ 폼 입력 후 할일 추가 가능
+- ✅ 추가 후 목록 자동 새로고침
+- ✅ 모달 자동 닫힘
+
+## 이전 해결 완료 항목
+- ✅ Dashboard 404 오류 해결 (space_members → user_spaces)
+- ✅ Vercel 배포 오류 해결 (구문 오류, 의존성)
 
 ## 현재 작업 중
-- Dashboard 404 오류 해결 ✅
-- Space 기반 할일 관리 기능 구현 중
+- Add Task 버튼 기능 구현 ✅
 
 ## 다음 작업 예정
 - Space 기능 완성
-- 반응형 디자인 적용  
+- 반응형 디자인 적용
 - 테스트 코드 작성
 
 ---
-작업 시간: 2025-05-26 09:00
-상태: Dashboard 오류 해결 완료 ✅
+작업 시간: 2025-05-26 09:30
+상태: Add Task 기능 구현 완료 ✅
+로컬 테스트: http://localhost:3005
