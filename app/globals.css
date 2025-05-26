@@ -205,22 +205,8 @@ body {
   padding-right: 1rem;
 }
 
-/* 1920px viewport - content width 1440px */
-@media (min-width: 1920px) {
-  .container-responsive {
-    max-width: 1440px;
-  }
-}
-
-/* 1440px viewport - content width 1320px */
-@media (min-width: 1440px) and (max-width: 1919px) {
-  .container-responsive {
-    max-width: 1320px;
-  }
-}
-
-/* Smaller viewports */
-@media (min-width: 1280px) and (max-width: 1439px) {
+/* 모든 큰 뷰포트에서 1200px로 통일 */
+@media (min-width: 1280px) {
   .container-responsive {
     max-width: 1200px;
   }

@@ -150,7 +150,7 @@ export default function OverviewPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar user={user} />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container-responsive py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">

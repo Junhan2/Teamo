@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import AddTodoForm from '@/components/AddTodoForm';
 import { todosApi } from '@/lib/api/todos/client';
 import { Database } from '@/types/supabase';
@@ -25,6 +26,8 @@ import {
   CheckCircle2,
   Circle,
   AlertCircle,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -32,7 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 
 type Todo = Database['public']['Tables']['todos']['Row'];
 
@@ -55,6 +58,7 @@ export function SpaceTodoList({
   const [filter, setFilter] = useState<'all' | 'personal' | 'shared'>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [expandedTodos, setExpandedTodos] = useState<Set<string>>(new Set());
   
   const { todos, isLoading, error, toggleSharing, refresh } = useTodos({
     teamId,
@@ -84,6 +88,16 @@ export function SpaceTodoList({
     refresh();
   };
 
+  const toggleTodoExpansion = (todoId: string) => {
+    const newExpanded = new Set(expandedTodos);
+    if (newExpanded.has(todoId)) {
+      newExpanded.delete(todoId);
+    } else {
+      newExpanded.add(todoId);
+    }
+    setExpandedTodos(newExpanded);
+  };
+
   const filteredTodos = todos.filter(todo => {
     if (userId && todo.user_id !== userId) return false;
     if (statusFilter !== 'all' && todo.status !== statusFilter) return false;
@@ -105,13 +119,38 @@ export function SpaceTodoList({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'done':
-        return 'text-green-600 bg-green-50';
+        return 'text-green-600 bg-green-50 border-green-200';
       case 'doing':
       case 'in_progress':
-        return 'text-blue-600 bg-blue-50';
+        return 'text-blue-600 bg-blue-50 border-blue-200';
       default:
-        return 'text-gray-600 bg-gray-50';
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
+  };
+
+  const formatDueDate = (dueDate: string) => {
+    const due = new Date(dueDate);
+    const today = new Date();
+    const diffDays = differenceInDays(due, today);
+    
+    const formattedDate = format(due, 'yyyy.MM.dd');
+    
+    if (diffDays === 0) {
+      return `~${formattedDate} (Today)`;
+    } else if (diffDays > 0) {
+      return `~${formattedDate} (D-${diffDays})`;
+    } else {
+      return `~${formattedDate} (D+${Math.abs(diffDays)})`;
+    }
+  };
+
+  const getAssigneeName = (todo: any) => {
+    // Team shared 할일에서 담당자 정보를 가져오는 로직
+    // 실제 구현에서는 todo에 assignee 정보가 포함되어야 합니다
+    if (todo.team_id && filter === 'shared') {
+      return todo.assignee_name || 'Unassigned';
+    }
+    return null;
   };
 
   if (error) {
@@ -247,102 +286,132 @@ export function SpaceTodoList({
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-2">
-          {filteredTodos.map((todo) => (
-            <Card key={todo.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-4 flex-1">
-                  <Checkbox
-                    checked={todo.status === 'done'}
-                    onCheckedChange={(checked) => 
-                      handleStatusChange(todo.id, checked ? 'done' : 'todo')
-                    }
-                  />
-                  
-                  <div className="flex-1">
-                    <h3 className={`font-medium ${
-                      todo.status === 'done' ? 'line-through text-muted-foreground' : ''
-                    }`}>
-                      {todo.title}
-                    </h3>
-                    {todo.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {todo.description}
-                      </p>
-                    )}
-                    
-                    <div className="flex items-center gap-4 mt-2">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="p-0 h-auto hover:bg-transparent"
-                          >
-                            <Badge 
-                              variant="outline" 
-                              className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
-                            >
-                              {getStatusIcon(todo.status)}
-                              <span className="ml-1 capitalize">
-                                {todo.status.replace('_', ' ')}
-                              </span>
-                            </Badge>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(todo.id, 'todo')}
-                            className="flex items-center gap-2"
-                          >
-                            <Circle className="h-4 w-4 text-gray-400" />
-                            To Do
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(todo.id, 'doing')}
-                            className="flex items-center gap-2"
-                          >
-                            <Clock className="h-4 w-4 text-blue-600" />
-                            Doing
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleStatusChange(todo.id, 'done')}
-                            className="flex items-center gap-2"
-                          >
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                            Done
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      
-                      {todo.due_date && (
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          {format(new Date(todo.due_date), 'MMM d')}
-                        </div>
-                      )}
-                      
-                      {todo.team_id && (
-                        <Badge variant="secondary" className="gap-1">
-                          <Users className="h-3 w-3" />
-                          Team
-                        </Badge>
+        <div className="space-y-3">
+          {filteredTodos.map((todo) => {
+            const isExpanded = expandedTodos.has(todo.id);
+            const assigneeName = getAssigneeName(todo);
+            
+            return (
+              <Card key={todo.id} className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+                <CardContent className="p-4">
+                  {/* Main Content */}
+                  <div className="space-y-3">
+                    {/* Title Row */}
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={todo.status === 'done'}
+                        onCheckedChange={(checked) => 
+                          handleStatusChange(todo.id, checked ? 'done' : 'todo')
+                        }
+                      />
+                      <h3 className={`font-medium text-lg flex-1 ${
+                        todo.status === 'done' ? 'line-through text-muted-foreground' : ''
+                      }`}>
+                        {todo.title}
+                      </h3>
+                      {todo.description && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleTodoExpansion(todo.id)}
+                          className="p-1 h-6 w-6"
+                        >
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </Button>
                       )}
                     </div>
+
+                    {/* Description - Collapsible */}
+                    {todo.description && (
+                      <Collapsible open={isExpanded}>
+                        <CollapsibleContent>
+                          <div className="ml-7 p-3 bg-gray-50 rounded-md border">
+                            <p className="text-sm text-muted-foreground">
+                              {todo.description}
+                            </p>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+
+                    {/* Bottom Row - Assignee and Due Date/Status */}
+                    <div className="flex items-center justify-between ml-7">
+                      {/* Left - Assignee */}
+                      <div className="flex items-center gap-2">
+                        {assigneeName ? (
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">{assigneeName}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">Personal</span>
+                        )}
+                      </div>
+
+                      {/* Right - Due Date and Status */}
+                      <div className="flex items-center gap-3">
+                        {/* Due Date */}
+                        {todo.due_date && (
+                          <Badge variant="outline" className="gap-1 text-xs">
+                            <Calendar className="h-3 w-3" />
+                            {formatDueDate(todo.due_date)}
+                          </Badge>
+                        )}
+
+                        {/* Status Badge with Dropdown */}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="p-0 h-auto hover:bg-transparent"
+                            >
+                              <Badge 
+                                variant="outline" 
+                                className={`cursor-pointer hover:bg-opacity-80 transition-colors ${getStatusColor(todo.status)}`}
+                              >
+                                {getStatusIcon(todo.status)}
+                                <span className="ml-1 capitalize">
+                                  {todo.status.replace('_', ' ')}
+                                </span>
+                              </Badge>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(todo.id, 'todo')}
+                              className="flex items-center gap-2"
+                            >
+                              <Circle className="h-4 w-4 text-gray-400" />
+                              To Do
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(todo.id, 'doing')}
+                              className="flex items-center gap-2"
+                            >
+                              <Clock className="h-4 w-4 text-blue-600" />
+                              Doing
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleStatusChange(todo.id, 'done')}
+                              className="flex items-center gap-2"
+                            >
+                              <CheckCircle2 className="h-4 w-4 text-green-600" />
+                              Done
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <ShareToggle
-                    todoId={todo.id}
-                    isShared={todo.is_shared || false}
-                    hasTeam={!!todo.team_id}
-                    compact
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
