@@ -29,6 +29,7 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronRight,
+  ListTodo,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -111,23 +112,23 @@ export function SpaceTodoList({
         return <CheckCircle2 className="h-4 w-4 text-white" />;
       case 'doing':
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-white" />;
+        return <Activity className="h-4 w-4 text-white" />;
       case 'todo':
       default:
-        return <Activity className="h-4 w-4 text-white" />;
+        return <ListTodo className="h-4 w-4 text-white" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'done':
-        return 'text-white font-mono font-medium border-0';
+        return 'text-white font-mono font-semibold border-0';
       case 'doing':
       case 'in_progress':
-        return 'text-white font-mono font-medium border-0';
+        return 'text-white font-mono font-semibold border-0';
       case 'todo':
       default:
-        return 'text-white font-mono font-medium border-0';
+        return 'text-white font-mono font-semibold border-0';
     }
   };
 
@@ -392,7 +393,7 @@ export function SpaceTodoList({
                                 style={{ backgroundColor: getStatusBgColor(todo.status) }}
                               >
                                 {getStatusIcon(todo.status)}
-                                <span className="ml-1 capitalize font-mono">
+                                <span className="ml-1 capitalize font-mono font-semibold">
                                   {todo.status === 'todo' ? 'ToDo' : 
                                    todo.status === 'in_progress' || todo.status === 'doing' ? 'Doing' : 
                                    'Complete'}
@@ -405,22 +406,22 @@ export function SpaceTodoList({
                               onClick={() => handleStatusChange(todo.id, 'todo')}
                               className="flex items-center gap-2"
                             >
-                              <Activity className="h-4 w-4" style={{ color: '#4D51CC' }} />
-                              <span className="font-mono">ToDo</span>
+                              <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
+                              <span className="font-mono font-semibold">ToDo</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'doing')}
                               className="flex items-center gap-2"
                             >
-                              <Clock className="h-4 w-4" style={{ color: '#FF82C2' }} />
-                              <span className="font-mono">Doing</span>
+                              <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
+                              <span className="font-mono font-semibold">Doing</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'done')}
                               className="flex items-center gap-2"
                             >
                               <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
-                              <span className="font-mono">Complete</span>
+                              <span className="font-mono font-semibold">Complete</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Todo, TodoWithSpace } from '@/lib/types/todo'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import { Calendar, Clock, MoreHorizontal, Edit2, Trash2, CheckCircle2, CircleDot, Activity } from 'lucide-react'
+import { Calendar, Clock, MoreHorizontal, Edit2, Trash2, CheckCircle2, CircleDot, Activity, ListTodo } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,9 +74,9 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
   const getStatusIcon = () => {
     switch (todo.status) {
       case 'todo':
-        return <Activity className="h-4 w-4" style={{ color: '#4D51CC' }} />
+        return <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
       case 'in_progress':
-        return <Clock className="h-4 w-4" style={{ color: '#FF82C2' }} />
+        return <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
       case 'done':
         return <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />
       default:
