@@ -107,24 +107,26 @@ export function SpaceTodoList({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'done':
-        return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+        return <CheckCircle2 className="h-4 w-4 text-emerald-600" />;
       case 'doing':
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-gray-600" />;
+        return <Clock className="h-4 w-4 text-pink-600" />;
+      case 'todo':
       default:
-        return <Circle className="h-4 w-4 text-gray-400" />;
+        return <Circle className="h-4 w-4 text-sky-500" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'done':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-emerald-700 bg-emerald-100 border-emerald-300';
       case 'doing':
       case 'in_progress':
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return 'text-pink-700 bg-pink-100 border-pink-300';
+      case 'todo':
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return 'text-sky-700 bg-sky-100 border-sky-300';
     }
   };
 
@@ -386,21 +388,21 @@ export function SpaceTodoList({
                               onClick={() => handleStatusChange(todo.id, 'todo')}
                               className="flex items-center gap-2"
                             >
-                              <Circle className="h-4 w-4 text-gray-400" />
+                              <Circle className="h-4 w-4 text-sky-500" />
                               To Do
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'doing')}
                               className="flex items-center gap-2"
                             >
-                              <Clock className="h-4 w-4 text-gray-600" />
+                              <Clock className="h-4 w-4 text-pink-600" />
                               Doing
                             </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => handleStatusChange(todo.id, 'done')}
                               className="flex items-center gap-2"
                             >
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
+                              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                               Done
                             </DropdownMenuItem>
                           </DropdownMenuContent>

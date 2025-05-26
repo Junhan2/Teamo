@@ -80,14 +80,14 @@ export default function SpaceGroupedTodoCard({
               </Badge>
               
               {stats.completed > 0 && (
-                <Badge variant="secondary" className="bg-green-100 text-green-700">
+                <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">
                   <CheckCircle2 className="h-3 w-3 mr-1" />
                   {stats.completed}
                 </Badge>
               )}
               
               {stats.inProgress > 0 && (
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                <Badge variant="secondary" className="bg-pink-100 text-pink-700">
                   <Clock className="h-3 w-3 mr-1" />
                   {stats.inProgress}
                 </Badge>
