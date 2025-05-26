@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSpace } from '@/contexts/SpaceContext';
 import { spacesClient } from '@/lib/api/spaces/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2 } from 'lucide-react';
+import { InlineSpinner } from '@/components/ui/UnifiedSpinner';
 
 interface CreateSpaceFormProps {
   onSuccess?: () => void;
@@ -17,6 +18,7 @@ interface CreateSpaceFormProps {
 
 export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
   const router = useRouter();
+  const { addSpace } = useSpace();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -42,6 +44,13 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
         description: formData.description.trim() || null,
       });
 
+      // 새로 생성된 스페이스를 즉시 목록에 추가
+      addSpace({
+        ...space,
+        user_role: 'owner', // 생성자는 owner
+        is_default: false   // 새 스페이스는 기본값이 아님
+      });
+
       toast({
         title: 'Success',
         description: 'Space created successfully',
@@ -52,7 +61,6 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
       } else {
         // 대시보드로 리다이렉트
         router.push('/dashboard');
-        router.refresh();
       }
     } catch (error) {
       console.error('Error creating space:', error);
@@ -106,7 +114,7 @@ export function CreateSpaceForm({ onSuccess, onCancel }: CreateSpaceFormProps) {
         <Button type="submit" disabled={isLoading}>
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <InlineSpinner className="w-4 h-4 mr-2" />
               Creating...
             </>
           ) : (

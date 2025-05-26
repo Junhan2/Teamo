@@ -41,7 +41,7 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
   const handleSetDefault = async (spaceId: string) => {
     setIsLoading(spaceId);
     try {
-      await spacesClient.setDefaultSpace(spaceId);
+      await context.setDefaultSpace(spaceId);
       toast({
         title: 'Success',
         description: 'Default space updated',
@@ -113,6 +113,11 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                   size="sm"
                   variant={isCurrent ? 'default' : 'outline'}
                   onClick={() => handleSelectSpace(space)}
+                  className={`transition-colors duration-200 ${
+                    isCurrent 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   {isCurrent ? 'Current' : 'Switch'}
@@ -124,6 +129,7 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                     variant="outline"
                     onClick={() => handleSetDefault(space.id)}
                     disabled={isLoading === space.id}
+                    className="border-gray-300 hover:border-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 transition-colors duration-200"
                   >
                     <Star className="mr-2 h-4 w-4" />
                     Set Default
@@ -132,7 +138,11 @@ export function SpaceList({ onSpaceSelect }: SpaceListProps) {
                 
                 {(role === 'owner' || role === 'admin') && (
                   <Link href={`/spaces/${space.id}/members`}>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      className="border-gray-300 hover:border-green-500 hover:text-green-600 hover:bg-green-50 transition-colors duration-200"
+                    >
                       <Users className="mr-2 h-4 w-4" />
                       Members
                     </Button>

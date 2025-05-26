@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "@/components/ui/use-toast"
+import { InlineSpinner } from "@/components/ui/UnifiedSpinner"
 import PageLoading from "@/components/PageLoading"
 import { 
   Users, 
@@ -110,6 +111,17 @@ export default function SpaceMembersPage() {
       return
     }
 
+    // 이메일 형식 검증
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(inviteEmail)) {
+      toast({
+        title: "오류",
+        description: "올바른 이메일 주소를 입력해주세요.",
+        variant: "destructive"
+      })
+      return
+    }
+
     try {
       setIsInviting(true)
       
@@ -127,7 +139,7 @@ export default function SpaceMembersPage() {
       
       toast({
         title: "초대 전송 완료",
-        description: "초대 링크가 클립보드에 복사되었습니다.",
+        description: `${inviteEmail}에게 초대를 보냈습니다. 초대 링크가 클립보드에 복사되었습니다.`,
       })
       
       // 폼 초기화
@@ -221,9 +233,9 @@ export default function SpaceMembersPage() {
 
         {/* 초대 폼 (관리자만) */}
         {isAdmin && (
-          <Card className="mb-8">
+          <Card className="mb-8 border-blue-200 bg-blue-50/30">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-blue-900">
                 <UserPlus className="h-5 w-5" />
                 새 멤버 초대
               </CardTitle>
@@ -231,35 +243,56 @@ export default function SpaceMembersPage() {
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="email">이메일 주소</Label>
+                  <Label htmlFor="email" className="text-sm font-medium">이메일 주소</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="user@example.com"
+                    placeholder="초대할 사용자의 이메일을 입력하세요"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
+                    className="mt-1"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="role">역할</Label>
+                  <Label htmlFor="role" className="text-sm font-medium">역할 선택</Label>
                   <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as "member" | "admin")}>
-                    <SelectTrigger>
+                    <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="member">멤버</SelectItem>
-                      <SelectItem value="admin">관리자</SelectItem>
+                      <SelectItem value="member">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          <span>멤버 - 기본 권한</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="admin">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          <span>관리자 - 모든 권한</span>
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <Button 
                   onClick={handleInvite} 
-                  disabled={isInviting}
-                  className="w-full"
+                  disabled={isInviting || !inviteEmail.trim()}
+                  className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
                 >
-                  {isInviting ? "초대 중..." : "초대 전송"}
+                  {isInviting ? (
+                    <>
+                      <InlineSpinner className="w-4 h-4 mr-2" />
+                      초대 중...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-2" />
+                      초대 전송
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

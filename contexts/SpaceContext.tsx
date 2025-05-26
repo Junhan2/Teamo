@@ -13,6 +13,7 @@ interface SpaceContextType {
   switchSpace: (spaceId: string) => Promise<void>;
   refreshSpaces: () => Promise<void>;
   setDefaultSpace: (spaceId: string) => Promise<void>;
+  addSpace: (space: SpaceWithRole) => void;
 }
 
 const SpaceContext = createContext<SpaceContextType | undefined>(undefined);
@@ -58,12 +59,34 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
   const setDefaultSpace = useCallback(async (spaceId: string) => {
     try {
       await spacesClient.setDefaultSpace(spaceId);
-      await loadSpaces();
+      
+      // 즉시 로컬 상태 업데이트
+      const updatedSpaces = spaces.map(space => ({
+        ...space,
+        is_default: space.id === spaceId
+      }));
+      setSpaces(updatedSpaces);
+      
+      // 현재 스페이스도 업데이트
+      const newDefaultSpace = updatedSpaces.find(s => s.id === spaceId);
+      if (newDefaultSpace) {
+        setCurrentSpace(newDefaultSpace);
+      }
     } catch (error) {
       console.error('Failed to set default space:', error);
       throw error;
     }
-  }, [loadSpaces]);
+  }, [spaces]);
+
+  // 새 스페이스 추가 (즉시 목록에 반영)
+  const addSpace = useCallback((space: SpaceWithRole) => {
+    setSpaces(prevSpaces => [...prevSpaces, space]);
+    
+    // 첫 번째 스페이스이거나 현재 스페이스가 없으면 현재 스페이스로 설정
+    if (spaces.length === 0 || !currentSpace) {
+      setCurrentSpace(space);
+    }
+  }, [spaces.length, currentSpace]);
 
   // 스페이스 목록 새로고침
   const refreshSpaces = useCallback(async () => {
@@ -84,6 +107,7 @@ export function SpaceProvider({ children }: { children: React.ReactNode }) {
         switchSpace,
         refreshSpaces,
         setDefaultSpace,
+        addSpace,
       }}
     >
       {children}
