@@ -51,7 +51,7 @@ export default function ParticlesBackground({
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * speed * 2,
           vy: (Math.random() - 0.5) * speed * 2,
-          size: Math.random() * 2 + 0.5,
+          size: Math.random() * 3 + 1,
           opacity: particleTransparency ? Math.random() * 0.8 + 0.2 : 1,
           baseOpacity: particleTransparency ? Math.random() * 0.8 + 0.2 : 1
         })
