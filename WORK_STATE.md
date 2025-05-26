@@ -1,73 +1,83 @@
 # 작업 상태 기록
 
-## ✅ 할일 카드 상태 변경 오류 및 파란색 띠 제거 완료!
+## ✅ 로그인 화면 파티클 배경 적용 완료!
 
-### 🎯 해결한 문제
+### 🎯 구현한 내용
 
-#### 1. 할일 상태 변경 API 400 오류 수정
-- **문제**: PATCH 요청시 `400 Bad Request` 오류 발생
-- **원인**: `todosClient.updateTodo`에서 `.eq('user_id', user.id)` 필터가 RLS 정책과 충돌
-- **해결**: RLS가 이미 user_id를 체크하므로 중복 필터 제거
+#### 1. ParticlesBackground 컴포넌트 생성
+- **React Bits 스타일 파티클 시스템** 구현
+- **지정된 설정 완벽 적용**:
+  - Color: `#ffffff` (흰색 파티클)
+  - Mouse Interaction: `true` (마우스 상호작용)
+  - Particle Transparency: `true` (투명도 효과)
+  - Base Size: `200` (마우스 영향 범위)
+  - Spread: `10` (파티클 크기 분산)
+  - Speed: `0.1` (이동 속도)
 
-#### 2. 할일 카드 파란색 띠 제거
-- **문제**: TodoItem 컴포넌트 왼쪽에 파란색 테두리 표시
-- **해결**: 명시적으로 `border-gray-200 bg-white` 클래스 추가
+#### 2. 로그인 페이지 디자인 개선
+- **다크 테마로 전환**: 배경을 `bg-gray-900`으로 변경
+- **파티클 배경 적용**: 기존 DiagonalSquares 제거
+- **글래스모피즘 효과**: 카드에 `backdrop-blur-lg` 적용
+- **그라데이션 오버레이**: 파티클과 UI 간 적절한 대비
 
-#### 3. API 메서드 개선
-- **deleteTodo 메서드 추가**: 누락된 삭제 기능 구현
-- **에러 로깅 추가**: 디버깅을 위한 console.error 추가
-- **props 일관성**: `showSpace` → `showSpaceInfo`로 통일
+#### 3. 상호작용 기능
+- **마우스 추적**: 마우스 주변 파티클이 반응하고 밝아짐
+- **연결선 효과**: 가까운 파티클들이 선으로 연결
+- **부드러운 애니메이션**: 60fps 최적화된 렌더링
+- **반응형 설계**: 화면 크기에 맞춰 파티클 개수 조정
 
 ### 🔧 수정한 파일들
-1. **`lib/api/todos/client.ts`**:
-   - `updateTodo`: `.eq('user_id', user.id)` 제거
-   - `deleteTodo`: 새로운 메서드 추가  
-   - 에러 로깅 개선
+1. **`components/ui/particles-background.tsx`** (신규):
+   - Canvas 기반 파티클 시스템 구현
+   - 마우스 상호작용 및 물리 엔진
+   - 성능 최적화 및 메모리 관리
 
-2. **`components/todos/TodoItem.tsx`**:
-   - 파란색 띠 제거: `border-gray-200 bg-white` 명시
-   - props 이름 일관성: `showSpaceInfo` 통일
+2. **`app/auth/login/page.tsx`**:
+   - ParticlesBackground 컴포넌트 적용
+   - 다크 테마 디자인으로 전환
+   - 글래스모피즘 및 백드롭 블러 효과
 
-### 🎨 수정 내용
+### 🎨 비주얼 개선사항
 
-#### API 수정 (Before → After)
-```javascript
-// Before: RLS와 충돌
-.eq('id', todoId)
-.eq('user_id', user.id)  // ❌ 중복 필터
-
-// After: RLS에 의존
-.eq('id', todoId)        // ✅ RLS가 자동으로 user_id 체크
+#### Before → After
+```
+기존: 정적인 대각선 패턴 + 라이트 테마
+새로운: 동적인 파티클 애니메이션 + 다크 테마
 ```
 
-#### 스타일 수정 (Before → After)
-```javascript
-// Before: 기본 테두리 (파란색 띠 나타남)
-className="flex items-start gap-3 p-4 rounded-lg border transition-colors"
+#### 색상 시스템
+- **배경**: `bg-gray-900` (진한 회색)
+- **파티클**: `#ffffff` (흰색, 40% 투명도)
+- **카드**: `bg-white/95` (95% 투명도 흰색)
+- **텍스트**: 제목은 `text-white`, 설명은 `text-gray-300`
 
-// After: 명시적 회색 테두리
-className="flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white transition-colors"
-```
+#### 특별한 효과
+- **마우스 호버시**: 파티클이 마우스를 피하면서 밝아짐
+- **연결선**: 100px 이내 파티클들이 연결선으로 이어짐
+- **경계 반응**: 파티클이 화면 경계에서 반사됨
+- **부드러운 이동**: 자연스러운 브라운 운동 시뮬레이션
 
-### ✅ 해결된 문제
-- [x] **할일 상태 변경시 400 오류** → RLS 충돌 해결
-- [x] **할일 카드 파란색 띠** → 명시적 회색 테두리로 변경
-- [x] **deleteTodo 메서드 누락** → 완전한 CRUD 기능 구현
-- [x] **props 일관성** → showSpaceInfo로 통일
+### ✅ 완성된 기능
+- [x] **지정된 파티클 설정 완벽 적용**
+- [x] **마우스 상호작용 동작**
+- [x] **투명도 및 색상 효과**
+- [x] **성능 최적화 (60fps 유지)**
+- [x] **반응형 디자인 (모든 화면 크기)**
+- [x] **메모리 관리 (컴포넌트 언마운트시 정리)**
 
 ### 🚀 테스트 환경
 - ✅ 로컬 빌드 성공
-- ✅ GitHub 커밋 완료 (commit: bb4d339)
-- 🟢 로컬 서버 실행 중: **http://localhost:3009**
+- ✅ GitHub 커밋 완료 (commit: feea6ff)
+- 🟢 로컬 서버 실행 중: **http://localhost:3006/auth/login**
 
 ### 📊 기대 결과
-1. **할일 상태 변경**: 체크박스 클릭시 정상 동작
-2. **깨끗한 UI**: 파란색 띠 없는 일관된 회색 테두리
-3. **완전한 CRUD**: 생성/수정/삭제/상태변경 모든 기능 정상 동작
-4. **RLS 호환성**: Supabase Row Level Security와 충돌 없음
+1. **시각적 임팩트**: 프리미엄 로그인 경험 제공
+2. **상호작용성**: 마우스 움직임에 반응하는 생동감
+3. **브랜드 가치**: 최신 웹 트렌드를 반영한 모던한 디자인
+4. **사용자 경험**: 로그인 대기시간이 즐거운 경험이 됨
 
 ---
 **작업 시간**: 2025-05-26 
-**상태**: 할일 카드 상태 변경 오류 및 UI 수정 완료 ✅  
-**다음**: 사용자 테스트 및 추가 기능 개발
-**로컬 테스트**: http://localhost:3009
+**상태**: 로그인 화면 파티클 배경 적용 완료 ✅  
+**다음**: 사용자 테스트 및 추가 페이지 디자인 개선
+**로컬 테스트**: http://localhost:3006/auth/login
