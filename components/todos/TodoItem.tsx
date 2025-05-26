@@ -30,9 +30,11 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
   const handleToggleComplete = async () => {
     setIsUpdating(true)
     try {
+      const newCompleted = !todo.is_completed
       await todosClient.updateTodo(todo.id, {
-        is_completed: !todo.is_completed,
-        completed_at: !todo.is_completed ? new Date().toISOString() : null
+        is_completed: newCompleted,
+        completed_at: newCompleted ? new Date().toISOString() : null,
+        status: newCompleted ? 'done' : 'todo' // status도 함께 업데이트
       })
       
       toast.success(todo.is_completed ? '할일을 미완료로 변경했습니다.' : '할일을 완료했습니다.')
@@ -88,8 +90,9 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
     <div
       className={cn(
         "flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-white transition-colors",
+        "!border-l-gray-200", // 명시적으로 왼쪽 border를 회색으로 설정
         todo.is_completed && "bg-gray-50 opacity-60",
-        isOverdue && "border-red-200 bg-red-50/30"
+        isOverdue && "border-red-200 bg-red-50/30 !border-l-red-200"
       )}
     >
       <Checkbox
