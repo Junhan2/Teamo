@@ -110,7 +110,7 @@ export function SpaceTodoList({
         return <CheckCircle2 className="h-4 w-4 text-green-600" />;
       case 'doing':
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-blue-600" />;
+        return <Clock className="h-4 w-4 text-gray-600" />;
       default:
         return <Circle className="h-4 w-4 text-gray-400" />;
     }
@@ -122,7 +122,7 @@ export function SpaceTodoList({
         return 'text-green-600 bg-green-50 border-green-200';
       case 'doing':
       case 'in_progress':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-gray-600 bg-gray-50 border-gray-200';
       default:
         return 'text-gray-600 bg-gray-50 border-gray-200';
     }
@@ -292,7 +292,7 @@ export function SpaceTodoList({
             const assigneeName = getAssigneeName(todo);
             
             return (
-              <Card key={todo.id} className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+              <Card key={todo.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   {/* Main Content */}
                   <div className="space-y-3">
@@ -393,7 +393,7 @@ export function SpaceTodoList({
                               onClick={() => handleStatusChange(todo.id, 'doing')}
                               className="flex items-center gap-2"
                             >
-                              <Clock className="h-4 w-4 text-blue-600" />
+                              <Clock className="h-4 w-4 text-gray-600" />
                               Doing
                             </DropdownMenuItem>
                             <DropdownMenuItem 

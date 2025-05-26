@@ -76,7 +76,7 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
       case 'todo':
         return <CircleDot className="h-4 w-4 text-gray-400" />
       case 'in_progress':
-        return <Clock className="h-4 w-4 text-blue-500" />
+        return <Clock className="h-4 w-4 text-gray-500" />
       case 'done':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />
       default:

@@ -28,7 +28,7 @@ export default function SpaceGroupedTodoCard({
       case 'personal':
         return 'bg-purple-100 text-purple-700 border-purple-200'
       case 'team':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+        return 'bg-gray-100 text-gray-700 border-gray-200'
       case 'project':
         return 'bg-green-100 text-green-700 border-green-200'
       default:
@@ -87,7 +87,7 @@ export default function SpaceGroupedTodoCard({
               )}
               
               {stats.inProgress > 0 && (
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                   <Clock className="h-3 w-3 mr-1" />
                   {stats.inProgress}
                 </Badge>
