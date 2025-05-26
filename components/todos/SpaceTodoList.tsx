@@ -110,7 +110,7 @@ export function SpaceTodoList({
     switch (status) {
       case 'done':
         return <CheckCircle2 className="h-4 w-4 text-white" />;
-      case 'in_progress':
+      case 'doing':
         return <Activity className="h-4 w-4 text-white" />;
       case 'todo':
       default:
@@ -122,7 +122,7 @@ export function SpaceTodoList({
     switch (status) {
       case 'done':
         return 'text-white font-mono font-semibold border-0';
-      case 'in_progress':
+      case 'doing':
         return 'text-white font-mono font-semibold border-0';
       case 'todo':
       default:
@@ -134,7 +134,7 @@ export function SpaceTodoList({
     switch (status) {
       case 'done':
         return '#3FCF8E';
-      case 'in_progress':
+      case 'doing':
         return '#FF82C2';
       case 'todo':
       default:
@@ -260,9 +260,9 @@ export function SpaceTodoList({
             To Do
           </Button>
           <Button
-            variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
+            variant={statusFilter === 'doing' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => setStatusFilter('in_progress')}
+            onClick={() => setStatusFilter('doing')}
             className="transition-colors"
           >
             Doing
@@ -392,7 +392,7 @@ export function SpaceTodoList({
                                 {getStatusIcon(todo.status)}
                                 <span className="ml-1 capitalize font-mono font-semibold">
                                   {todo.status === 'todo' ? 'ToDo' : 
-                                   todo.status === 'in_progress' ? 'Doing' : 
+                                   todo.status === 'doing' ? 'Doing' : 
                                    'Complete'}
                                 </span>
                               </Badge>
@@ -407,7 +407,7 @@ export function SpaceTodoList({
                               <span className="font-mono font-semibold">ToDo</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => handleStatusChange(todo.id, 'in_progress')}
+                              onClick={() => handleStatusChange(todo.id, 'doing')}
                               className="flex items-center gap-2"
                             >
                               <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />

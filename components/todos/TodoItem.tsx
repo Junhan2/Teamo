@@ -75,7 +75,7 @@ export default function TodoItem({ todo, onUpdate, showSpaceInfo = false }: Todo
     switch (todo.status) {
       case 'todo':
         return <ListTodo className="h-4 w-4" style={{ color: '#4D51CC' }} />
-      case 'in_progress':
+      case 'doing':
         return <Activity className="h-4 w-4" style={{ color: '#FF82C2' }} />
       case 'done':
         return <CheckCircle2 className="h-4 w-4" style={{ color: '#3FCF8E' }} />

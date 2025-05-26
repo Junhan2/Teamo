@@ -13,7 +13,7 @@ export interface TodoWithSpace extends Todo {
 }
 
 // Todo status type
-export type TodoStatus = 'todo' | 'in_progress' | 'done'
+export type TodoStatus = 'todo' | 'doing' | 'done'
 
 // Todo priority type  
 export type TodoPriority = 'low' | 'medium' | 'high'
