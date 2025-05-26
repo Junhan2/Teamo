@@ -23,8 +23,6 @@ export default function ParticlesBackground({
 }: ParticlesBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>()
-  const particlesRef = useRef<any[]>([])
-  const mouseRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,106 +31,65 @@ export default function ParticlesBackground({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // 간단한 파티클 시스템
+    const particles: Array<{
+      x: number
+      y: number
+      vx: number
+      vy: number
+      size: number
+      opacity: number
+    }> = []
+
     // Canvas 크기 설정
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
-      // 화면 크기 변경 시 파티클 재생성
-      particlesRef.current = createParticles()
     }
+    
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
 
     // 파티클 생성
     const createParticles = () => {
-      const particles = []
-      // 화면 크기에 따라 파티클 개수 동적 조정
-      const screenArea = canvas.width * canvas.height
-      const baseArea = 1920 * 1080 // 기준 해상도 (Full HD)
-      let densityFactor = Math.sqrt(screenArea / baseArea)
+      particles.length = 0 // 배열 초기화
+      const count = 300
       
-      // 모바일/태블릿에서 추가 최적화
-      if (canvas.width <= 768) {
-        densityFactor *= 0.7 // 모바일에서 30% 감소
-      } else if (canvas.width <= 1024) {
-        densityFactor *= 0.85 // 태블릿에서 15% 감소
-      }
-      
-      const particleCount = Math.max(30, Math.floor(300 * densityFactor)) // 모바일에서 최소 30개      
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * speed * 2,
           vy: (Math.random() - 0.5) * speed * 2,
           size: Math.random() * 3 + 1,
-          opacity: particleTransparency ? Math.random() * 0.8 + 0.2 : 1,
-          baseOpacity: particleTransparency ? Math.random() * 0.8 + 0.2 : 1
+          opacity: particleTransparency ? Math.random() * 0.8 + 0.2 : 1
         })
       }
-      return particles
     }
 
-    particlesRef.current = createParticles()
-
-    // 마우스 이벤트
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = {
-        x: e.clientX,
-        y: e.clientY
-      }
-    }
-
-    if (mouseInteraction) {
-      window.addEventListener('mousemove', handleMouseMove)
-    }
+    createParticles()
 
     // 애니메이션 루프
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       
-      const particles = particlesRef.current
-      
-      particles.forEach((particle, i) => {
+      particles.forEach(particle => {
         // 파티클 이동
         particle.x += particle.vx
         particle.y += particle.vy
 
-        // 마우스 상호작용
-        if (mouseInteraction) {
-          const dx = mouseRef.current.x - particle.x
-          const dy = mouseRef.current.y - particle.y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-          
-          if (distance < baseSize) {
-            const force = (baseSize - distance) / baseSize
-            particle.x -= dx * force * 0.01
-            particle.y -= dy * force * 0.01
-            particle.opacity = Math.min(1, particle.baseOpacity + force * 0.5)
-          } else {
-            particle.opacity = particle.baseOpacity
-          }
-        }
-
         // 경계 처리
-        if (particle.x < 0 || particle.x > canvas.width) {          particle.vx *= -1
-          particle.x = Math.max(0, Math.min(canvas.width, particle.x))
+        if (particle.x < 0 || particle.x > canvas.width) {
+          particle.vx *= -1
         }
         if (particle.y < 0 || particle.y > canvas.height) {
           particle.vy *= -1
-          particle.y = Math.max(0, Math.min(canvas.height, particle.y))
         }
 
         // 파티클 그리기
         ctx.beginPath()
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        
-        // 색상 적용
-        const r = parseInt(color.slice(1, 3), 16)
-        const g = parseInt(color.slice(3, 5), 16)
-        const b = parseInt(color.slice(5, 7), 16)
-        
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${particle.opacity})`
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`
         ctx.fill()
       })
 
@@ -144,14 +101,11 @@ export default function ParticlesBackground({
     // 클린업
     return () => {
       window.removeEventListener('resize', resizeCanvas)
-      if (mouseInteraction) {
-        window.removeEventListener('mousemove', handleMouseMove)
-      }
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [color, mouseInteraction, particleTransparency, baseSize, spread, speed])
+  }, [])
 
   return (
     <canvas

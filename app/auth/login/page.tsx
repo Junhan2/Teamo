@@ -47,8 +47,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-gray-900 relative overflow-hidden">
-      {/* Particles Background */}
-      <ParticlesBackground 
+      {/* Temporary: Particles disabled for debugging */}
+      {/* <ParticlesBackground 
         color="#ffffff"
         mouseInteraction={true}
         particleTransparency={true}
@@ -56,7 +56,7 @@ export default function LoginPage() {
         spread={3}
         speed={0.1}
         className="opacity-40"
-      />
+      /> */}
       
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900/70 via-gray-800/50 to-gray-900/70 z-10"></div>
